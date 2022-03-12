@@ -7,7 +7,7 @@ import { AuthProvider } from "../providers/AuthProvider";
 import { StatusProvider } from "../providers/StatusProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
-import Authentication from "./Authentication";
+//import Authentication from "./Authentication";
 import Routes from "./Routes";
 import Footer from "./Footer";
 import Spinner from "./Spinner";
@@ -27,7 +27,7 @@ console.log("app rendering");
           <StatusProvider>
             <CssBaseline />
             <BrowserRouter>
-              <Authentication />
+              {/* <Authentication /> */}
               <Contents />
               <Spinner />
               <FloatingActionButton/>
