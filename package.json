@@ -47,6 +47,7 @@
     "prebuild": "yarn install-pre-push-hook && yarn sitemap-build && yarn favicons-build && yarn manifest-build && rm -rf build/",
     "build": "react-scripts build",
     "rawbuild": "react-scripts build && yarn sw-add-blacklist && yarn postbuild",
+    "postbuild": "rm -rf ../appalti190-server/client/build; cp -a build/ ../appalti190-server/client/",
     "sw-add-blacklist": "node scripts/add-blacklist-urls-to-service-worker",
     "translations-parse": "i18next 'src/**/*.js' --config 'src/i18next-parser.config.js' --silent",
     "translate-auto": "node scripts/translate-auto.js",
