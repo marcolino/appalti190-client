@@ -4,9 +4,9 @@ import { useEffect, useContext } from "react";
 //import { useTranslation } from "react-i18next";
 import { currentAuthenticatedUser } from "../libs/TrackPromise";
 import { AuthContext } from "../providers/AuthProvider";
-import { isLocalhost } from "../libs/Misc";
+//import { isLocalhost } from "../libs/Misc";
 import "../i18n"; // TODO: can we remove this import from here? Now we have it in /src/index.js ...
-import config from "../config";
+//import config from "../config";
 
 
 

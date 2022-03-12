@@ -1,6 +1,7 @@
 //import React from "react";
-import { Auth } from "aws-amplify";
+//import { Auth } from "aws-amplify";
 import { trackPromise } from "react-promise-tracker";
+import Auth from "./Auth";
 
 
 
