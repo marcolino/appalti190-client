@@ -34,14 +34,14 @@ serviceWorkerRegistration.unregister(); // TODO: ONLY TO BETTER DEBUG
 //serviceWorkerRegistration.register();
 
 // Set up a broadcast channel to localize messages from i18n service worker
-const channel1 = new BroadcastChannel("sw-i18n-messages");
-channel1.addEventListener("message", event => {
+const channelI18nMessages = new BroadcastChannel("sw-i18n-messages");
+channelI18nMessages.addEventListener("message", event => {
   toast[event.data.level](i18n.t(event.data.message));
 });
 
 // Set up a broadcast channel to localize messages from background push messages service worker
-const channel2 = new BroadcastChannel("sw-background-push-messages");
-channel2.addEventListener("message", event => {
+const channelBackgroundPushMessages = new BroadcastChannel("sw-background-push-messages");
+channelBackgroundPushMessages.addEventListener("message", event => {
 console.log('received event.data:', event.data);
   toast[event.data.level](i18n.t(event.data.message));
 });

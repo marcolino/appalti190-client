@@ -21,14 +21,16 @@ function SignOut() {
       // TODO: we should also at least clear localStorage.CognitoIdentityServiceProvider.* keys ...
       //return toast.warning("You are currently offline. Please wait for the network to become available.");
 console.log("signOut calling setAuth");
-      setAuth({ user: false })
+      setAuth({ user: false });
       history.replace("/");
     } else {
       signOut({
         success: () => {
           //toast.success(t("Signed out")); // too noisy...
 console.log("signOut calling setAuth");
+console.log("SETAUTH auth:", auth);
           setAuth({ user: false })
+console.log("SETAUTH auth:", auth);
           history.replace("/");
         },
         error: (err) => {

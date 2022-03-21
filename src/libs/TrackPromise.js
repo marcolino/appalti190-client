@@ -5,9 +5,9 @@ import Auth from "./Auth";
 
 
 
-export function currentAuthenticatedUser({success, error, final}) {
+export function NOTUSEDcurrentAuthenticatedUser({success, error, final}) {
   trackPromise(
-    Auth.currentAuthenticatedUser()
+    Auth.NOTUSEDcurrentAuthenticatedUser()
       .then((data) => success(data))
       .catch((data) => error(data))
       .finally((data) => final(data))

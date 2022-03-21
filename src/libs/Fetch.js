@@ -44,8 +44,21 @@ export const resendResetPasswordCode = (params) => {
 };
 
 
-export const transformXls2Xml = (params) => {
-  return instance.post("/service/transformXls2Xml", params).then(response => {
+export const upload = (params) => {
+  console.log("upload params:", params);
+    return instance.post("/service/upload").then(response => {
+  console.log("upload response:", response);
+      return { ok: true, ...response.data };
+    }).catch(err => {
+  console.warn("err.message", err.message, err.reason)
+      return { ok: false, message: err.message };
+    });
+  };
+  
+export const transformXls2Xml = (params) => { // TODO: we don't need params.file.path (???)
+console.log("transformXls2Xml params:", params);
+  return instance.post("/service/transformXls2Xml/filePath", {filePath: params.file.path}).then(response => {
+console.log("transformXls2Xml response:", response);
     return { ok: true, ...response.data };
   }).catch(err => {
 console.warn("err.message", err.message, err.reason)

@@ -1,34 +1,46 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 //import Button from "@material-ui/core/Button";
 import { toast } from "./Toast";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
 import { transformXls2Xml } from "../libs/Fetch";
+import { ServiceContext } from "../providers/ServiceProvider";
+
 //import config from "../config";
 
 function Tab05Check(props) { // TODO: we need file here...
   const { t } = useTranslation();
-  const [ nextIsEnabled/*, setNextIsEnabled*/ ] = useState(false);
+  const { service, setService } = useContext(ServiceContext);
+  const [ statusLocal, setStatusLocal ] = useState({});
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
 
   useEffect(() => {
-console.log("Tab05Check props:", props)
     if (props.value === props.index) {
-      (async () => {
-        await transformXls2Xml({file: props.file}).then(data => {
-          if (!data.ok) {
+      //(async () => {
+        setStatusLocal({loading: true});
+console.log("transformXls2Xml service:", service);       
+        transformXls2Xml({file: service.file}).then(response => {
+          if (!response.ok) {
             //console.warn("transformXls2Xml error:", JSON.stringify(data));
-            toast.error(t(data.message));
+            // TODO: ok?
+            toast.error(t(response.message));
+            setStatusLocal({error: response.message});
             return;
           }
-          console.log("getUsers success:", data);
-        }).catch(err => {
-          console.error("getUsers error catched:", err);
+          console.log("transformXls2Xml success:", response);
+          // TODO: tell user, and enable CONTINUE button...
+          setService({...service, transform: response});
+          setStatusLocal({success: response});
+          setNextIsEnabled(true);
+        }/*).catch(err => {
+          console.warn("transformXls2Xml error:", err.message, typeof err.message);
+          setStatusLocal({error: err.message});
           toast.error(t(err.message));
-        });
-      })();
+        }*/);
+      //})();
     }
-  }, [props, t]);
+  }, [props, t, /*service,*/ setService]);
 
   const onNext = () => {
     props.goto("next");
@@ -41,7 +53,10 @@ console.log("Tab05Check props:", props)
           {t("Check")}
         </TabTitle>
         <TabParagraph>
-          Elaborazione in corso...
+         {/* SL:  {JSON.stringify(status.service?.transform)} */}
+          {statusLocal && "loading" in statusLocal && `Elaborazione in corso...`}
+          {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
+          {statusLocal && "success" in statusLocal && `Elaborazione completata`}
         </TabParagraph>
       </TabBodyScrollable>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React/*, { useContext }*/ from "react";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -8,12 +8,12 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
+//import { StatusContext } from "../providers/StatusProvider";
 import Tab01Start from "./Tab01Start";
 import Tab02Download from "./Tab02Download";
 import Tab03FillData from "./Tab03FillData";
 import Tab04Upload from "./Tab04Upload";
 import Tab05Check from "./Tab05Check";
-
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -129,12 +129,14 @@ const useStyles = makeStyles(theme => ({
 const TabsPanel = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  //const { status, setStatus } = useContext(StatusContext);
   const [tabId, setTabId] = React.useState(0);
 
   function handleChangeTab(event, id) {
     console.log("handleChangeTab id:", id);
     setTabId(id); // comment to disable the possibility to change tab by clicking on app bar titles
   }
+  
   function goto(where) {
     let id = where;
     if (typeof where === "string") {

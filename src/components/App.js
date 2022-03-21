@@ -4,15 +4,15 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { AuthProvider } from "../providers/AuthProvider";
-import { StatusProvider } from "../providers/StatusProvider";
+import { ServiceProvider } from "../providers/ServiceProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
 import Routes from "./Routes";
 import Footer from "./Footer";
 import Loader from "./Loader";
 import CookieBanner from "./CookieBanner";
-import PushNotifications from "../components/PushNotifications";
-import FloatingActionButton from "./FloatingActionButton";
+// import PushNotifications from "../components/PushNotifications";
+// import FloatingActionButton from "./FloatingActionButton";
 import { isAuthLocation } from "../libs/Misc";
 import config from "../config";
 import theme from "../themes/default"; // here we choose the theme
@@ -22,16 +22,16 @@ function App() {
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <OnlineStatusProvider>
-          <StatusProvider>
+          <ServiceProvider>
             <CssBaseline />
             <BrowserRouter>
               <Loader />
               <Contents />
               <CookieBanner />
-              <FloatingActionButton/>
+              {/* <FloatingActionButton/> */}
             </BrowserRouter>
-            <PushNotifications />
-          </StatusProvider>
+            {/* <PushNotifications /> */}
+          </ServiceProvider>
         </OnlineStatusProvider>
       </AuthProvider>
     </ThemeProvider>

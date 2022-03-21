@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import PropTypes from "prop-types";
-//import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 import { useTranslation } from "react-i18next";
 //import { useDrpzone } from "react-dropzone";
 import Button from "@material-ui/core/Button";
@@ -9,13 +9,39 @@ import Button from "@material-ui/core/Button";
 import useDragAndDrop from "../hooks/useDragAndDrop";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
 //import { ControlPointDuplicateOutlined } from "@material-ui/icons";
+import { ServiceContext } from "../providers/ServiceProvider";
+//import { AuthContext } from "../providers/AuthProvider"; // TODO: test only
+//import { upload } from "../libs/Fetch"; // TODO (use instance.post in libs/Fetch, not a raw fetch ...)
 
 
+
+
+const useStyles = makeStyles(theme => ({
+  fileDropLabel: {
+    display: "inline-block",
+    textAlign: "center",
+    width: "100%",
+    border: "3px black dashed",
+    padding: "3em 1.78em", /* ??? */
+    cursor: "pointer",
+    backgroundColor: "#f0f0f0",
+  },
+  fileDropError: {
+    display: "inline-block",
+    fontSize: "1.0em",
+    fontStyle: "italic",
+    fontWeight: "bold",
+    color: "darkred",
+    marginTop: "1em",
+  }
+}));
 
 function Tab04Upload(props) {
-  //const classes = useStyles();
+  const classes = useStyles();
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
+  const { service, setService } = useContext(ServiceContext);
+  //const { auth, setAuth } = useContext(AuthContext);
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
   const [ file, setFile ] = useState(null);
   const {
@@ -30,46 +56,83 @@ function Tab04Upload(props) {
   const onDrop = (e) => {
     e.preventDefault();
     const selectedFile = e?.dataTransfer?.files[0];
-//console.log("dropped file:", selectedFile);
     fileSelect(selectedFile);
   };
 
   const onFileSelect = (e) => {
     e.preventDefault();
     const selectedFile = e?.target?.files[0];
-//console.log("selected file:", selectedFile);
     fileSelect(selectedFile);
   };
 
   const fileSelect = (selectedFile) => {
-    setFileDropError(null);
-    if (!fileValidate(selectedFile)) return;
-    setFile(selectedFile);
-    setNextIsEnabled(true);
     setDragOver(false);
+    if (selectedFile) {
+      const error = fileValidate(selectedFile);
+      if (error) {
+        setFileDropError(error);
+        setFile(null);
+        setNextIsEnabled(false);
+      } else {
+        setFileDropError(null);
+        setFile(selectedFile);
+        setNextIsEnabled(true);
+      }
+    } else {
+      setFileDropError(t("No file selected, sorry... Please, repeat..."));
+      setFile(null);
+      setNextIsEnabled(false);
+    }
   };
 
   const fileValidate = (file) => { // validate file type or name
     // ods: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     // xls: application/vnd.ms-excel
-    //console.log("file.type:", file.type);
     if (!( // TODO: check if these tests are enough general...
-      file.type.split("/")[1].match("officedocument.spreadsheetml.sheet") ||
-      file.type.split("/")[1].match("ms-excel")
+      file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") ||
+      file?.type?.split("/")[1]?.match("ms-excel")
     )) {
-      setFileDropError(t("Please provide a spreadsheet to upload"));
-      return false;
+      return t(`Please upload a spreadsheet`) + `.` + file?.type ? ` ` + t(`Selected file looks like {{fileType}}`, {fileType: file.type}) : ``;
     }
-    return true;
+    return null; // validated
   };
 
   const fileReset = (e) => {
     setFile(null);
     document.getElementById("file").value = "";
     setFileDropError("");
+    setNextIsEnabled(false);
+    setDragOver(false);
   };
 
-  const onNext = () => {
+  const fileUpload = async () => {
+		const formData = new FormData();
+		formData.append("file", file);
+
+		await fetch("/api/service/upload", {
+			method: "POST",
+			body: formData,
+		})
+    .then((response) => response.json())
+    .then((result) => {
+      console.log('Upload success, file path', result.file);
+      //setStatus({...status, service: {}});
+      //setStatus({...status, service: {file: result.file}});
+
+      console.log("TTTTT pre, service:", service)
+      setService({file: result.file});
+      //setAuth({...auth, service: result.file});
+      console.log("TTTTT2, service:", service);
+setTimeout(() => {console.log("TT3:", service)}, 1000)
+    })
+    // .catch((error) => {
+    //   console.error('Upload error:', error);
+    // });
+	};
+
+  const onNext = async () => {
+    await fileUpload();
+    console.log("GOT NEXT, service", service);
     props.goto("next");
   };
 
@@ -90,17 +153,18 @@ function Tab04Upload(props) {
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onDrop={onDrop}
-              style={{ width: "100%", textAlign: "center", backgroundColor: `${dragOver ? "yellow" : ""}`}}
+              style={{ /* width: "100%", textAlign: "center",*/ backgroundColor: `${dragOver ? "#ffdd00" : ""}`}}
+              className={classes.fileDropLabel}
             >
-              <h4 style={{ color: `${dragOver ? "black" : "#333"}` }}>
+              <span style={{ color: `${dragOver ? "black" : "#444"}` }}>
                 {t("Drop the file here or click to select from disk")}
-              </h4>
+              </span>
             </label>
             <input type="file" name="file" id="file" onChange={onFileSelect} style={{display: "none"}} />
-            {fileDropError && (
-                <div className="file-drop-error">{fileDropError}</div>
-            )}
           </form>
+          {fileDropError && (
+            <div className={classes.fileDropError}>{fileDropError}</div>
+          )}
           <br />
           <TabParagraph>
             {file && t(`File caricato: ${file.name}`)}
