@@ -22,7 +22,6 @@ import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, checkPassword } from "../../libs/Validation";
 import config from "../../config";
-import { ETBTAdd } from "../../libs/I18n"; // TODO: remove me when finished collecting serve errors
 
 const styles = theme => ({
   avatar: {
@@ -151,22 +150,19 @@ function SignUp() {
     setError({});
 
     signUp({
-      username: email,
+      email,
       password,
-      attributes: {
-        email,
-        name: firstName,
-        family_name: lastName,
-        /**
-         * IMPROVE: add custom fields
-         * phone_number: phoneNumber, // E.164 number convention: country code (1 to 3 digits) + subscriber number (max 12 digits)
-         * "custom:favorite_flavor": FavoriteFlavour, // custom attribute, not standard
-         */
-      }
+      firstName,
+      lastName,
+      /**
+       * IMPROVE: add custom fields
+       * phone_number: phoneNumber, // E.164 number convention: country code (1 to 3 digits) + subscriber number (max 12 digits)
+       * "custom:favorite_flavor": FavoriteFlavour, // custom attribute, not standard
+       */
     }, {
       success: (data) => {
         console.log("signUp success:", data);
-        const medium = data.codeDeliveryDetails.DeliveryMedium.toLowerCase();
+        const medium = data.codeDeliveryMedium.toLowerCase();
         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
         setCodeDeliveryMedium(medium);
         setWaitingForCode(true);
@@ -174,7 +170,6 @@ function SignUp() {
       },
       error: (err) => {
 console.error("signup error:", err);
-ETBTAdd("signup", err);
         switch (err.code) {
           case "UsernameExistsException":
             setError({ email: err.message }); // since we use email as username, we blame email field as guilty
@@ -193,19 +188,18 @@ ETBTAdd("signup", err);
     if (!validateFormStep2()) return;
     setError({});
 
-    confirmSignUp(email, code, {
+    confirmSignUp({email, code}, {
       success: (data) => {
         console.log("confirmSignup success:", data);
         // data is not meaningful
         handleOpenDialog(
           t("Registered successfully"),
-          t("You can now sign in with email and password."),
+          t("You can now sign in with email and password") + ".",
           () => formSignUpCompleted
         );
       },
       error: (err) => {
 console.error("confirmSignUp error:", err);
-ETBTAdd("confirmSignUp", err);
         toast.error(t(err.message));
         setError({ code: err.message});
       },
@@ -222,7 +216,6 @@ ETBTAdd("confirmSignUp", err);
       },
       error: (err) => {
 console.error("resendSignUp error:", err);
-ETBTAdd("confirmSignUp", err);
         toast.error(t(err.message));
         setError({ code: err.message});
       },

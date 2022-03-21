@@ -17,12 +17,14 @@ import SearchIcon from "@material-ui/icons/Search";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import SecurityIcon from '@material-ui/icons/Security';
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
 import { AuthContext } from "../providers/AuthProvider";
+import { isAdmin } from "../libs/Validation";
 import config from "../config";
 
 const useStyles = makeStyles((theme) => ({
@@ -74,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuPadding: {
     padding: 0,
+    lineHeight: 0,
   },
 }));
 
@@ -146,7 +149,7 @@ function Header() {
     },
   ];
 
-  const userItems = auth.isAuthenticated ?
+  const userItems = auth.user ?
     [
       {
         label: t("Profile"),
@@ -171,26 +174,35 @@ function Header() {
       },
     ]
   ;
+  if (auth.user && isAdmin(auth.user)) {
+    userItems.unshift(
+      {
+        label: t("Admin panel"),
+        icon: <SecurityIcon />,
+        href: "/admin-panel",
+      }
+    );
+  };
  
   const getMobileMainMenuItems = () => {
     return mainItems.map(({ label, icon, href }) => (
-      <MenuItem
-        key={label}
-        className={classes.menuItem}
-      >
-        <Link {...{
-          key: label,
-          component: RouterLink,
-          to: href,
-          color: "inherit",
-          className: classes.menuLink,
-        }}>
+      <Link {...{
+        key: label,
+        component: RouterLink,
+        to: href,
+        color: "inherit",
+        className: classes.menuLink,
+      }}>
+        <MenuItem
+          key={label}
+          className={classes.menuItem}
+        >
           <Grid container spacing={1} alignItems="center">
             {icon}
             <span className={classes.menuLabel}>{label}</span>
           </Grid>
-        </Link>
-      </MenuItem>
+        </MenuItem>
+      </Link>
     ));
   };
 
@@ -210,26 +222,28 @@ function Header() {
 
   const getUserMenuItems = () => {
     return userItems.map(({ label, icon, href }) => (
-        <MenuItem
-          key={label}
-          className={classes.menuItem}
-        >
-          <Link {...{
-            key: label,
-            component: RouterLink,
-            to: href,
-            color: "inherit",
-            className: classes.menuLink,
-          }}>
+        <Link {...{
+          key: label,
+          component: RouterLink,
+          to: href,
+          color: "inherit",
+          className: classes.menuLink,
+        }}>
+          <MenuItem
+            key={label}
+            className={classes.menuItem}
+          >
             <Grid container spacing={1} alignItems="center">
               {icon}
               <span className={classes.menuLabel}>{label}</span>
             </Grid>
-          </Link>
-        </MenuItem>
+          </MenuItem>
+        </Link>
     ));
   };
 
+  console.log('HEADER - auth:', auth);
+  if (auth.user === null) console.warn("!!!!!!!!!!!! user is null!"); // TODO: REMOVEME
   return (
     <header>
       <AppBar className={classes.header} elevation={elevation} position="fixed">
@@ -278,7 +292,7 @@ function Header() {
 
           {/* user menu */}
           <>
-            {auth.isAuthenticated ?
+            {auth.user ?
               <IconButton
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
@@ -286,25 +300,25 @@ function Header() {
                 onClick={handleUserMenuOpen}
                 color="inherit"
               >
-                {auth.isAuthenticated ?
+                {auth.user ?
                   //<AccountCircleIcon />
 
                   // <IconGravatar
-                  //   email={auth.user.attributes.email}
+                  //   email={auth.user.email}
                   //   size={30}
                   // />
 
-                  //<img src={auth.user.attributes.picture} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+                  //<img src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
 
-                  //<ImageCustom src={auth.user.attributes.picture} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+                  //<ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
 
                   //<IconCustom name="UserPicture" size={30} className={classes.logo} />
 
-                  auth.user.attributes.picture ?
-                    <ImageCustom src={auth.user.attributes.picture} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+                  auth.user.profileImage ?
+                    <ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
                   :
                     <IconGravatar
-                      email={auth.user.attributes.email}
+                      email={auth.user.email}
                       size={30}
                     />
                 :
@@ -312,7 +326,8 @@ function Header() {
                 }
               </IconButton>
             :
-              (auth.isAuthenticated === false) && // if auth.isAuthenticated is undefined, we don't kow yet, so do not show anything...
+              (auth.user === false) && // if auth.user is false, we show the "Join" button;
+                                       // otherwise (it's null), we don't kow yet, so do not show anything...
                 <Button
                   variant="contained"
                   size="small"

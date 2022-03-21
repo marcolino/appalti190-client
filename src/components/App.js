@@ -4,36 +4,34 @@ import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { AuthProvider } from "../providers/AuthProvider";
-import { StatusProvider } from "../providers/StatusProvider";
+import { ServiceProvider } from "../providers/ServiceProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
-//import Authentication from "./Authentication";
 import Routes from "./Routes";
 import Footer from "./Footer";
-import Spinner from "./Spinner";
+import Loader from "./Loader";
 import CookieBanner from "./CookieBanner";
-import PushNotifications from "../components/PushNotifications";
-import FloatingActionButton from "./FloatingActionButton";
+// import PushNotifications from "../components/PushNotifications";
+// import FloatingActionButton from "./FloatingActionButton";
 import { isAuthLocation } from "../libs/Misc";
 import config from "../config";
 import theme from "../themes/default"; // here we choose the theme
 
 function App() {
-console.log("app rendering");
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <OnlineStatusProvider>
-          <StatusProvider>
+          <ServiceProvider>
             <CssBaseline />
             <BrowserRouter>
-              {/* <Authentication /> */}
+              <Loader />
               <Contents />
-              <Spinner />
-              <FloatingActionButton/>
+              <CookieBanner />
+              {/* <FloatingActionButton/> */}
             </BrowserRouter>
-            <PushNotifications />
-          </StatusProvider>
+            {/* <PushNotifications /> */}
+          </ServiceProvider>
         </OnlineStatusProvider>
       </AuthProvider>
     </ThemeProvider>
@@ -79,7 +77,6 @@ const Contents = () => {
         <div className={classes.body}>
           <Routes />
         </div>
-        <CookieBanner />
       </div>
       <div className={classes.footer}>
         <Footer isOnline={isOnline} />
