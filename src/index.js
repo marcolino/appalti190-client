@@ -9,12 +9,20 @@ import { i18n } from "./i18n";
 console.log("app started rendering");
 const root = document.getElementById("root");
 ReactDOM.render(
-  <React.StrictMode/*Fragment*/>
+  // <React.StrictMode>
+  <>
     <App />
     <ToastContainer />
-  </React.StrictMode/*Fragment*/>,
+  </>,
+  // </React.StrictMode>,
   root
 );
+/**
+ * NOTE:
+ * <React.StrictMode> with material-ui v4 causes JS error
+ *   `findDOMNode is deprecated in StrictMode. findDOMNode was passed an instance of Transition which is inside StrictMode. Instead, add a ref directly to the element you want to reference.`
+ * To avoid it, avoid using <React.StrictMode> here, OR upgrade to material-ui v5
+ */
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
@@ -25,13 +33,14 @@ ReactDOM.render(
 //     fetch("/analytics", {body, method: "POST", keepalive: true});
 // }
 //reportWebVitals(sendToAnalytics);
-reportWebVitals(console.log);
+//reportWebVitals(console.log);
+reportWebVitals();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://cra.link/PWA
-serviceWorkerRegistration.unregister(); // TODO: ONLY TO BETTER DEBUG
-//serviceWorkerRegistration.register();
+//serviceWorkerRegistration.unregister(); // TODO: ONLY TO BETTER DEBUG
+serviceWorkerRegistration.register();
 
 // Set up a broadcast channel to localize messages from i18n service worker
 const channelI18nMessages = new BroadcastChannel("sw-i18n-messages");

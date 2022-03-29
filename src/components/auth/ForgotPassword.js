@@ -18,7 +18,8 @@ import Lock from "@material-ui/icons/Lock";
 import LockOpen from "@material-ui/icons/LockOpen";
 // TODO: do not use trackpromise, but "../../libs/Fetch" ...
 //import { forgotPassword, forgotPasswordSubmit, resendResetPasswordCode } from "../../libs/TrackPromise";
-import { forgotPassword, forgotPasswordSubmit, resendResetPasswordCode } from "../../libs/Fetch";
+//import { forgotPassword, forgotPasswordSubmit, resendResetPasswordCode } from "../../libs/Fetch";
+import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText } from "../FormElements";
 import { validateEmail, checkPassword } from "../../libs/Validation";
@@ -124,8 +125,8 @@ function ForgotPassword() {
     setError({});
 
     console.log("formForgotPassword");
-    forgotPassword({
-      email
+    AuthService.forgotPassword({ // TODO; to be tested
+      email,
     }).then(data => {
       if (!data.ok) {
         console.warn("forgotPassword error:", data);
@@ -160,7 +161,7 @@ Please copy and paste it here.`, {medium, email}),
     e.preventDefault();
     setError({});
     
-    forgotPasswordSubmit({email, code, password, passwordConfirmed}).then(data => {
+    AuthService.forgotPasswordSubmit({email, code, password, passwordConfirmed}).then(data => { // TODO: to be tested
       if (!data.ok) {
         console.warn("forgotPasswordSubmit error:", data);
         toast.error(t(data.message));
@@ -186,7 +187,7 @@ Please copy and paste it here.`, {medium, email}),
     setError({});
 
 console.log("formResendResetPasswordCode");
-    resendResetPasswordCode({email}).then(data => {
+    AuthService.resendResetPasswordCode({email}).then(data => { // TODO: to be tested
       if (!data.ok) {
         console.warn("formResendResetPasswordCode error:", data);
         switch (data.code) {

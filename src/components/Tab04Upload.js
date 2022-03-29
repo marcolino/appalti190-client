@@ -12,7 +12,7 @@ import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton 
 import { ServiceContext } from "../providers/ServiceProvider";
 //import { AuthContext } from "../providers/AuthProvider"; // TODO: test only
 //import { upload } from "../libs/Fetch"; // TODO (use instance.post in libs/Fetch, not a raw fetch ...)
-
+import JobService from "../services/JobService";
 
 
 
@@ -92,7 +92,9 @@ function Tab04Upload(props) {
       file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") ||
       file?.type?.split("/")[1]?.match("ms-excel")
     )) {
-      return t(`Please upload a spreadsheet`) + `.` + file?.type ? ` ` + t(`Selected file looks like {{fileType}}`, {fileType: file.type}) : ``;
+console.log("FILE:", file);
+console.log("FILE.TYPE:", file?.type);
+      return t(`Please upload a spreadsheet`) + `.` + (file?.type ? ` ` + t(`Selected file looks like {{fileType}}`, {fileType: file.type}) : ``);
     }
     return null; // validated
   };
@@ -106,33 +108,20 @@ function Tab04Upload(props) {
   };
 
   const fileUpload = async () => {
-		const formData = new FormData();
-		formData.append("file", file);
-
-		await fetch("/api/service/upload", {
-			method: "POST",
-			body: formData,
-		})
-    .then((response) => response.json())
-    .then((result) => {
-      console.log('Upload success, file path', result.file);
-      //setStatus({...status, service: {}});
-      //setStatus({...status, service: {file: result.file}});
-
-      console.log("TTTTT pre, service:", service)
-      setService({file: result.file});
-      //setAuth({...auth, service: result.file});
-      console.log("TTTTT2, service:", service);
-setTimeout(() => {console.log("TT3:", service)}, 1000)
-    })
-    // .catch((error) => {
-    //   console.error('Upload error:', error);
-    // });
-	};
+    await JobService.upload(file).then(
+      (response) => {
+        console.log('Upload success, file path', response.data.file);
+        setService({file: response.data.file});
+        console.log("service:", service);
+      },
+      (error) => { // TODO...
+        console.error('Upload error:', error);
+      }
+    );
+  };
 
   const onNext = async () => {
     await fileUpload();
-    console.log("GOT NEXT, service", service);
     props.goto("next");
   };
 

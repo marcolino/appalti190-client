@@ -1,4 +1,4 @@
-import React/*, { useContext }*/ from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -14,6 +14,8 @@ import Tab02Download from "./Tab02Download";
 import Tab03FillData from "./Tab03FillData";
 import Tab04Upload from "./Tab04Upload";
 import Tab05Check from "./Tab05Check";
+import Tab06Validation from "./Tab06Validation";
+import Tab07Finished from "./Tab07Finished";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -130,7 +132,7 @@ const TabsPanel = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   //const { status, setStatus } = useContext(StatusContext);
-  const [tabId, setTabId] = React.useState(0);
+  const [tabId, setTabId] = useState(0);
 
   function handleChangeTab(event, id) {
     console.log("handleChangeTab id:", id);
@@ -219,10 +221,10 @@ const TabsPanel = () => {
         <Tab05Check value={tabId} index={4} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={5}>
-        attendi la validazione da parte dell'ANAC...
+        <Tab06Validation value={tabId} index={5} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={6}>
-        Finito!
+        <Tab07Finished value={tabId} index={6} goto={(where) => goto(where)} />
       </TabPanel>
     </div>
   );

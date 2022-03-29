@@ -1,5 +1,6 @@
 export const isAdmin = (user) => {
-  return user.roles.includes("admin");
+  //return user.roles.includes("admin");
+  return user.roles.includes("ROLE_MODERATOR")
 };
 
 export const validateEmail = (email) => {

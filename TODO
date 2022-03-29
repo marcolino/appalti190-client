@@ -91,6 +91,8 @@
 - usare react-router OPPURE react-router-dom
 - verificare OnlineStatusProvider quando si parte offline
 
+- dall'axios request interceptor, passare la lingua preferita dell'utente per i messaggi d'errore dal server
+
 x Antonio:
 - serve sia un template ODS che XLS? Su Excel funzionano entrambi?
 - occorre spiegare i prerequisiti:

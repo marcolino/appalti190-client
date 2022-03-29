@@ -1,7 +1,8 @@
-import instance from "../middlewares/Interceptors";
+//import instance from "../middlewares/UNUSED-Interceptors";
+import api from "../services/API";
 
 export const signIn = (params) => {
-  return instance.post("/auth/login", params).then(response => {
+  return api.post("/auth/login", params).then(response => {
     return { ok: true, ...response.data };
   }).catch(err => {
     return { ok: false, ...err.response.data };
@@ -9,7 +10,7 @@ export const signIn = (params) => {
 };
 
 export const getUsers = (params) => {
-  return instance.post("/user", params).then(response => {
+  return api.post("/user", params).then(response => {
     return { ok: true, ...response.data };
   }).catch(err => {
     return { ok: false, ...err.response.data };
@@ -18,7 +19,7 @@ export const getUsers = (params) => {
 
 export const forgotPassword = (params) => {
 console.log("FETCH forgotPassword /auth/recover - params:", params);
-  return instance.post("/auth/recover", params).then(response => {
+  return api.post("/auth/recover", params).then(response => {
     return { ok: true, ...response.data };
   }).catch(err => {
 console.error("ERR:", err);
@@ -28,7 +29,7 @@ console.error("ERR:", err);
 
 export const forgotPasswordSubmit = (params) => {
 console.log("FETCH forgotPasswordSubmit /auth/reset - params:", params);
-  return instance.post("/auth/reset", params).then(response => {
+  return api.post("/auth/reset", params).then(response => {
     return { ok: true, ...response.data };
   }).catch(err => {
     return { ok: false, ...err.response.data };
@@ -36,7 +37,7 @@ console.log("FETCH forgotPasswordSubmit /auth/reset - params:", params);
 };
 
 export const resendResetPasswordCode = (params) => {
-  return instance.post("/auth/resend", params).then(response => {
+  return api.post("/auth/resend", params).then(response => {
     return { ok: true, ...response.data };
   }).catch(err => {
     return { ok: false, ...err.response.data };
@@ -46,7 +47,7 @@ export const resendResetPasswordCode = (params) => {
 
 export const upload = (params) => {
   console.log("upload params:", params);
-    return instance.post("/service/upload").then(response => {
+    return api.post("/service/upload").then(response => {
   console.log("upload response:", response);
       return { ok: true, ...response.data };
     }).catch(err => {
@@ -55,16 +56,16 @@ export const upload = (params) => {
     });
   };
   
-export const transformXls2Xml = (params) => { // TODO: we don't need params.file.path (???)
-console.log("transformXls2Xml params:", params);
-  return instance.post("/service/transformXls2Xml/filePath", {filePath: params.file.path}).then(response => {
-console.log("transformXls2Xml response:", response);
-    return { ok: true, ...response.data };
-  }).catch(err => {
-console.warn("err.message", err.message, err.reason)
-    return { ok: false, message: err.message };
-  });
-};
+// export const transformXls2Xml = (params) => { // TODO: we don't need params.file.path (???)
+// console.log("transformXls2Xml params:", params);
+//   return api.post("/service/transformXls2Xml/filePath", {filePath: params.file.path}).then(response => {
+// console.log("transformXls2Xml response:", response);
+//     return { ok: true, ...response.data };
+//   }).catch(err => {
+// console.warn("err.message", err.message, err.reason)
+//     return { ok: false, message: err.message };
+//   });
+// };
 
 // export const federatedSignIn = (params) => {
 // console.log(currentFunctionName(), params);

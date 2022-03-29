@@ -4,7 +4,7 @@ import { usePersistedState } from "../hooks/usePersistedState";
 const initialState = { user: false };
 
 const AuthContext = createContext(initialState);
-console.log("COOKIE - RESET AUTHCONTEXT TO INITIALSTATE");
+// console.log("COOKIE - RESET AUTHCONTEXT TO INITIALSTATE");
 
 const AuthProvider = (props) => {
 console.log("calling usePersistedState with initialstate =", initialState);

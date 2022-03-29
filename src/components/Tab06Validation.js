@@ -9,7 +9,7 @@ import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton 
 import { ServiceContext } from "../providers/ServiceProvider";
 import JobService from "../services/JobService";
 
-function Tab05Check(props) { // TODO: we need file here...
+function Tab06Validation(props) { // TODO: we need file here...
   const { t } = useTranslation();
   const { service, setService } = useContext(ServiceContext);
   const [ statusLocal, setStatusLocal ] = useState({});
@@ -17,25 +17,24 @@ function Tab05Check(props) { // TODO: we need file here...
 
   useEffect(() => {
     console.log("PROPS:", props);
-    console.log("SERVICE:", service);
-    //if (service.file) {
     if (props.value === props.index) {
       (async () => {
       setStatusLocal({loading: true});
+/*
       await JobService.transformXls2Xml(service.file.path).then(
         response => {
 console.log("transformXls2Xml XXX:", response);
-          if (!response) { // TODO: response.ok ? ...
+          if (!response) { // TODO...
             //console.warn("transformXls2Xml error:", JSON.stringify(data));
             // TODO: ok?
             toast.error(errorMessage(response.message));
             setStatusLocal({error: response.message});
             return;
           }
-          console.log("transformXls2Xml success:", response.data);
+          console.log("transformXls2Xml success:", response);
           // TODO: tell user, and enable CONTINUE button...
-          setService({...service, transform: response.data});
-          setStatusLocal({success: response.data});
+          setService({...service, transform: response});
+          setStatusLocal({success: response});
           setNextIsEnabled(true);
         },
         error => { // TODO...
@@ -43,6 +42,7 @@ console.log("transformXls2Xml XXX:", response);
           toast.error(errorMessage(error));
         }
       );
+*/
       })();
     }
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -56,22 +56,11 @@ console.log("transformXls2Xml XXX:", response);
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
-          {t("Check")}
+          {t("Attendi la validazione da parte dell'ANAC")}
         </TabTitle>
         <TabParagraph>
-         {/* SL:  {JSON.stringify(status.service?.transform)} */}
-          {statusLocal && "loading" in statusLocal && `Elaborazione in corso...`}
-          {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
-          {statusLocal && "success" in statusLocal && `Elaborazione completata`}
         </TabParagraph>
         {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
-        {((statusLocal && "success" in statusLocal) || (statusLocal && "error" in statusLocal)) && (
-          <pre>
-            {
-              JSON.stringify(service, null, 2)
-            }
-          </pre>
-        )}
       </TabBodyScrollable>
 
       <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
@@ -80,10 +69,10 @@ console.log("transformXls2Xml XXX:", response);
     </TabContainer>
   );
 }
-Tab05Check.propTypes = {
+Tab06Validation.propTypes = {
   goto: PropTypes.func.isRequired,
 };
-Tab05Check.defaultProps = {
+Tab06Validation.defaultProps = {
 };
 
-export default React.memo(Tab05Check);
+export default React.memo(Tab06Validation);

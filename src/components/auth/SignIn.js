@@ -12,11 +12,14 @@ import Person from "@material-ui/icons/Person";
 import Lock from "@material-ui/icons/Lock";
 //import i18n from "i18next";
 //import { signIn/*, federatedSignIn*/ } from "../../libs/TrackPromise";
-import { signIn/*, federatedSignIn*/ } from "../../libs/Fetch";
+//import { signIn/*, federatedSignIn*/ } from "../../libs/Fetch";
 import { FacebookIcon, GoogleIcon } from "../IconFederated";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormDividerWithText, /*FormCheckbox,*/ FormLink } from "../FormElements";
-import { AuthContext } from "../../providers/AuthProvider";
+import { errorMessage } from "../../libs/Misc";
+import AuthService from "../../services/AuthService";
+import EventBus from "../../libs/EventBus";
+//import { AuthContext } from "../../providers/AuthProvider";
 import { OnlineStatusContext } from "../../providers/OnlineStatusProvider";
 import { validateEmail } from "../../libs/Validation";
 import config from "../../config";
@@ -55,8 +58,8 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //const [rememberMe, setRememberMe] = useState(true);
-  const [error, setError] = useState({});
-  const { setAuth } = useContext(AuthContext);
+  const [formError, setFormError] = useState({});
+  //const { setAuth } = useContext(AuthContext);
   const isOnline = useContext(OnlineStatusContext);
   /* UNUSED */ const { promiseInProgress } = usePromiseTracker({delay: config.spinner.delay});
   const { t } = useTranslation();
@@ -73,14 +76,14 @@ function SignIn() {
     // validate email formally
     if (!validateEmail(email)) {
       const err = "Please supply a valid email";
-      setError({ email: err });
+      setFormError({ email: err });
       toast.warning(err);
       return false;
     }
 
     if (!password) {
       const err = "Please supply a password";
-      setError({ password: err });
+      setFormError({ password: err });
       toast.warning(err);
       return false;
     }
@@ -92,8 +95,27 @@ function SignIn() {
     e.preventDefault();
     if (!validateForm()) return;
     if (!onlineCheck()) return;
-    setError({});
+    setFormError({});
 
+    AuthService.signin({
+      email,
+      password
+    }).then(() => {
+      //props.history.push("/profile");
+      //window.location.reload();
+console.log("signin OK");
+      EventBus.dispatch("login");
+      history.push("/");
+      //window.location.reload();
+    },
+    (error) => {
+      console.error("signin error:", error);
+      toast.error(errorMessage(error));
+      //setLoading(false);
+      //setMessage(errorMessage(error));
+    });
+
+/*
     signIn({
       email,
       password,
@@ -101,7 +123,7 @@ function SignIn() {
       if (!data.ok) {
         console.warn("signIn error:", data);
         toast.error(t(data.message));
-        setError({});
+        setFormError({});
         return;
       }
       console.log("signIn success:", data);
@@ -116,15 +138,16 @@ function SignIn() {
     }).catch(err => {
       console.error("signIn error catched:", err);
       toast.error(t(err.message));
-      setError({}); // we can't blame some user input, it's a server side error
+      setFormError({}); // we can't blame some user input, it's a server side error
     });
+  */
   };
 
   const formFederatedSignIn = (e, provider) => {
     e.preventDefault();
     if (!validateForm()) return;
     if (!onlineCheck()) return;
-    setError({});
+    setFormError({});
 
     window.open("/api/auth/loginGoogle", "_self");
 
@@ -141,11 +164,11 @@ function SignIn() {
     // }).catch(err => {
     //   console.error("federatedSignIn error:", err);
     //   toast.error(t(err.message));
-    //   setError({}); // we don't know whom to blame
+    //   setFormError({}); // we don't know whom to blame
     // });
   };
 
-console.log("config.federatedSigninProviders.length:", config.federatedSigninProviders.length);
+//console.log("config.federatedSigninProviders.length:", config.federatedSigninProviders.length);
   return (
     <Container maxWidth="xs">
 
@@ -177,7 +200,7 @@ console.log("config.federatedSigninProviders.length:", config.federatedSigninPro
             onChange={setEmail}
             placeholder={t("Email")}
             startAdornmentIcon={<Person />}
-            error={error.email}
+            error={formError.email}
           />
 
           <FormInput
@@ -187,7 +210,7 @@ console.log("config.federatedSigninProviders.length:", config.federatedSigninPro
             onChange={setPassword}
             placeholder={t("Password")}
             startAdornmentIcon={<Lock />}
-            error={error.password}
+            error={formError.password}
           />
 
           <Box m={1} />

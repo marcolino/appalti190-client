@@ -17,7 +17,9 @@ import ConfirmationNumber from "@material-ui/icons/ConfirmationNumber";
 import Person from "@material-ui/icons/Person";
 import Email from "@material-ui/icons/Email";
 import Lock from "@material-ui/icons/Lock";
-import { signUp, resendSignUp, confirmSignUp } from "../../libs/TrackPromise";
+import { errorMessage } from "../../libs/Misc";
+import AuthService from "../../services/AuthService";
+import { /*signUp,*/ resendSignUp/*, confirmSignUp*/ } from "../../libs/TrackPromise";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, checkPassword } from "../../libs/Validation";
@@ -94,7 +96,6 @@ function SignUp() {
   }, []);
 
   const validateFormStep1 = () => {
-    
     // validate email formally
     if (!validateEmail(email)) {
       const err = t("Please supply a valid email");
@@ -149,38 +150,66 @@ function SignUp() {
     if (!validateFormStep1()) return;
     setError({});
 
-    signUp({
-      email,
-      password,
-      firstName,
-      lastName,
-      /**
-       * IMPROVE: add custom fields
-       * phone_number: phoneNumber, // E.164 number convention: country code (1 to 3 digits) + subscriber number (max 12 digits)
-       * "custom:favorite_flavor": FavoriteFlavour, // custom attribute, not standard
-       */
-    }, {
-      success: (data) => {
-        console.log("signUp success:", data);
-        const medium = data.codeDeliveryMedium.toLowerCase();
+    AuthService.signup({email, password, firstName, lastName}).then(
+      (response) => {
+        console.log("signup OK");
+        //EventBus.dispatch("login");
+        //history.push("/");
+        const medium = response?.codeDeliveryMedium?.toLowerCase();
         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
         setCodeDeliveryMedium(medium);
         setWaitingForCode(true);
-        setPassword("");
+        //setPassword("");
+        //setMessage(response.data.message);
+        //setSuccessful(true);
       },
-      error: (err) => {
-console.error("signup error:", err);
-        switch (err.code) {
-          case "UsernameExistsException":
-            setError({ email: err.message }); // since we use email as username, we blame email field as guilty
-            toast.warning(t(err.message));
+      (error) => {
+        console.error("signup error:", error.response, Object.keys(error));
+        //setMessage(errorMessage(error));
+        //setSuccessful(false);
+        switch (error.response.data.code) {
+          case "EmailExistsException":
+            setError({ email: error.response.data.message }); // since we use email as username, we blame email field as guilty
+            toast.warning(errorMessage(error)); // TRANSLATE ON SERVER!
             break;
           default:
             setError({}); // we don't know whom to blame
-            toast.error(t(err.message));
-          }
-      },
-    });
+            toast.error(errorMessage(error));
+        }
+      }
+    );
+//     signUp({
+//       email,
+//       password,
+//       firstName,
+//       lastName,
+//       /**
+//        * IMPROVE: add custom fields
+//        * phone_number: phoneNumber, // E.164 number convention: country code (1 to 3 digits) + subscriber number (max 12 digits)
+//        * "custom:favorite_flavor": FavoriteFlavour, // custom attribute, not standard
+//        */
+//     }, {
+//       success: (data) => {
+//         console.log("signUp success:", data);
+//         const medium = data.codeDeliveryMedium.toLowerCase();
+//         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
+//         setCodeDeliveryMedium(medium);
+//         setWaitingForCode(true);
+//         setPassword("");
+//       },
+//       error: (err) => {
+// console.error("signup error:", err);
+//         switch (err.code) {
+//           case "UsernameExistsException":
+//             setError({ email: err.message }); // since we use email as username, we blame email field as guilty
+//             toast.warning(t(err.message));
+//             break;
+//           default:
+//             setError({}); // we don't know whom to blame
+//             toast.error(t(err.message));
+//           }
+//       },
+//     });
   };
 
   const formConfirmSignUp = (e) => {
@@ -188,22 +217,42 @@ console.error("signup error:", err);
     if (!validateFormStep2()) return;
     setError({});
 
-    confirmSignUp({email, code}, {
-      success: (data) => {
-        console.log("confirmSignup success:", data);
-        // data is not meaningful
-        handleOpenDialog(
-          t("Registered successfully"),
-          t("You can now sign in with email and password") + ".",
-          () => formSignUpCompleted
-        );
-      },
-      error: (err) => {
-console.error("confirmSignUp error:", err);
-        toast.error(t(err.message));
-        setError({ code: err.message});
-      },
+console.log("formConfirmSignUp", email, code);
+    AuthService.signupConfirm({email, code}, {
+    }).then(() => {
+console.log("signupConfirm OK");
+      //EventBus.dispatch("login");
+      //history.push("/");
+      //window.location.reload();
+      handleOpenDialog(
+        t("Registered successfully"),
+        t("You can now sign in with email and password") + ".",
+        () => formSignUpCompleted
+      );
+    },
+    (error) => {
+      console.error("signupConfirm error:", error);
+      toast.error(errorMessage(error));
+      //setLoading(false);
+      //setMessage(errorMessage(error));
+      setError({ code: error.message});
     });
+//     confirmSignUp({email, code}, {
+//       success: (data) => {
+//         console.log("confirmSignup success:", data);
+//         // data is not meaningful
+//         handleOpenDialog(
+//           t("Registered successfully"),
+//           t("You can now sign in with email and password") + ".",
+//           () => formSignUpCompleted
+//         );
+//       },
+//       error: (err) => {
+// console.error("confirmSignUp error:", err);
+//         toast.error(t(err.message));
+//         setError({ code: err.message});
+//       },
+//     });
   };
   
   const formResendSignUpCode = (e) => {

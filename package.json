@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "export PORT=3000 & react-scripts start",
-    "start-production": "yarn build && serve -s build -p 3000",
+    "start-production_UNUSED?": "yarn build && serve -s build -p 3000",
     "start-dev": "nodemon -w '.' -e 'js,json,css' --ignore build/ --exec 'yarn rawbuild && yarn sound-ok || yarn sound-ko'",
     "prebuild": "yarn install-pre-push-hook && yarn sitemap-build && yarn favicons-build && yarn manifest-build && rm -rf build/",
     "build": "react-scripts build",
@@ -37,7 +37,7 @@
     "sound-ok": "play -q -n synth 0.7 sin 4000 2> /dev/null",
     "sound-ko": "play -q -n synth 0.7 sin 200 2> /dev/null"
   },
-  "DISABLED_proxy": "http://localhost:5000",
+  "DISABLEDproxy": "http://localhost:8080",
   "eslintConfig": {
     "extends": [
       "react-app",

@@ -1,8 +1,10 @@
-import React, { useContext } from "react";
+import React, { /*useEffect, useState, */useContext } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
+//import AuthService from "../services/AuthService";
+//import EventBus from "../libs/EventBus";
 import { AuthProvider } from "../providers/AuthProvider";
 import { ServiceProvider } from "../providers/ServiceProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
@@ -85,4 +87,4 @@ const Contents = () => {
   );
 }
 
-export default App;
+export default React.memo(App);

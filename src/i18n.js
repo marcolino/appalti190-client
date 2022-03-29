@@ -29,8 +29,8 @@ i18n
       escapeValue: false // react already safes from xss
     },
     detection: {
-      order: [ "navigator" ], // only detect from browser
-      checkWhitelist: true, // only detect languages that are in the whitelist
+      //order: [ "navigator" ], // only detect from browser
+      //checkWhitelist: true, // only detect languages that are in the whitelist
     },
   })
 ;

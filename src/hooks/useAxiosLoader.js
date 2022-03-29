@@ -1,13 +1,14 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 //import axios from "axios";
-import instance from "../middlewares/Interceptors";
+//import instance from "../middlewares/Interceptors";
+import instance from "../services/API";
 
 //const instance = axios.create(); // export this and use it in all your components
 
 export const useAxiosLoader = () => {
 //console.log("*** useAxiosLoader");
   const [counter, setCounter] = useState(0);
-  const inc = useCallback(() => {console.log("LOADING INC"); setCounter(counter => counter + 1)}, [setCounter]); // add to counter
+  const inc = useCallback(() => setCounter(counter => counter + 1), [setCounter]); // add to counter
   const dec = useCallback(() => setCounter(counter => counter - 1), [setCounter]); // remove from counter
   
   const interceptors = useMemo(() => ({

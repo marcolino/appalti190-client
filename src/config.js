@@ -63,6 +63,7 @@ module.exports = {
       "Content-Type-BACKUP": "x-www-form-urlencoded",
     },
     redirect: "follow",
+    backendType: "NodeJsExpress", // NodeJsExpress / SpringBoot
   },
   indexedDb: {
     name: 'sw-background-push-messages',

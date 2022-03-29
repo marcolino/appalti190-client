@@ -13,8 +13,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuIcon from "@material-ui/icons/Menu";
 import HomeIcon from "@material-ui/icons/Home";
-import SearchIcon from "@material-ui/icons/Search";
-import ListAltIcon from "@material-ui/icons/ListAlt";
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
+//import ListAltIcon from "@material-ui/icons/ListAlt";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import SecurityIcon from '@material-ui/icons/Security';
@@ -23,8 +23,10 @@ import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
+import AuthService from "../services/AuthService";
 import { AuthContext } from "../providers/AuthProvider";
 import { isAdmin } from "../libs/Validation";
+import EventBus from "../libs/EventBus";
 import config from "../config";
 
 const useStyles = makeStyles((theme) => ({
@@ -90,6 +92,31 @@ function Header() {
   const history = useHistory();
   const { t } = useTranslation();
 
+  const [currentUser, setCurrentUser] = useState(undefined);
+
+  // handle auth
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
+console.log("HEADER - CURRENT USER:", user);
+
+    if (user) {
+      setCurrentUser(user);
+      //setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
+      //setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
+    }
+
+    EventBus.on("login", () => {
+      logIn();
+    });
+    EventBus.on("logout", () => {
+      logOut();
+    });
+
+    return () => {
+      EventBus.remove("logout");
+    };
+  }, []);
+
   // handle responsiveness
   useEffect(() => {
     const setResponsiveness = () => {
@@ -104,6 +131,21 @@ function Header() {
     };
   }, []);
 
+  const logIn = () => {
+console.log("HEADER LOGIN");
+    //setShowModeratorBoard(false);
+    //setShowAdminBoard(false);
+    setCurrentUser(AuthService.getCurrentUser());
+  };
+
+  const logOut = () => {
+console.log("HEADER LOGOUT");
+    AuthService.logout();
+    //setShowModeratorBoard(false);
+    //setShowAdminBoard(false);
+    setCurrentUser(undefined);
+  };
+  
   const [state, setState] = useState({
     view: "mobile", // mobile / desktop
     drawerOpen: false,
@@ -137,19 +179,25 @@ function Header() {
       href: "/",
       showInDesktopMode: false,
     },
+    // {
+    //   label: t("Searches"),
+    //   icon: <SearchIcon />,
+    //   href: "/searches",
+    // },
+    // {
+    //   label: t("Listings"),
+    //   icon: <ListAltIcon />,
+    //   href: "/listings",
+    // },
     {
-      label: t("Searches"),
-      icon: <SearchIcon />,
-      href: "/searches",
-    },
-    {
-      label: t("Listings"),
-      icon: <ListAltIcon />,
-      href: "/listings",
+      label: t("Support"),
+      icon: <ContactSupportIcon />,
+      href: "/support",
     },
   ];
 
-  const userItems = auth.user ?
+  // const userItems = auth.user ?
+  const userItems = currentUser ?
     [
       {
         label: t("Profile"),
@@ -174,7 +222,8 @@ function Header() {
       },
     ]
   ;
-  if (auth.user && isAdmin(auth.user)) {
+  // if (auth.user && isAdmin(auth.user)) {
+  (currentUser && isAdmin(currentUser)) &&
     userItems.unshift(
       {
         label: t("Admin panel"),
@@ -182,7 +231,7 @@ function Header() {
         href: "/admin-panel",
       }
     );
-  };
+  //};
  
   const getMobileMainMenuItems = () => {
     return mainItems.map(({ label, icon, href }) => (
@@ -243,7 +292,7 @@ function Header() {
   };
 
   console.log('HEADER - auth:', auth);
-  if (auth.user === null) console.warn("!!!!!!!!!!!! user is null!"); // TODO: REMOVEME
+  //if (auth.user === null) console.warn("!!!!!!!!!!!! user is null!"); // TODO: REMOVEME
   return (
     <header>
       <AppBar className={classes.header} elevation={elevation} position="fixed">
@@ -292,6 +341,35 @@ function Header() {
 
           {/* user menu */}
           <>
+          {currentUser ? 
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleUserMenuOpen}
+              color="inherit"
+            >
+              {currentUser.profileImage ?
+                <ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+              :
+                <IconGravatar
+                  // email={auth.user.email}
+                  email={currentUser.email}
+                  size={30}
+                />
+              }
+            </IconButton>
+          :
+            <Button
+              variant="contained"
+              size="small"
+              color="secondary"
+              onClick={handleUserJoin}
+            >
+              {t("Join !")}
+            </Button>
+          }
+{/*
             {auth.user ?
               <IconButton
                 aria-label="account of current user"
@@ -301,19 +379,6 @@ function Header() {
                 color="inherit"
               >
                 {auth.user ?
-                  //<AccountCircleIcon />
-
-                  // <IconGravatar
-                  //   email={auth.user.email}
-                  //   size={30}
-                  // />
-
-                  //<img src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
-
-                  //<ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
-
-                  //<IconCustom name="UserPicture" size={30} className={classes.logo} />
-
                   auth.user.profileImage ?
                     <ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
                   :
@@ -337,6 +402,7 @@ function Header() {
                   {t("Join !")}
                 </Button>
             }
+*/}
 
             <Menu
               id="menu-appbar"
