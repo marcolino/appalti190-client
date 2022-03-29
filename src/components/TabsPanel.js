@@ -206,25 +206,25 @@ const TabsPanel = () => {
       </AppBar>
 
       <TabPanel value={tabId} index={0}>
-        <Tab01Start goto={(where) => goto(where)} />
+        <Tab01Start active={tabId === 0} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={1}>
-        <Tab02Download goto={(where) => goto(where)} />
+        <Tab02Download active={tabId === 1} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={2}>
-        <Tab03FillData goto={(where) => goto(where)} />
+        <Tab03FillData active={tabId === 2} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={3}>
-        <Tab04Upload goto={(where) => goto(where)} />
+        <Tab04Upload active={tabId === 3} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={4}>
-        <Tab05Check value={tabId} index={4} goto={(where) => goto(where)} />
+        <Tab05Check active={tabId === 4} _value={tabId} _index={4} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={5}>
-        <Tab06Validation value={tabId} index={5} goto={(where) => goto(where)} />
+        <Tab06Validation active={tabId === 5} value={tabId} index={5} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={6}>
-        <Tab07Finished value={tabId} index={6} goto={(where) => goto(where)} />
+        <Tab07Finished active={tabId === 6} value={tabId} index={6} goto={(where) => goto(where)} />
       </TabPanel>
     </div>
   );

@@ -19,7 +19,8 @@ function Tab05Check(props) { // TODO: we need file here...
     console.log("PROPS:", props);
     console.log("SERVICE:", service);
     //if (service.file) {
-    if (props.value === props.index) {
+    //if (props.value === props.index) {
+    if (props.active) {
       (async () => {
       setStatusLocal({loading: true});
       await JobService.transformXls2Xml(service.file.path).then(
