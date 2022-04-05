@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link as RouterLink, useHistory } from "react-router-dom";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -91,7 +91,7 @@ function Header() {
   const { auth } = useContext(AuthContext);
   const history = useHistory();
   const { t } = useTranslation();
-
+  const location = useLocation();
   const [currentUser, setCurrentUser] = useState(undefined);
 
   // handle auth
@@ -291,8 +291,13 @@ console.log("HEADER LOGOUT");
     ));
   };
 
-  console.log('HEADER - auth:', auth);
-  //if (auth.user === null) console.warn("!!!!!!!!!!!! user is null!"); // TODO: REMOVEME
+  const showJoinButton = () => {
+    return !["/signin", "/signup", "/signout"].includes(location.pathname);
+  };
+
+  //console.log('HEADER - auth:', auth);
+  //console.log("LOCATION:", location);
+
   return (
     <header>
       <AppBar className={classes.header} elevation={elevation} position="fixed">
@@ -360,14 +365,17 @@ console.log("HEADER LOGOUT");
               }
             </IconButton>
           :
-            <Button
-              variant="contained"
-              size="small"
-              color="secondary"
-              onClick={handleUserJoin}
-            >
-              {t("Join !")}
-            </Button>
+            showJoinButton() ?
+              <Button
+                variant="contained"
+                size="small"
+                color="secondary"
+                onClick={handleUserJoin}
+              >
+                {t("Join !")}
+              </Button>
+            :
+              null
           }
 {/*
             {auth.user ?

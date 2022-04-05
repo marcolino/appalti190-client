@@ -97,7 +97,7 @@ const a11yProps = (index) => {
 
 const StyledTab = withStyles((theme) => ({
   root: {
-    opacity: 0.8  ,
+    opacity: 0.8, //0.8,
     //textTransform: 'none',
     //color: '#444',
     //fontWeight: theme.typography.fontWeightRegular,
@@ -106,6 +106,11 @@ const StyledTab = withStyles((theme) => ({
     // '&:focus': {
     //   opacity: 1,
     // },
+    // backgroundColor: "blue",
+    // 
+    // "&$selected": {
+    //   color: "red",
+    // }
   },
 }))((props) => {
   return (
@@ -119,13 +124,12 @@ const useStyles = makeStyles(theme => ({
     //width: "100%",
     //backgroundColor: theme.palette.background.paper,
   },
-  tabs: {
-    "& .MuiTabs-indicator": {
-      //display: "none",
-      backgroundColor: "orange",
-    }
-
-  }
+  // tabs: {
+  //   "& .MuiTabs-indicator": {
+  //     //display: "none",
+  //     backgroundColor: "orange",
+  //   }
+  // }
 }));
 
 const TabsPanel = () => {
@@ -187,12 +191,12 @@ const TabsPanel = () => {
         <Paper elevation={0} square>
           <Tabs
             value={tabId}
-            indicatorColor="secondary"
-            textColor="secondary"
+            //indicatorColor="secondary"
+            //textColor="secondary"
             variant="scrollable"
             scrollButtons="auto"
             onChange={handleChangeTab}
-            aria-label="disabled tabs example"
+            aria-label="current section"
           >
             <StyledTab label={`${t("Start")} 🪄`} {...a11yProps(0)} />
             <StyledTab label={`${t("Download")} ⬇`} {...a11yProps(1)} />

@@ -35,12 +35,12 @@ function Tab02Download(props) {
             {t("Download")} ⬇
           </Button>
         </TabParagraph>
-        <br />
+        {/* <br />
         <TabParagraph small>
           <input type="checkbox"></input>
           Clicca qui se preferisci la versione ODS (Open Document Format),
           nel caso che tu utilizzi LibreOffice anziché Microsoft Office.
-        </TabParagraph>
+        </TabParagraph> */}
       </TabBodyScrollable>
 
       <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>

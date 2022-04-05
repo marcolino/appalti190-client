@@ -16,9 +16,7 @@ import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 import ConfirmationNumber from "@material-ui/icons/ConfirmationNumber";
 import Lock from "@material-ui/icons/Lock";
 import LockOpen from "@material-ui/icons/LockOpen";
-// TODO: do not use trackpromise, but "../../libs/Fetch" ...
-//import { forgotPassword, forgotPasswordSubmit, resendResetPasswordCode } from "../../libs/TrackPromise";
-//import { forgotPassword, forgotPasswordSubmit, resendResetPasswordCode } from "../../libs/Fetch";
+import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText } from "../FormElements";
@@ -125,61 +123,69 @@ function ForgotPassword() {
     setError({});
 
     console.log("formForgotPassword");
-    AuthService.forgotPassword({ // TODO; to be tested
-      email,
-    }).then(data => {
-      if (!data.ok) {
-        console.warn("forgotPassword error:", data);
-        toast.error(t(data.message));
-        setError({ email: data.message}); // TODO: should we always blame email input for error?
-        return;
+    AuthService.forgotPassword({email}).then(
+      (response) => {
+        console.log("forgotPassword success:", response);
+        setWaitingForCode(true);
+        setPassword("");
+        switch (response.codeDeliveryMedium) {
+          default: // in future we could treat EMAIL/SMS/... separately...
+            // TODO
+            // const medium = data.CodeDeliveryDetails.AttributeName;
+            // const email = data.CodeDeliveryDetails.Destination;
+            const medium = "email";
+            const email = "marcosolari+6@gmail.com";
+            setCodeDeliveryMedium(medium);
+            ///toast.info(`Verification code sent via ${medium} to ${email}.\nPlease open it and copy and paste it here.`);
+            handleOpenDialog1(
+              t("Verification code sent"),
+              t(`\
+  Verification code sent via {{medium}} to {{email}}.
+  Please copy and paste it here.`, {medium, email}),
+              () => {},
+            );
+        }
+      },
+      (error) => {
+        console.error("forgotPassword error:", error);
+        toast.error(errorMessage(error));
+        //setLoading(false);
+        //setMessage(errorMessage(error));
       }
-      console.log("forgotPassword success:", data);
-      setWaitingForCode(true);
-      setPassword("");
-      switch (data.codeDeliveryMedium) {
-        default: // in future we could treat EMAIL/SMS/... separately...
-          // TODO
-          // const medium = data.CodeDeliveryDetails.AttributeName;
-          // const email = data.CodeDeliveryDetails.Destination;
-          const medium = "email";
-          const email = "marcosolari+6@gmail.com";
-          setCodeDeliveryMedium(medium);
-          ///toast.info(`Verification code sent via ${medium} to ${email}.\nPlease open it and copy and paste it here.`);
-          handleOpenDialog1(
-            t("Verification code sent"),
-            t(`\
-Verification code sent via {{medium}} to {{email}}.
-Please copy and paste it here.`, {medium, email}),
-            () => {},
-          );
-      }
-    });
+    );
   };
   
   const formConfirmForgotPassword = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     setError({});
     
-    AuthService.forgotPasswordSubmit({email, code, password, passwordConfirmed}).then(data => { // TODO: to be tested
-      if (!data.ok) {
-        console.warn("forgotPasswordSubmit error:", data);
-        toast.error(t(data.message));
-        setError({ password: data.message}); // TODO: check whom to blame for error
+    AuthService.resetPasswordConfirm({
+      email,
+      password,
+      code,
+      //passwordConfirmed
+    }).then(
+      response => { // TODO: to be tested
+        console.log("resetPasswordConfirm success:", response);
+        setWaitingForCode(false);
+        setEmail("");
+        setPassword("");
+        setPasswordConfirmed("");
+        setCode("");
+        handleOpenDialog2(
+          t(`Password reset success`),
+          t(`You can now sign in with your new password`),
+        );
+        //history.push("/signin");
+      },
+      error => {
+        console.warn("resetPasswordConfirm error:", error);
+        toast.error(t(error.message));
+        setError({ password: error.message}); // TODO: check whom to blame for error
         return;
-      }
-      console.log("17 confirmForgotPasswordSubmit success data:", data);
-      setWaitingForCode(false);
-      setEmail("");
-      setPassword("");
-      setPasswordConfirmed("");
-      setCode("");
-      handleOpenDialog2(
-        t(`Password reset success`),
-        t(`You can now sign in with your new password`),
-      );
-      //history.push("/signin");
-    });
+      },
+    );
   };
   
   const formResendResetPasswordCode = (e) => {

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton, TabTooltip } from "./TabsComponents";
-
 function Tab01Start(props) {
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
@@ -26,7 +25,7 @@ function Tab01Start(props) {
           . Speriamo che sia chiara e semplice da usare.
           </TabParagraph>
         <TabParagraph>
-          Questa app ti guiderà passo passo nei pochi passi che occorrono per completare
+          Questa app ti guiderà passo passo nei pochi steps che occorrono per completare
           l'adempimento con successo.
         </TabParagraph>
         <TabParagraph>
@@ -46,9 +45,9 @@ function Tab01Start(props) {
           caricare qui il foglio Excel compilato.
         </TabParagraph>
         <TabParagraph>
-          A questo punto il nostro sistema effetturà il controllo formale dei dati inseriti.
-          Nel caso che venga segnalato qualche anomalia dovrai correggere i problemi
-          segnalati sul tuo file Excel, e poi ri-caricarlo.
+          A questo punto il nostro sistema effettuerà il controllo formale dei dati inseriti.
+          Nel caso che venga segnalato qualche anomalia dovrai correggere sul file Excel le anomalie
+          segnalate, e poi ri-caricarlo.
         </TabParagraph>
         <TabParagraph>
           Dopodichè potrai scaricare il documento XML prodotto, che andrà pubblicato sul
@@ -63,13 +62,15 @@ function Tab01Start(props) {
           Tieni presente che siamo sempre disponibili a risponderti per qualsiasi dubbio o
           incertezza. Le modalità di assistenza sono diverse, dal supporto telefonico a
           quello per email, e dipendono anche dal piano scelto.
-          I riferimenti sono presenti nel menu in alto a sinistra, in "Supporto".
+          I riferimenti sono presenti nel menu, alla voce "Supporto".
         </TabParagraph>
       </TabBodyScrollable>
 
-      <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-        {`${t("Start")}`}
-      </TabNextButton>
+      <div>
+        <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
+          {`${t("Start")}`}
+        </TabNextButton>
+      </div>
     </TabContainer>
   );
 }

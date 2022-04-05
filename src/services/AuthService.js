@@ -2,6 +2,8 @@
 import api from "./API";
 import TokenService from "./TokenService";
 
+// TODO: handle errors (with catch?)
+
 const signup = ({/*username, */email, password, firstName, lastName}) => {
   return api
     .post("/auth/signup", {
@@ -55,31 +57,59 @@ const getCurrentUser = () => {
   return TokenService.getUser();
 };
 
-const forgotPassword = (params) => {
-  console.log("API forgotPassword /auth/recover - params:", params);
-  return api.post("/auth/recover", params).then(response => {
-    return { ok: true, ...response.data };
-  }).catch(err => {
-console.error("ERR:", err);
-    return { ok: false, ...err.response.data };
+const forgotPassword = ({email}) => {
+  console.log("API forgotPassword /auth/resetPassword - email:", email);
+  return api.post("/auth/resetPassword/email", {
+    email
+  }).then(
+    (response) => {
+      return response.data;
+    },
+    (error) => {
+console.error("FORGOTPASSWORDERROR:", error);
+    return error;
   });
 };
   
-const forgotPasswordSubmit = (params) => {
-console.log("API forgotPasswordSubmit /auth/reset - params:", params);
-  return api.post("/auth/reset", params).then(response => {
-    return { ok: true, ...response.data };
-  }).catch(err => {
-    return { ok: false, ...err.response.data };
-  });
+const resetPasswordConfirm = ({email, password, code}) => {
+console.log("resetPasswordConfirm /auth/resetPasswordConfirm:", {email, password, code});
+  return api.post("/auth/resetPasswordConfirm/email/password/code", {
+    email,
+    password,
+    code
+  }).then(
+    response => {
+      return response.data;
+    },
+    error => {
+console.error("resetPassword error:", error);
+      return error;
+    }
+  );
 };
   
+const resendSignUpCode = ({email}) => {
+console.log("API resendSignUpCode /auth/resendSignUpCode - params:", email);
+  return api
+    .post("/auth/resendSignUpCode", {
+      email,
+    })
+    .then(response => {
+console.log("API resendSignUpCode SUCCESS", response);
+      return response.data;
+    }).catch(err => {
+console.log("API resendSignUpCode Error", err);
+      return err;
+    })
+  ;
+};
+
 const resendResetPasswordCode = (params) => {
-console.log("API resendResetPasswordCode /auth/resend - params:", params);
-  return api.post("/auth/resend", params).then(response => {
-    return { ok: true, ...response.data };
+  console.log("API resendResetPasswordCode /auth/resendResetPasswordCode - params:", params);
+  return api.post("/auth/resendResetPasswordCode", params).then(response => {
+    return response.data;
   }).catch(err => {
-    return { ok: false, ...err.response.data };
+    return err;
   });
 };
     
@@ -90,7 +120,8 @@ const AuthService = {
   logout,
   getCurrentUser,
   forgotPassword,
-  forgotPasswordSubmit,
+  resetPasswordConfirm,
+  resendSignUpCode,
   resendResetPasswordCode,
 };
 

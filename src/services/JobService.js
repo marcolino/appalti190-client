@@ -24,9 +24,38 @@ const transformXls2Xml = (filePath) => {
   );
 }
 
+const validateXml = () => {
+  return api.post(
+    "/job/validateXml",
+  );
+}
+
+const outcomeCheck = (/*anno, codiceFiscaleAmministrazione*/) => {
+  return api.post(
+    "/job/outcomeCheck"/*/anno/codiceFiscaleAmministrazione"*/,
+    {/*
+      anno,
+      codiceFiscaleAmministrazione,
+    */}
+  );
+}
+
+const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
+  return api.post(
+    "/job/outcomeFailureDetails/anno/codiceFiscaleAmministrazione",
+    {
+      anno,
+      codiceFiscaleAmministrazione,
+    }
+  );
+}
+
 const JobService = {
   upload,
   transformXls2Xml,
+  validateXml,
+  outcomeCheck,
+  outcomeFailureDetails,
 };
 
 export default JobService;

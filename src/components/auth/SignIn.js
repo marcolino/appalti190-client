@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useHistory/*, Redirect*/ } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { usePromiseTracker } from "react-promise-tracker";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
@@ -10,16 +10,12 @@ import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Person from "@material-ui/icons/Person";
 import Lock from "@material-ui/icons/Lock";
-//import i18n from "i18next";
-//import { signIn/*, federatedSignIn*/ } from "../../libs/TrackPromise";
-//import { signIn/*, federatedSignIn*/ } from "../../libs/Fetch";
 import { FacebookIcon, GoogleIcon } from "../IconFederated";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormDividerWithText, /*FormCheckbox,*/ FormLink } from "../FormElements";
 import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
 import EventBus from "../../libs/EventBus";
-//import { AuthContext } from "../../providers/AuthProvider";
 import { OnlineStatusContext } from "../../providers/OnlineStatusProvider";
 import { validateEmail } from "../../libs/Validation";
 import config from "../../config";
@@ -100,20 +96,22 @@ function SignIn() {
     AuthService.signin({
       email,
       password
-    }).then(() => {
-      //props.history.push("/profile");
-      //window.location.reload();
-console.log("signin OK");
-      EventBus.dispatch("login");
-      history.push("/");
-      //window.location.reload();
-    },
-    (error) => {
-      console.error("signin error:", error);
-      toast.error(errorMessage(error));
-      //setLoading(false);
-      //setMessage(errorMessage(error));
-    });
+    }).then(
+      (response) => {
+        //props.history.push("/profile");
+        //window.location.reload();
+  console.log("signin OK");
+        EventBus.dispatch("login");
+        history.push("/");
+        //window.location.reload();
+      },
+      (error) => {
+        console.error("signin error:", error);
+        toast.error(errorMessage(error));
+        //setLoading(false);
+        //setMessage(errorMessage(error));
+      }
+    );
 
 /*
     signIn({

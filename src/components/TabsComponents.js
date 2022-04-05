@@ -5,17 +5,18 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
+import useWindowSize from "../hooks/useWindowSize";
 
-const height = window.innerHeight;
-const width = window.innerWidth;
-const heightScrollable = (
-  (height >= width) ?
-    //height - (height *.12) - (height *.12) - (height *.12) // portrait
-    height * .64 // portrait
-  :
-    //height - (height *.16) - (height *.16) - (height*.16) // landscape
-    height * .52 // landscape
-  );
+// const height = window.innerHeight;
+// const width = window.innerWidth;
+// const heightScrollable = (
+//   (height >= width) ?
+//     //height - (height *.12) - (height *.12) - (height *.12) // portrait
+//     height * .64 // portrait
+//   :
+//     //height - (height *.16) - (height *.16) - (height*.16) // landscape
+//     height * .52 // landscape
+//   );
 
 //console.log("height, width, heightScrollable:", height, width, heightScrollable);
 const useStyles = makeStyles(theme => ({
@@ -46,14 +47,35 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     marginTop: "1em",
-    height: heightScrollable,
+    minHeight: "5em",
+    //maxHeight: heightScrollable,
   },
   scrollable: {
     height: "100%",
     overflowY: "auto",
     paddingLeft: 10,
     paddingRight: 10,
+    minHeight: "3em",
   },
+
+  // scrollableContainer: {
+  //   width: "100%",
+  //   height: "100%",
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   flexWrap: "nowrap",
+  // },
+  // scrollableHeader: {
+  //   flexShrink: 0,
+  // },
+  // scrollableBody: {
+  //   flexGrow: 1,
+  //   overflow: "auto",
+  //   minHeight: "3em",
+  // },
+  // scrollableFooter: {
+  //   flexShrink: 0,
+  // },
 }));
 
 const TabContainer = React.memo(props => {
@@ -71,9 +93,21 @@ TabContainer.defaultProps = {
 
 const TabBodyScrollable = React.memo(props => {
   const classes = useStyles();
+
+  /**
+   * Note: here we assume fixed sections height...
+   * this is a bad hack to have a scrollable body
+   * and avoid a scrollable container for any
+   * window height and consistent after a resize
+   */
+  const toolbarHeight = 90; // toolbar height
+  const tabbarHeight = 100; // tabbbar height
+  const footerHeight = 60; // footer height
+  const size = useWindowSize();
+
   return (
     <div className={classes.scrollableContainer}>
-      <div className={classes.scrollable}>
+      <div className={classes.scrollable} style={{height: Math.max(120, size.height - toolbarHeight - tabbarHeight - /*titleHeight - */footerHeight)}}>
         {props.children}
       </div>
     </div>

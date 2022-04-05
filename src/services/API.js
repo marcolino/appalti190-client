@@ -4,8 +4,9 @@ import EventBus from "../libs/EventBus";
 import { i18n } from "../i18n";
 import config from "../config";
 
+console.log("baseURL:", config.api.endpoint[(process.env.NODE_ENV === "production") ? "production" : "development" ]);
 const instance = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: config.api.endpoint[(process.env.NODE_ENV === "production") ? "production" : "development" ],
   headers: {
     "Content-Type": "application/json",
   },

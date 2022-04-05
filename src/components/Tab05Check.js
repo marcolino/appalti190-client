@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-//import Button from "@material-ui/core/Button";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
-//import { transformXls2Xml } from "../libs/Fetch";
 import { ServiceContext } from "../providers/ServiceProvider";
 import JobService from "../services/JobService";
 
@@ -18,33 +16,33 @@ function Tab05Check(props) { // TODO: we need file here...
   useEffect(() => {
     console.log("PROPS:", props);
     console.log("SERVICE:", service);
-    //if (service.file) {
+    if (service.file) {
     //if (props.value === props.index) {
     if (props.active) {
       (async () => {
-      setStatusLocal({loading: true});
-      await JobService.transformXls2Xml(service.file.path).then(
-        response => {
+        setStatusLocal({loading: true});
+        await JobService.transformXls2Xml(service.file.path).then(
+          response => {
 console.log("transformXls2Xml XXX:", response);
-          if (!response) { // TODO: response.ok ? ...
-            //console.warn("transformXls2Xml error:", JSON.stringify(data));
-            // TODO: ok?
-            toast.error(errorMessage(response.message));
-            setStatusLocal({error: response.message});
-            return;
+            if (!response) { // TODO: response.ok ? ...
+              //console.warn("transformXls2Xml error:", JSON.stringify(data));
+              // TODO: ok?
+              toast.error(errorMessage(response.message));
+              setStatusLocal({error: response.message});
+              return;
+            }
+            console.log("transformXls2Xml success:", response.data);
+            setService({...service, transform: response.data.result});
+            setStatusLocal({success: response.data});
+            setNextIsEnabled(true);
+          },
+          error => {
+            console.error('Upload error:', error);
+            toast.error(errorMessage(error));
           }
-          console.log("transformXls2Xml success:", response.data);
-          // TODO: tell user, and enable CONTINUE button...
-          setService({...service, transform: response.data});
-          setStatusLocal({success: response.data});
-          setNextIsEnabled(true);
-        },
-        error => { // TODO...
-          console.error('Upload error:', error);
-          toast.error(errorMessage(error));
-        }
-      );
+        );
       })();
+    }
     }
     /* eslint-disable react-hooks/exhaustive-deps */
   }, [props/*, service, setService*/]);

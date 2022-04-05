@@ -41,7 +41,7 @@ const [ nextIsEnabled/*, setNextIsEnabled*/ ] = useState(true);
         </TabParagraph>
         <TabParagraph>
           A questo punto puoi passare al secondo foglio, "ELENCO GARE".
-          Occorre inserire ogni apaplto (o "gara"), uno per riga.
+          Occorre inserire ogni appalto (o "gara"), uno per riga.
         </TabParagraph>
         <TabParagraph>
           I campi da compilare sono:

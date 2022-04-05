@@ -19,7 +19,6 @@ import Email from "@material-ui/icons/Email";
 import Lock from "@material-ui/icons/Lock";
 import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
-import { /*signUp,*/ resendSignUp/*, confirmSignUp*/ } from "../../libs/TrackPromise";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, checkPassword } from "../../libs/Validation";
@@ -150,7 +149,12 @@ function SignUp() {
     if (!validateFormStep1()) return;
     setError({});
 
-    AuthService.signup({email, password, firstName, lastName}).then(
+    AuthService.signup({
+      email,
+      password,
+      firstName,
+      lastName
+    }).then(
       (response) => {
         console.log("signup OK");
         //EventBus.dispatch("login");
@@ -218,57 +222,48 @@ function SignUp() {
     setError({});
 
 console.log("formConfirmSignUp", email, code);
-    AuthService.signupConfirm({email, code}, {
-    }).then(() => {
+    AuthService.signupConfirm({
+      email,
+      code
+    }).then(
+      (response) => {
 console.log("signupConfirm OK");
-      //EventBus.dispatch("login");
-      //history.push("/");
-      //window.location.reload();
-      handleOpenDialog(
-        t("Registered successfully"),
-        t("You can now sign in with email and password") + ".",
-        () => formSignUpCompleted
-      );
-    },
-    (error) => {
-      console.error("signupConfirm error:", error);
-      toast.error(errorMessage(error));
-      //setLoading(false);
-      //setMessage(errorMessage(error));
-      setError({ code: error.message});
-    });
-//     confirmSignUp({email, code}, {
-//       success: (data) => {
-//         console.log("confirmSignup success:", data);
-//         // data is not meaningful
-//         handleOpenDialog(
-//           t("Registered successfully"),
-//           t("You can now sign in with email and password") + ".",
-//           () => formSignUpCompleted
-//         );
-//       },
-//       error: (err) => {
-// console.error("confirmSignUp error:", err);
-//         toast.error(t(err.message));
-//         setError({ code: err.message});
-//       },
-//     });
+        //EventBus.dispatch("login");
+        //history.push("/");
+        //window.location.reload();
+        handleOpenDialog(
+          t("Registered successfully"),
+          t("You can now sign in with email and password") + ".",
+          () => formSignUpCompleted
+        );
+      },
+      (error) => {
+        console.error("signupConfirm error:", error);
+        toast.error(errorMessage(error));
+        //setLoading(false);
+        //setMessage(errorMessage(error));
+        setError({ code: error.message});
+      }
+    );
   };
   
   const formResendSignUpCode = (e) => {
     e.preventDefault();
     setError({});
-
-    resendSignUp(email, {
-      success: (data) => {
+console.log("£££££££££££££££££ resendSignUpCode email:", email);
+    AuthService.resendSignUpCode({
+      email,
+    }).then(
+      (response) => {
+console.log("resendSignUpCode success:", response);
         toast.info(t("Code resent successfully by {{codeDeliveryMedium}}", {codeDeliveryMedium}));
       },
-      error: (err) => {
-console.error("resendSignUp error:", err);
-        toast.error(t(err.message));
-        setError({ code: err.message});
+      (error) => {
+console.error("resendSignUpCode error:", error);
+        toast.error(t(error.message));
+        setError({ code: error.message});
       },
-    });
+    );
   };
   
   const formSignUpCompleted = () => {

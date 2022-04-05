@@ -3,8 +3,10 @@ import { createTheme } from "@material-ui/core/styles";
 //import { unstable_createMuiStrictModeTheme as createMuiTheme } from "@material-ui/core/styles"; // TEMPORARY: temporary, to solve material-ui drawer "findDOMNode is deprecated in StrictModefindDOMNode is deprecated in StrictMode" warning
 //import blueGrey from "@material-ui/core/colors/blueGrey";
 import lightGreen from "@material-ui/core/colors/lightGreen";
+import lightBlue from "@material-ui/core/colors/lightBlue";
 import grey from "@material-ui/core/colors/grey";
 import amber from "@material-ui/core/colors/amber";
+//import { red } from "@material-ui/core/colors";
 
 export default createTheme({
   typography: {
@@ -12,6 +14,53 @@ export default createTheme({
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
   },
   overrides: {
+    MuiTabs: {
+      root: {
+        color: lightGreen[700],
+        backgroundColor: lightGreen[50],
+      },
+      indicator: {
+        backgroundColor: lightGreen[600],
+      }
+    },
+    MuiTab: {
+      "root": {
+        "color": "black",
+        "&$selected": {
+          "color": "white",
+          "backgroundColor": lightGreen[400],
+        },
+      },
+      // color: "yellow",
+      // backgroundColor: "red",
+      // selected: {
+      //   backgroundColor: "red", //lightGreen[900],
+      //   _color: "red",
+      //   "_&:hover": {
+      //     backgroundColor: lightGreen[600],
+      //     color: "red",
+      //   },
+      // },
+      // root: {
+      //   _backgroundColor: amber[900],
+      //   _color: "red",
+      //   "_&:hover": {
+      //     backgroundColor: lightBlue[300],
+      //     color: "red",
+      //   },
+      // },
+    },
+    OLDMuiTab: {
+      // general overrides for your material tab component here
+      root: {
+        backgroundColor: lightBlue[200],
+        color: lightGreen[400],
+        "&$selected": {
+          backgroundColor: lightGreen[400],
+          color: "red",
+        },
+      },
+    },
     MuiInputBase: {
       input: {
         "&:-webkit-autofill": {

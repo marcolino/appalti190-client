@@ -26,6 +26,7 @@ Performance
 Styling
  - Fluid Typography: https://css-tricks.com/snippets/css/fluid-typography
  - Color Contrast Checker: https://dequeuniversity.com/rules/axe/2.2/color-contrast?application=lighthouse
+ - Fixed header, footer with scrollable content: https://stackoverflow.com/questions/4069734/fixed-header-footer-with-scrollable-content/21168136#21168136
 
 Tests
  - How to ignore partial Jest snapshot diffs: https://lanwen.ru/posts/ignore-jest-snapshot-diffs
