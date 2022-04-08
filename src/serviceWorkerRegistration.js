@@ -147,7 +147,7 @@ export function unregister() {
       })
       .catch((error) => {
         // broadcastChannel.postMessage({level: "error", message:
-        //   t(error.message) // TODO: how to localize these errors?
+        //   t(error.message);
         // });
         console.error(error.message); // do not bore users with unregister errors
       });

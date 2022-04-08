@@ -116,7 +116,7 @@ const FormButton = React.memo((props) => {
       margin: theme.spacing(1, 0, 0, 0),
       textTransform: "none",
       fontSize: "1.3em",
-      color: "white", // TODO
+      color: "white",
       backgroundColor: theme.palette.success.main,
       "&:hover": {
         backgroundColor: shadeColor(theme.palette.success.main, -25),
@@ -126,7 +126,7 @@ const FormButton = React.memo((props) => {
       margin: theme.spacing(1, 0, 0, 0),
       textTransform: "none",
       fontSize: "1em !important",
-      color: "white", // TODO
+      color: "white",
       backgroundColor: theme.palette.secondary.dark + " !important",
       "&:hover": {
         backgroundColor: shadeColor(theme.palette.secondary.dark, -25)  + " !important",

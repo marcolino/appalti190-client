@@ -3,32 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="%REACT_APP_THEME_COLOR%"><!-- theme color for android tool-bar and android chrome address-bar - TODO: use base theme color, but in contrast with app header background color... -->
+    <meta name="theme-color" content="%REACT_APP_THEME_COLOR%"><!-- theme color for android tool-bar and android chrome address-bar -->
     <meta name="description" content="Start receiving the best real estate information, in a professional way" />
 
     <meta http-equiv="cache-control" content="max-age=604800" />
-    
-    <!--
-      Not here, we wrote a function in cloudflare...
-      <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8; X-Content-Type-Options=nosniff" />
-    -->
-    
-    <!--
-    TODO: make these parameters centralized (in .env?)
-    <meta name="og:title" content="Appalti190" />
-    <meta name="og:type" content="website" />
-    <meta name="og:description" content="Start receiving the best real estate information, in a professional way" />
-    <meta name="og:image" content="LINK TO THE IMAGE FILE" />
-    <meta name="og:url" content="https://appalti190.arsistemi.it/" />
-    <meta name="og:site_name" content="appalti190.arsistemi.it" />
-    <meta name="twitter:title" content="Appalti190 - Per una trasparenza reale ed accessibile">
-    <meta name="twitter:description" content="Servizio per l'assolvimento degli obblighi di pubblicazione delle informazioni all’Autorità Nazionale AntiCorruzione, ai sensi della legge n. 190/2012">
-    <meta name="twitter:card" content="app" />
-    <meta name="twitter:image" content="https://appalti190-showcase.herokuapp.com/static/media/logo.4c2e3946.png" />
-    <meta name="twitter:site" content="@arsistemi" /> <! -- twitter @account -- >
-    <meta name="twitter:creator" content="@arsistemi"> <! -- twitter @username of content creator -- >
-    -->
+
+    <meta name="og:title" content="%REACT_APP_META_TITLE%" />
+    <meta name="og:type" content="%REACT_APP_META_TYPE%" />
+    <meta name="og:description" content="%REACT_APP_META_DESCRIPTION%" />
+    <meta name="og:image" content="%REACT_APP_META_IMAGE%" />
+    <meta name="og:url" content="%REACT_APP_META_URL%" />
+    <meta name="og:site_name" content="%REACT_APP_META_SITENAME%" />
+    <meta name="twitter:title" content="%REACT_APP_META_TITLE%" />
+    <meta name="twitter:description" content="%REACT_APP_META_DESCRIPTION%" />
+    <meta name="twitter:image" content="%REACT_APP_META_IMAGE%" />
+    <meta name="twitter:site" content="%REACT_APP_META_TWITTER_SITE%" />
+    <meta name="twitter:creator" content="%REACT_APP_META_TWITTER_CREATOR%" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +30,7 @@
     <title>%REACT_APP_TITLE%</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>You need to enable JavaScript to run this app, sorry.</noscript>
     <div id="root"></div>
   </body>
 </html>

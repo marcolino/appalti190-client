@@ -4,48 +4,69 @@ import { useTranslation } from "react-i18next";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
-import { ServiceContext } from "../providers/ServiceProvider";
+import { JobContext } from "../providers/JobProvider";
 import JobService from "../services/JobService";
 
-function Tab05Check(props) { // TODO: we need file here...
+function Tab05Check(props) {
   const { t } = useTranslation();
-  const { service, setService } = useContext(ServiceContext);
+  const { service, setService } = useContext(JobContext);
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
-
+  
   useEffect(() => {
-    console.log("PROPS:", props);
-    console.log("SERVICE:", service);
-    if (service.file) {
-    //if (props.value === props.index) {
     if (props.active) {
-      (async () => {
-        setStatusLocal({loading: true});
-        await JobService.transformXls2Xml(service.file.path).then(
-          response => {
-console.log("transformXls2Xml XXX:", response);
-            if (!response) { // TODO: response.ok ? ...
-              //console.warn("transformXls2Xml error:", JSON.stringify(data));
-              // TODO: ok?
-              toast.error(errorMessage(response.message));
-              setStatusLocal({error: response.message});
-              return;
-            }
-            console.log("transformXls2Xml success:", response.data);
-            setService({...service, transform: response.data.result});
-            setStatusLocal({success: response.data});
-            setNextIsEnabled(true);
-          },
-          error => {
-            console.error('Upload error:', error);
-            toast.error(errorMessage(error));
-          }
-        );
-      })();
-    }
+      if (service.file && !service.transform) {
+        (async () => {
+          setStatusLocal({loading: true});
+          await JobService.transformXls2Xml(service.file.path).then(
+            /*async*/ result => {
+              if (result instanceof Error) { // TODO: always handle errors this way!
+                setService({...service, transform: result});
+                toast.error(errorMessage(result));
+                return setStatusLocal({ error: errorMessage(result)});
+              }
+              setService({...service, transform: result.data.result});
+              setStatusLocal({success: result.data});
+              //setNextIsEnabled(true);
+            },
+            // error => {
+            //   console.error('transformXls2Xml error:', error);
+            //   setService({...service, transform: error}); // to stop repeated calls...
+            //   toast.error(errorMessage(error));
+            // }
+          );
+        })();
+      }
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props/*, service, setService*/]);
+  }, [props, service/*, setService*/]);
+
+  useEffect(() => {
+    if (props.active) {
+      if (service.file && service.transform && !service.validateXml) {
+        (async () => {
+          setStatusLocal({loading: true});
+          await JobService.validateXml(service.transform).then(
+            response => {
+              if (response instanceof Error) { // TODO: always handle errors this way!
+                setService({...service, validateXml: response});
+                toast.error(errorMessage(response));
+                return setStatusLocal({ error: errorMessage(response)});
+              }
+              setService({...service, validateXml: response.data.result});
+              setStatusLocal({success: response.data});
+              setNextIsEnabled(true);
+            },
+            // error => {
+            //   setService({...service, validateXml: error}); // to stop repeated calls...
+            //   toast.error(errorMessage(error));
+            // }
+          );
+        })();
+      }
+    }
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [props, service/*, setService*/]);
 
   const onNext = () => {
     props.goto("next");

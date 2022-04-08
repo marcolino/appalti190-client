@@ -6,7 +6,6 @@ function PushNotifications() {
   const { status, setStatus } = useContext(StatusContext);
 
   useEffect(() => { // TODO: save timestamp of last getToken(), and repeat it not more often than one week...
-    console.log("PushNotifications - calling getToken");
     getToken();
     //getToken(setToken);
   }, [status]);

@@ -1,14 +1,11 @@
-import React, { /*useState, useEffect, */useContext } from "react";
-import { useLocation } from "react-router-dom"; // TODO: Ok? if so, accorpate with next row
-import { useHistory } from "react-router-dom";
-//import { useTranslation } from "react-i18next";
+import React, { useContext } from "react";
+import { useLocation, useHistory } from "react-router-dom";
 import { Container, Button, lightColors, darkColors } from "react-floating-action-button";
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
 //import useSound from "use-sound";
 import { StatusContext } from "../providers/StatusProvider";
 //import config from "../config";
 //import buttonClick from "../assets/sounds/pop.mp3";
-
 
 
 

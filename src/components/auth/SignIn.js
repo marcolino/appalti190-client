@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { usePromiseTracker } from "react-promise-tracker";
+//import { usePromiseTracker } from "react-promise-tracker";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -54,10 +54,10 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //const [rememberMe, setRememberMe] = useState(true);
-  const [formError, setFormError] = useState({});
+  const [error, setError] = useState({});
   //const { setAuth } = useContext(AuthContext);
   const isOnline = useContext(OnlineStatusContext);
-  /* UNUSED */ const { promiseInProgress } = usePromiseTracker({delay: config.spinner.delay});
+  //const { promiseInProgress } = usePromiseTracker({delay: config.spinner.delay});
   const { t } = useTranslation();
 
   const onlineCheck = () => {
@@ -72,14 +72,14 @@ function SignIn() {
     // validate email formally
     if (!validateEmail(email)) {
       const err = "Please supply a valid email";
-      setFormError({ email: err });
+      setError({ email: err });
       toast.warning(err);
       return false;
     }
 
     if (!password) {
       const err = "Please supply a password";
-      setFormError({ password: err });
+      setError({ password: err });
       toast.warning(err);
       return false;
     }
@@ -91,87 +91,42 @@ function SignIn() {
     e.preventDefault();
     if (!validateForm()) return;
     if (!onlineCheck()) return;
-    setFormError({});
+    setError({});
 
     AuthService.signin({
       email,
       password
     }).then(
-      (response) => {
-        //props.history.push("/profile");
-        //window.location.reload();
-  console.log("signin OK");
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          toast.error(errorMessage(result));
+          setError({}); // we don't know which field to blame
+          return;
+        }
+        console.info(`signin by ${email}`); // TODO: audit to the cloud?
         EventBus.dispatch("login");
         history.push("/");
-        //window.location.reload();
       },
-      (error) => {
-        console.error("signin error:", error);
-        toast.error(errorMessage(error));
-        //setLoading(false);
-        //setMessage(errorMessage(error));
-      }
-    );
-
-/*
-    signIn({
-      email,
-      password,
-    }).then(data => {
-      if (!data.ok) {
-        console.warn("signIn error:", data);
-        toast.error(t(data.message));
-        setFormError({});
-        return;
-      }
-      console.log("signIn success:", data);
-      // TODO: do we need tokens here?
-      setAuth({ user: { ...data.user, accessToken: data.accessToken, refreshToken: data.refreshToken }});
-      // if (!rememberMe) {
-      //   localStorage.clear(); // TODO...
+      // (error) => {
+      //   console.error("signin error:", error);
+      //   toast.error(errorMessage(error));
       // }
-      setEmail("");
-      setPassword("");
-      history.push("/");
-    }).catch(err => {
-      console.error("signIn error catched:", err);
-      toast.error(t(err.message));
-      setFormError({}); // we can't blame some user input, it's a server side error
-    });
-  */
+    );
   };
 
   const formFederatedSignIn = (e, provider) => {
     e.preventDefault();
     if (!validateForm()) return;
     if (!onlineCheck()) return;
-    setFormError({});
-
+    setError({});
     window.open("/api/auth/loginGoogle", "_self");
-
-    // federatedSignIn().then(data => {
-    //   console.log("federatedSignIn calling setAuth - data:", data);
-    //   // TODO: do we need tokens here?
-    //   setAuth({ user: { ...data.user, accessToken: data.accessToken, refreshToken: data.refreshToken }});
-    //   if (!rememberMe) {
-    //     localStorage.clear();
-    //   }
-    //   setEmail("");
-    //   setPassword("");
-    //   history.push("/");
-    // }).catch(err => {
-    //   console.error("federatedSignIn error:", err);
-    //   toast.error(t(err.message));
-    //   setFormError({}); // we don't know whom to blame
-    // });
   };
 
-//console.log("config.federatedSigninProviders.length:", config.federatedSigninProviders.length);
   return (
     <Container maxWidth="xs">
 
       <form className={classes.form} noValidate autoComplete="off">
-        <fieldset disabled={promiseInProgress} className={classes.fieldset}>
+        <fieldset /*disabled={promiseInProgress}*/ className={classes.fieldset}>
 
           <Box m={0} />
 
@@ -198,7 +153,7 @@ function SignIn() {
             onChange={setEmail}
             placeholder={t("Email")}
             startAdornmentIcon={<Person />}
-            error={formError.email}
+            error={error.email}
           />
 
           <FormInput
@@ -208,7 +163,7 @@ function SignIn() {
             onChange={setPassword}
             placeholder={t("Password")}
             startAdornmentIcon={<Lock />}
-            error={formError.password}
+            error={error.password}
           />
 
           <Box m={1} />
@@ -221,13 +176,16 @@ function SignIn() {
 
           <Grid container alignItems="center">
             <Grid className={classes.columnLeft}>
-              {/* <FormCheckbox
-                checked={rememberMe}
-                onChange={setRememberMe}
-                className={classes.rememberMe}
-              >
-                {t("Remember me")}
-              </FormCheckbox> */}
+              {/**
+                * remember-me feature is bad practice
+                  <FormCheckbox
+                    checked={rememberMe}
+                    onChange={setRememberMe}
+                    className={classes.rememberMe}
+                  >
+                    {t("Remember me")}
+                  </FormCheckbox>
+                */}
             </Grid>
             <Grid className={classes.columnRight} style={{marginTop: 5}}>
               <FormLink

@@ -9,7 +9,7 @@ import Link from "@material-ui/core/Link";
 import i18n from "i18next";
 import IconCustom from "./IconCustom";
 import { isAuthLocation } from "../libs/Misc";
-//import { getCurrentLanguage } from "../libs/I18n";
+import { getCurrentLanguage } from "../libs/I18n";
 import config from "../config";
 import packageJson from "../package.alias.json";
 
@@ -23,11 +23,10 @@ function Footer(props) {
   const location = useLocation();
 	const classes = useStyles();
   const { t } = useTranslation();
+
   const on = t("on"), off = t("off");
-  //const [language, setLanguage] = useState(navigator.language.slice(0, 2).toLowerCase());
-  const [language, setLanguage] = useState(i18n.language);
-  const [languageIcon, setLanguageIcon] = useState(config.languages.supported[language].icon);
-  //const languageIcon = config.languages.supported[navigator.language.slice(0, 2).toLowerCase()].icon; // TODO: do something safer...
+  const [language, setLanguage] = getCurrentLanguage(i18n);
+  const [languageIcon, setLanguageIcon] = useState(config.languages.supported[getCurrentLanguage(i18n)].icon);
 
   const changeLanguage = () => { // simply toggle en <=> it, just to debug
     const lang = (language === "it" ? "en" : "it");

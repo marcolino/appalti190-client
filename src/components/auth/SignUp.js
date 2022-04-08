@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, Link as RouterLink } from "react-router-dom";
-import { usePromiseTracker } from "react-promise-tracker";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import AccountCircleOutlined from "@material-ui/icons/AccountCircleOutlined";
 import ConfirmationNumber from "@material-ui/icons/ConfirmationNumber";
 import Person from "@material-ui/icons/Person";
@@ -21,7 +15,9 @@ import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
-import { validateEmail, checkPassword } from "../../libs/Validation";
+import { validateEmail, validatePassword } from "../../libs/Validation";
+import Dialog from "../Dialog";
+
 import config from "../../config";
 
 const styles = theme => ({
@@ -37,9 +33,6 @@ const styles = theme => ({
   },
   fieldset: {
     border: 0,
-  },
-  dialogContent: {
-    whiteSpace: "pre-line", // to enable whitespaces in dialog content
   },
 });
 const useStyles = makeStyles((theme) => (styles(theme)));
@@ -59,26 +52,18 @@ function SignUp() {
   const [code, setCode] = useState("");
   const [error, setError] = useState({});
   const [formState, setFormState] = useState({ xs: true, horizontalSpacing: 0 });
-  const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState(null);
   const [dialogContent, setDialogContent] = useState(null);
-  const [dialogCallback, setDialogCallback] = useState(null);
-  const { promiseInProgress } = usePromiseTracker({ delay: config.spinner.delay });
+  const [dialogButtons, setDialogButtons] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { t } = useTranslation();
 
-  const handleOpenDialog = (title, content, callback) => {
+  const openDialog = (title, content, buttons) => {
     setDialogTitle(title);
     setDialogContent(content);
-    setDialogCallback(callback);
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setDialogTitle(null);
-    setDialogContent(null);
-    dialogCallback && dialogCallback();
-  };
+    setDialogButtons(buttons);
+    setDialogOpen(true);    
+  }
 
   // set up event listener to set correct grid rowSpacing based on inner width
   useEffect(() => {
@@ -112,7 +97,7 @@ function SignUp() {
     }
 
     // check password for minimum complexity
-    if (!checkPassword(password)) {
+    if (!validatePassword(password)) {
       const err = t("Please supply a more complex password");
       setError({ password: err });
       toast.warning(err);
@@ -137,8 +122,9 @@ function SignUp() {
   };
 
   const validateFormStep2 = () => {
+    const err = t("The confirmed password does not match the password");
     if (code.length <= 0) {
-      setError({ code: t("Code is mandatory")});
+      setError({ code: err });
       return false;
     }
     return true;
@@ -155,65 +141,47 @@ function SignUp() {
       firstName,
       lastName
     }).then(
-      (response) => {
-        console.log("signup OK");
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          switch (result.response.data.code) {
+            case "EmailExistsException":
+              setError({ email: errorMessage(result) }); // since we use email as username, we blame email field as guilty
+              //toast.warning(errorMessage(result));
+              openDialog(
+                t("Email exists already"),
+                t("This email is already present") + `.\n` +
+                //errorMessage(result) + `\n` +
+                t("Do you want to sign in with that email?"),
+                [
+                  {
+                    text: t("Ok"),
+                    close: true,
+                    callback: () => history.push("/signin"),
+                  },
+                  {
+                    text: t("No, I will retry with a different email"),
+                    close: true,
+                  }
+
+                ],
+              );
+      
+              break;
+            default:
+              setError({}); // we don't know whom to blame
+              toast.error(errorMessage(result));
+          }
+          return;
+        }
+        console.info(`signup code sent to ${email}`);
         //EventBus.dispatch("login");
         //history.push("/");
-        const medium = response?.codeDeliveryMedium?.toLowerCase();
+        const medium = result?.codeDeliveryMedium?.toLowerCase();
         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
         setCodeDeliveryMedium(medium);
         setWaitingForCode(true);
-        //setPassword("");
-        //setMessage(response.data.message);
-        //setSuccessful(true);
       },
-      (error) => {
-        console.error("signup error:", error.response, Object.keys(error));
-        //setMessage(errorMessage(error));
-        //setSuccessful(false);
-        switch (error.response.data.code) {
-          case "EmailExistsException":
-            setError({ email: error.response.data.message }); // since we use email as username, we blame email field as guilty
-            toast.warning(errorMessage(error)); // TRANSLATE ON SERVER!
-            break;
-          default:
-            setError({}); // we don't know whom to blame
-            toast.error(errorMessage(error));
-        }
-      }
     );
-//     signUp({
-//       email,
-//       password,
-//       firstName,
-//       lastName,
-//       /**
-//        * IMPROVE: add custom fields
-//        * phone_number: phoneNumber, // E.164 number convention: country code (1 to 3 digits) + subscriber number (max 12 digits)
-//        * "custom:favorite_flavor": FavoriteFlavour, // custom attribute, not standard
-//        */
-//     }, {
-//       success: (data) => {
-//         console.log("signUp success:", data);
-//         const medium = data.codeDeliveryMedium.toLowerCase();
-//         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
-//         setCodeDeliveryMedium(medium);
-//         setWaitingForCode(true);
-//         setPassword("");
-//       },
-//       error: (err) => {
-// console.error("signup error:", err);
-//         switch (err.code) {
-//           case "UsernameExistsException":
-//             setError({ email: err.message }); // since we use email as username, we blame email field as guilty
-//             toast.warning(t(err.message));
-//             break;
-//           default:
-//             setError({}); // we don't know whom to blame
-//             toast.error(t(err.message));
-//           }
-//       },
-//     });
   };
 
   const formConfirmSignUp = (e) => {
@@ -221,48 +189,48 @@ function SignUp() {
     if (!validateFormStep2()) return;
     setError({});
 
-console.log("formConfirmSignUp", email, code);
     AuthService.signupConfirm({
       email,
       code
     }).then(
-      (response) => {
-console.log("signupConfirm OK");
-        //EventBus.dispatch("login");
-        //history.push("/");
-        //window.location.reload();
-        handleOpenDialog(
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          console.error("signupConfirm error:", result);
+          toast.error(errorMessage(result));
+          return setError({ code: result.message });
+        }
+        console.info(`signup complete for ${email}`);
+        openDialog(
           t("Registered successfully"),
           t("You can now sign in with email and password") + ".",
-          () => formSignUpCompleted
+          [
+            {
+              text: t("Ok"),
+              close: true,
+              callback: formSignUpCompleted,
+            }
+          ],
         );
       },
-      (error) => {
-        console.error("signupConfirm error:", error);
-        toast.error(errorMessage(error));
-        //setLoading(false);
-        //setMessage(errorMessage(error));
-        setError({ code: error.message});
-      }
     );
   };
   
   const formResendSignUpCode = (e) => {
     e.preventDefault();
     setError({});
-console.log("£££££££££££££££££ resendSignUpCode email:", email);
+    //console.log("resendSignUpCode email:", email);
     AuthService.resendSignUpCode({
       email,
     }).then(
-      (response) => {
-console.log("resendSignUpCode success:", response);
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          console.error("signupConfirm error:", result);
+          toast.error(errorMessage(result));
+          return setError({ code: errorMessage(result) });
+        }
+        //console.log("resendSignUpCode success:", result);
         toast.info(t("Code resent successfully by {{codeDeliveryMedium}}", {codeDeliveryMedium}));
-      },
-      (error) => {
-console.error("resendSignUpCode error:", error);
-        toast.error(t(error.message));
-        setError({ code: error.message});
-      },
+      }
     );
   };
   
@@ -277,7 +245,7 @@ console.error("resendSignUpCode error:", error);
     <Container maxWidth="xs">
 
       <form className={classes.form} noValidate autoComplete="off">
-        <fieldset disabled={promiseInProgress} className={classes.fieldset}>
+        <fieldset /*disabled={promiseInProgress}*/ className={classes.fieldset}>
           {!waitingForCode && (
             <>
 
@@ -408,31 +376,13 @@ console.error("resendSignUpCode error:", error);
       </form>
 
       <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {dialogTitle}
-        </DialogTitle>
-        <DialogContent id="alert-dialog-description">
-          <Typography variant="body1" className={classes.dialogContent}>
-            {dialogContent}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <FormButton
-            onClick={handleCloseDialog}
-            fullWidth={false}
-            className={"buttonSecondary"}
-            autoFocus
-          >
-            {t("Ok")}
-          </FormButton>
-        </DialogActions>
-      </Dialog>
-      
+        dialogOpen={dialogOpen}
+        dialogSetOpen={setDialogOpen}
+        dialogTitle={dialogTitle}
+        dialogContent={dialogContent}
+        dialogButtons={dialogButtons}
+      />
+
     </Container>
   );
 }

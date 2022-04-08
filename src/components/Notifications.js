@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
 import ShareIcon from '@material-ui/icons/Share';
@@ -13,6 +14,7 @@ import CardActions from "@material-ui/core/CardActions";
 import Typography from "@material-ui/core/Typography";
 import red from '@material-ui/core/colors/red';
 import { StatusContext } from "../providers/StatusProvider";
+import config from "../config";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,31 +35,33 @@ export default function Notifications(props) {
   const { status, setStatus } = useContext(StatusContext);
   const history = useHistory();
 	const classes = useStyles();
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
+
+  const shareMessage = (index) => { // TODO: handle message sharing, if needed
+    alert(t("Sorry, message sharing is not handled, yet..."));
+  };
 
   const deleteForeverMessage = (index) => {
-    //setStatus({pushNotifications: []}); // TODO: delete only THIS message!
     setStatus({pushNotifications: status.pushNotifications.filter((notification, i) =>
       i !== index
     )});
-console.log("Notifications - (!status.pushNotifications.length):", (!status.pushNotifications.length));
     if (status.pushNotifications.length <= 1) { // setStatus is asynchronous...
       history.goBack();
     }
   };
   
-console.log("Notifications - status.pushNotifications:", status.pushNotifications);
-console.log("Notifications - props.location.state:", props.location.state);
+  //console.log("Notifications - status.pushNotifications:", status.pushNotifications);
+  //console.log("Notifications - props.location.state:", props.location.state);
 
 //{props.location.state && props.location.state.map((state, index) => {
 
-return (
+  return (
     <div className={classes.root}>
       {status.pushNotifications.map((state, index) => {
-console.log("Notifications state:", state);
+        //console.log("Notifications state:", state);
         const timestamp = state.data["google.c.a.ts"];
         const when = new Intl.DateTimeFormat(
-          'it-IT'/* TODO */,
+          config.languages.fallback,
           {
             year: 'numeric',
             month: '2-digit',
@@ -95,10 +99,10 @@ console.log("Notifications state:", state);
 
             <CardActions>
               <IconButton aria-label="share">
-                <ShareIcon /> {/* TODO: handle share */}
+                <ShareIcon  onClick={() => shareMessage(index)}/>
               </IconButton>
               <IconButton aria-label="delete forever" onClick={() => deleteForeverMessage(index)} >
-                <DeleteForeverIcon /> {/* TODO: handle delete forever */}
+                <DeleteForeverIcon />
               </IconButton>
             </CardActions>
 

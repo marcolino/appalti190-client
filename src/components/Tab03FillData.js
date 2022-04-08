@@ -14,7 +14,7 @@ function Tab03FillData(props) {
   const classes = useStyles();
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
-const [ nextIsEnabled/*, setNextIsEnabled*/ ] = useState(true);
+  const [ nextIsEnabled/*, setNextIsEnabled*/ ] = useState(true);
 
   const onNext = () => {
     props.goto("next");

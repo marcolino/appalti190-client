@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { usePromiseTracker } from "react-promise-tracker";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import LockOpenOutlined from "@material-ui/icons/LockOpenOutlined";
 import ConfirmationNumber from "@material-ui/icons/ConfirmationNumber";
 import Lock from "@material-ui/icons/Lock";
@@ -20,8 +13,8 @@ import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText } from "../FormElements";
-import { validateEmail, checkPassword } from "../../libs/Validation";
-import config from "../../config";
+import { validateEmail, validatePassword } from "../../libs/Validation";
+import Dialog from "../Dialog";
 
 const styles = theme => ({
   avatar: {
@@ -42,44 +35,19 @@ function ForgotPassword() {
   const [waitingForCode, setWaitingForCode] = useState(false);
   const [codeDeliveryMedium, setCodeDeliveryMedium] = useState("");
   const [code, setCode] = useState("");
-  const history = useHistory();
-  const { promiseInProgress } = usePromiseTracker({delay: config.spinner.delay});
-  const [openDialog1, setOpenDialog1] = useState(false);
-  const [dialogTitle1, setDialogTitle1] = useState(null);
-  const [dialogContent1, setDialogContent1] = useState(null);
-  //const [dialogCallback1, setDialogCallback1] = useState(null);
-  const [openDialog2, setOpenDialog2] = useState(false);
-  const [dialogTitle2, setDialogTitle2] = useState(null);
-  const [dialogContent2, setDialogContent2] = useState(null);
-  //const [dialogCallback2, setDialogCallback2] = useState(null);
+  const [dialogTitle, setDialogTitle] = useState(null);
+  const [dialogContent, setDialogContent] = useState(null);
+  const [dialogButtons, setDialogButtons] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const { t } = useTranslation();
-
-  const handleOpenDialog1 = (title, content) => {
-    setDialogTitle1(title);
-    setDialogContent1(content);
-    setOpenDialog1(true);
-  };
-
-  const handleCloseDialog1 = (cb) => {
-    setOpenDialog1(false);
-    setDialogTitle1(null);
-    setDialogContent1(null);
-    //cb();
-  };
-
-  const handleOpenDialog2 = (title, content) => {
-    setDialogTitle2(title);
-    setDialogContent2(content);
-    setOpenDialog2(true);
-  };
-
-  const handleCloseDialog2 = () => {
-    setOpenDialog2(false);
-    setDialogTitle2(null);
-    setDialogContent2(null);
-    //dialogCallback2();
-    history.push("/signin"); 
-  };
+ 
+  const openDialog = (title, content, buttons) => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogButtons(buttons);
+    setDialogOpen(true);    
+  }
 
   const validateForm = () => { // validate email formally
     if (!waitingForCode) {
@@ -92,7 +60,7 @@ function ForgotPassword() {
     }
 
     if (waitingForCode) {
-      if (!checkPassword(password)) {
+      if (!validatePassword(password)) {
         const err = t("Please supply a more complex password");
         toast.warning(err);
         setError({ password: err });
@@ -122,36 +90,37 @@ function ForgotPassword() {
     if (!validateForm()) return;
     setError({});
 
-    console.log("formForgotPassword");
     AuthService.forgotPassword({email}).then(
-      (response) => {
-        console.log("forgotPassword success:", response);
+      (result) => {
+        if (result instanceof Error) { // TODO: always handle errors this way!
+          toast.error(errorMessage(result));
+          return setError({ email: errorMessage(result)});
+        }
         setWaitingForCode(true);
         setPassword("");
-        switch (response.codeDeliveryMedium) {
+        switch (result.codeDeliveryMedium) {
           default: // in future we could treat EMAIL/SMS/... separately...
-            // TODO
-            // const medium = data.CodeDeliveryDetails.AttributeName;
-            // const email = data.CodeDeliveryDetails.Destination;
-            const medium = "email";
-            const email = "marcosolari+6@gmail.com";
+            const medium = result.codeDeliveryMedium;
             setCodeDeliveryMedium(medium);
-            ///toast.info(`Verification code sent via ${medium} to ${email}.\nPlease open it and copy and paste it here.`);
-            handleOpenDialog1(
+            openDialog(
               t("Verification code sent"),
-              t(`\
-  Verification code sent via {{medium}} to {{email}}.
-  Please copy and paste it here.`, {medium, email}),
-              () => {},
+              t(`Verification code sent via {{medium}} to {{email}}.`, {medium, email}) + `\n` +
+              t(`Please copy and paste it here.`),
+              // [
+              //   {
+              //     text: t("Ok"),
+              //     close: true,
+              //     callback: () => console.log("Post OK close action"),
+              //   }
+              // ]
             );
         }
       },
-      (error) => {
-        console.error("forgotPassword error:", error);
-        toast.error(errorMessage(error));
-        //setLoading(false);
-        //setMessage(errorMessage(error));
-      }
+//       (error) => { // TODO: THIS IS NEVER REACHED!!!
+// console.error("E forgotPassword error:", error);
+//         toast.error(errorMessage(error));
+//         setError({ email: errorMessage(error)}); // TODO: always do setError( ... errorMessage(error) ...)
+//       }
     );
   };
   
@@ -164,26 +133,28 @@ function ForgotPassword() {
       email,
       password,
       code,
-      //passwordConfirmed
     }).then(
-      response => { // TODO: to be tested
-        console.log("resetPasswordConfirm success:", response);
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          toast.error(errorMessage(error));
+          return setError({ password: errorMessage(error)}); // TODO: which field to blame?
+        }
         setWaitingForCode(false);
         setEmail("");
         setPassword("");
         setPasswordConfirmed("");
         setCode("");
-        handleOpenDialog2(
+        openDialog(
           t(`Password reset success`),
           t(`You can now sign in with your new password`),
+          // [
+          //   {
+          //     text: t("Ok"),
+          //     close: true,
+          //     callback: () => console.log("Post OK close action"),
+          //   }
+          // ]
         );
-        //history.push("/signin");
-      },
-      error => {
-        console.warn("resetPasswordConfirm error:", error);
-        toast.error(t(error.message));
-        setError({ password: error.message}); // TODO: check whom to blame for error
-        return;
       },
     );
   };
@@ -192,34 +163,29 @@ function ForgotPassword() {
     e.preventDefault();
     setError({});
 
-console.log("formResendResetPasswordCode");
-    AuthService.resendResetPasswordCode({email}).then(data => { // TODO: to be tested
-      if (!data.ok) {
-        console.warn("formResendResetPasswordCode error:", data);
-        switch (data.code) {
-          case "ExpiredCodeException":
-            setError({ confirmationCode: data }); // blame confirmationCode field as guilty
-            break;
-          default:
-            setError({}); // we don't know whom to blame
+    AuthService.resendResetPasswordCode({
+      email
+    }).then(
+      result => {
+        if (result instanceof Error) {
+          setError({ confirmationCode: errorMessage(result) }); // blame confirmationCode field
+          toast.error(errorMessage(result));
+          return;
         }
-        toast.error(t(data.message));
-        return;
+        // TODO: CHECK IF IN DATA WE HAVE MESSAGE TO SHOW TO THE USER resendResetPasswordCode
+  console.log("CHECK IF IN DATA WE HAVE MESSAGE TO SHOW TO THE USER resendResetPasswordCode", result);
+        toast.info("Code resent successfully");
       }
-      console.log("TODO: CHECK IF IN DATA WE HAVE MESSAGE TO SHOW TO THE USER resendResetPasswordCode success data:", data);
-      toast.info("Code resent successfully");
-    });
+    );
   };
 
   return (
     <Container maxWidth="xs">
 
       <form className={classes.form} noValidate autoComplete="off">
-        <fieldset disabled={promiseInProgress} className={classes.fieldset}>
+        <fieldset /*disabled={promiseInProgress}*/ className={classes.fieldset}>
           {!waitingForCode && (
             <>
-
-{/* <FormButton onClick={formTestETBT}>{"TEST ETBT"}</FormButton> */}
 
               <Box m={1} />
 
@@ -316,56 +282,12 @@ console.log("formResendResetPasswordCode");
       </form>
 
       <Dialog
-        open={openDialog1}
-        onClose={handleCloseDialog1}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {dialogTitle1}
-        </DialogTitle>
-        <DialogContent id="alert-dialog-description">
-          <Typography variant="body1" style={{whiteSpace: 'pre-line'}}>
-            {dialogContent1}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <FormButton
-            onClick={handleCloseDialog1}
-            fullWidth={false}
-            className={"buttonSecondary"}
-            autoFocus
-          >
-            {t("Ok")}
-          </FormButton>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={openDialog2}
-        onClose={handleCloseDialog2}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {dialogTitle2}
-        </DialogTitle>
-        <DialogContent id="alert-dialog-description">
-          <Typography variant="body1" style={{whiteSpace: 'pre-line'}}>
-            {dialogContent2}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <FormButton
-            onClick={handleCloseDialog2}
-            fullWidth={false}
-            className={"buttonSecondary"}
-            autoFocus
-          >
-            {t("Ok")}
-          </FormButton>
-        </DialogActions>
-      </Dialog>
+        dialogOpen={dialogOpen}
+        dialogSetOpen={setDialogOpen}
+        dialogTitle={dialogTitle}
+        dialogContent={dialogContent}
+        dialogButtons={dialogButtons}
+      />
 
     </Container>
   );

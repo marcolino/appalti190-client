@@ -6,6 +6,12 @@ import React from "react";
 export const errorMessage = error => {
   return (
     (
+      error.request &&
+      error.request.status >= 400 &&
+      error.request.data &&
+      error.request.data.message
+    ) ||
+    (
       error.response &&
       error.response.data &&
       error.response.data.message

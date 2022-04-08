@@ -8,7 +8,7 @@ export const validateEmail = (email) => {
   return re.test(String(email).toLowerCase());
 };
 
-export const checkPassword = (password) => {
+export const validatePassword = (password) => {
   /**
    * ^	                The password string will start this way
    * (?=.*[a-z])	      The string must contain at least 1 lowercase alphabetical character

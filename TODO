@@ -66,8 +66,11 @@
 - usare useMemo e useCallback per tutti i componenti - OK
 - tests: rendere più semplice la rigenerazione degli snapshots - OK
 - dall'axios request interceptor, passare la lingua preferita dell'utente per i messaggi d'errore dal server - OK
+- provare a usare entrambi useLocation e useHistory da "react-router" oppure da "react-router-dom" - OK
+- rename service -> job - OK
+- fare un componente per i Dialog - OK
+- in caso di errore "User already exists" durante la registrazione, chiedere di redirigere in /signin - OK
 
-- provare a usare entrambi useLocation e useHistory da "react-router" oppure da "react-router-dom"
 - risolvere i TODO's nel codice
 - gestire la navigazione da tastiera
 - completare (e testare) gli attributi aria
@@ -82,12 +85,11 @@
 - gestire URL di callback per la rimozione dell'autorizzazione (Facebook e Google)
 - gestire URL di callback per la richiesta di eliminazione dei dati (Facebook e Google)
 - ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
-- in caso di errore "User already exists" durante la registrazione, valutare se proporre di redirigere in /signin
 - integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre)
 - verificare OnlineStatusProvider quando si parte offline
 
 x Antonio:
 - serve sia un template ODS che XLS? Su Excel funzionano entrambi?
 - occorre spiegare i prerequisiti:
-  - programma di gestione fogli di lavoro (MS-Excel o LibreOffice)
+- programma di gestione fogli di lavoro (MS-Excel o LibreOffice)
 - occorre capire qual'è la struttura cui fanno riferimento per la pubblicazione dell'XML...

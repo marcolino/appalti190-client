@@ -46,13 +46,13 @@ export const getToken = (setToken) => {
   // we do not already have a valid token saved to local storage, get it from firebase
   return messaging.getToken({vapidKey}).then((token) => {
     if (token) {
-      console.info("PushNotifications - Firebase - current token for client:", token);
+      //console.log("PushNotifications - Firebase - current token for client:", token);
       if (setToken) setToken(token);
       // TODO: track the token -> client mapping, by sending to backend server, and
       // show on the UI that permission is secured
       localStorage.setItem(tokenKey, JSON.stringify({value: token, timestamp: new Date().getTime()}));
     } else {
-      console.info("No registration token available, requesting permission to generate one...");
+      //console.log("No registration token available, requesting permission to generate one...");
       if (setToken) setToken(null);
       // shows on the UI that permission is required
     }

@@ -1,5 +1,14 @@
 DOCUMENTATION
 
+Setup
+
+ - activities for every new project:
+    - register Firebase project, and update public/firebase-messaging-sw.js:firebaseConfig.
+
+ - use Cloudflare function to handle Strict-Transport-Security, not a
+   <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
+
+
 Security
  - .env files are excluded by git repositories; .env.gpg files are not;
    when adding some secret to .env, crypt it with yarn env-crypt (or better

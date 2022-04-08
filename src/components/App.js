@@ -1,20 +1,15 @@
-import React, { /*useEffect, useState, */useContext } from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-//import AuthService from "../services/AuthService";
-//import EventBus from "../libs/EventBus";
-import { AuthProvider } from "../providers/AuthProvider";
-import { ServiceProvider } from "../providers/ServiceProvider";
+import { JobProvider } from "../providers/JobProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
 import Routes from "./Routes";
 import Footer from "./Footer";
 import Loader from "./Loader";
 import CookieBanner from "./CookieBanner";
-// import PushNotifications from "../components/PushNotifications";
-// import FloatingActionButton from "./FloatingActionButton";
 import { isAuthLocation } from "../libs/Misc";
 import config from "../config";
 import theme from "../themes/default"; // here we choose the theme
@@ -22,9 +17,9 @@ import theme from "../themes/default"; // here we choose the theme
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <AuthProvider>
+      {/* <AuthProvider> */}
         <OnlineStatusProvider>
-          <ServiceProvider>
+          <JobProvider>
             <CssBaseline />
             <BrowserRouter>
               <Loader />
@@ -33,9 +28,9 @@ function App() {
               {/* <FloatingActionButton/> */}
             </BrowserRouter>
             {/* <PushNotifications /> */}
-          </ServiceProvider>
+          </JobProvider>
         </OnlineStatusProvider>
-      </AuthProvider>
+      {/* </AuthProvider> */}
     </ThemeProvider>
   );
 }

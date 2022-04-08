@@ -4,9 +4,8 @@ import EventBus from "../libs/EventBus";
 import { i18n } from "../i18n";
 import config from "../config";
 
-console.log("baseURL:", config.api.endpoint[(process.env.NODE_ENV === "production") ? "production" : "development" ]);
 const instance = axios.create({
-  baseURL: config.api.endpoint[(process.env.NODE_ENV === "production") ? "production" : "development" ],
+  baseURL: config.api.endpoint[(window.location.hostname === "localhost") ? "development" : "production"],
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,7 +23,7 @@ instance.interceptors.request.use(
           cfg.headers["Authorization"] = `Bearer ${token}`;
           break;
         default:
-          console.warn(`Backend type unforeseen: ${config.backendType}, using 'NodeJsExpress'`);
+          console.error(`Backend type unforeseen: ${config.backendType}, using 'NodeJsExpress'`);
           cfg.headers["x-access-token"] = token;
           break;
       }
@@ -32,6 +31,9 @@ instance.interceptors.request.use(
 
     // add user language to request
     cfg.headers["x-user-language"] = i18n.language;
+
+    // add accepted version to request
+    cfg.headers["accept-version"] = config.api.version;
 
     return cfg;
   },
@@ -65,9 +67,9 @@ instance.interceptors.response.use(
           TokenService.updateLocalAccessToken(accessToken);
 
           return instance(originalConfig);
-        } catch (_error) { // could not refresh token
+        } catch (error) { // could not refresh token
           EventBus.dispatch("logout");
-          return Promise.reject(_error);
+          return Promise.reject(error);
         }
       }
     }

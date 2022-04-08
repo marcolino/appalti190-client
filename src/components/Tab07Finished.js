@@ -1,29 +1,20 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-//import Button from "@material-ui/core/Button";
-// import { toast } from "./Toast";
-// import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph } from "./TabsComponents";
-//import { transformXls2Xml } from "../libs/Fetch";
-//import { ServiceContext } from "../providers/ServiceProvider";
-// import JobService from "../services/JobService";
 
-function Tab07Finished(props) { // TODO: we need file here...
+function Tab07Finished(props) {
   const { t } = useTranslation();
-  //const { service, setService } = useContext(ServiceContext);
   const [ statusLocal, setStatusLocal ] = useState({});
-  //const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
 
   useEffect(() => {
-    console.log("PROPS:", props);
     if (props.value === props.index) {
       (async () => {
         setStatusLocal({loading: true});
       })();
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props/*, service, setService*/]);
+  }, [props]);
 
   return (
     <TabContainer>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -24,7 +24,7 @@ import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
 import AuthService from "../services/AuthService";
-import { AuthContext } from "../providers/AuthProvider";
+//import { AuthContext } from "../providers/AuthProvider";
 import { isAdmin } from "../libs/Validation";
 import EventBus from "../libs/EventBus";
 import config from "../config";
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
   headerLabel: {
   },
-  title: { // TODO...
+  title: {
     flexGrow: 1,
     color: "#222",
     fontWeight: 700,
@@ -88,7 +88,7 @@ const elevation = 3; // header elevation over contents below
 
 function Header() {
   const classes = useStyles();
-  const { auth } = useContext(AuthContext);
+  //const { auth } = useContext(AuthContext);
   const history = useHistory();
   const { t } = useTranslation();
   const location = useLocation();
@@ -97,7 +97,7 @@ function Header() {
   // handle auth
   useEffect(() => {
     const user = AuthService.getCurrentUser();
-console.log("HEADER - CURRENT USER:", user);
+    //console.log("HEADER - CURRENT USER:", user);
 
     if (user) {
       setCurrentUser(user);
@@ -132,14 +132,14 @@ console.log("HEADER - CURRENT USER:", user);
   }, []);
 
   const logIn = () => {
-console.log("HEADER LOGIN");
+    //console.log("HEADER LOGIN");
     //setShowModeratorBoard(false);
     //setShowAdminBoard(false);
     setCurrentUser(AuthService.getCurrentUser());
   };
 
   const logOut = () => {
-console.log("HEADER LOGOUT");
+    //console.log("HEADER LOGOUT");
     AuthService.logout();
     //setShowModeratorBoard(false);
     //setShowAdminBoard(false);
@@ -295,9 +295,6 @@ console.log("HEADER LOGOUT");
     return !["/signin", "/signup", "/signout"].includes(location.pathname);
   };
 
-  //console.log('HEADER - auth:', auth);
-  //console.log("LOCATION:", location);
-
   return (
     <header>
       <AppBar className={classes.header} elevation={elevation} position="fixed">
@@ -355,7 +352,7 @@ console.log("HEADER LOGOUT");
               color="inherit"
             >
               {currentUser.profileImage ?
-                <ImageCustom src={auth.user.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+                <ImageCustom src={/*auth.user.*/currentUser.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
               :
                 <IconGravatar
                   // email={auth.user.email}

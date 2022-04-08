@@ -35,27 +35,17 @@ exports[`renders Home screen 1`] = `
               <div
                 class="makeStyles-title-15"
               >
-                Quiccasa
+                Appalti190
               </div>
               <div>
                 <a
                   class="MuiTypography-root MuiLink-root MuiLink-underlineHover makeStyles-menuLink-12 MuiTypography-colorInherit"
-                  href="/searches"
+                  href="/support"
                 >
                   <span
                     class="makeStyles-headerLabel-14"
                   >
-                    Searches
-                  </span>
-                </a>
-                <a
-                  class="MuiTypography-root MuiLink-root MuiLink-underlineHover makeStyles-menuLink-12 MuiTypography-colorInherit"
-                  href="/listings"
-                >
-                  <span
-                    class="makeStyles-headerLabel-14"
-                  >
-                    Listings
+                    Support
                   </span>
                 </a>
               </div>
@@ -86,13 +76,14 @@ exports[`renders Home screen 1`] = `
         <div
           style="display: none;"
         />
+        ...
       </div>
     </div>
     <div
       class="makeStyles-footer-5 makeStyles-footer-7"
     >
       <div
-        class="MuiContainer-root makeStyles-footer-23 MuiContainer-maxWidthLg"
+        class="MuiContainer-root makeStyles-footer-20 MuiContainer-maxWidthLg"
       >
         <div
           class="MuiGrid-root MuiGrid-container MuiGrid-justify-content-xs-center"
@@ -100,11 +91,11 @@ exports[`renders Home screen 1`] = `
           <h6
             class="MuiTypography-root MuiTypography-body2 MuiTypography-colorTextSecondary"
           >
-            quiccasa-client
+            appalti190-client
              
              
             v
-            0.1.77
+            2.0.3
              
              ~ 
             ©
@@ -116,9 +107,9 @@ exports[`renders Home screen 1`] = `
              
             <a
               class="MuiTypography-root MuiLink-root MuiLink-underlineHover MuiTypography-colorInherit"
-              href="https://www.sistemisolari.com"
+              href="https://www.arsistemi.it"
             >
-              Sistemi Solari
+              AR Sistemi
             </a>
             <span>
                

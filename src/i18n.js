@@ -3,14 +3,12 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import config from "./config";
 
-import en from "./locales/en/translation.json";
-import it from "./locales/it/translation.json";
-import fr from "./locales/fr/translation.json";
-
 /**
  * All supported languages resources are listed here.
  * When adding a new language, add it here.
  */
+import { en, fr, it } from "./locales/index";
+
 const resources = {
   en: { translation: en },
   it: { translation: it },

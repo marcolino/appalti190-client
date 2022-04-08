@@ -1,20 +1,12 @@
 import React, { useState, useEffect/*, useContext*/ } from "react";
 import { makeStyles } from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
-//import Card from "@material-ui/core/Card";
-//import CardHeader from "@material-ui/core/CardHeader";
-//import CardContent from "@material-ui/core/CardContent";
-//import Typography from "@material-ui/core/Typography";
 import { useTranslation } from "react-i18next";
-//import axios from "axios";
-//import { getUsers } from "../libs/Fetch";
-//import EventBus from "../libs/EventBus";
 import { errorMessage } from "../libs/Misc";
 import UserService from "../services/UserService";
-import moment from "moment";
-import "moment/locale/it"; // TODO: import all needed locales... (!!!)
-//import { toast } from "./Toast";
-//import { AuthContext } from "../providers/AuthProvider";
+import { toast } from "./Toast";
+//import moment from "moment";
+//import "moment/locale/it"; // import all needed locales...
 
 const useStyles = makeStyles(theme => ({
 	adminPanel: {
@@ -26,60 +18,28 @@ const useStyles = makeStyles(theme => ({
 
 function AdminPanel() {
 	const classes = useStyles();
-  //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
-
-  //const [data/*, setData*/] = useState({});
   const [content, setContent] = useState({});
 
-  moment.locale("it");
+  //moment.locale("it");
 
   useEffect(() => {
     UserService.getAdminPanel().then(
-      (response) => {
-        setContent(response.data);
+      result => {
+        if (result instanceof Error) { // TODO: test this code...
+          toast.error(errorMessage(result));
+          return setContent(errorMessage(result));
+        }
+        setContent(result.data);
       },
-      (error) => {
-        setContent(errorMessage(error));
-        // if (error.response && error.response.status === 403) {
-        //   EventBus.dispatch("logout");
-        // }
-      }
+      // (error) => {
+      //   setContent(errorMessage(error));
+      //   // if (error.response && error.response.status === 403) {
+      //   //   EventBus.dispatch("logout");
+      //   // }
+      // }
     );
   }, []);
-  
-  // useEffect(() => {
-  //   (async () => {
-  //     await getUsers({}).then(data => {
-  //       if (!data.ok) {
-  //         console.warn("getUsers error:", data);
-  //         toast.error(t(data.message));
-  //         return;
-  //       }
-  //       console.log("getUsers success:", data);
-  //     }).catch(err => {
-  //       console.error("getUsers error catched:", err);
-  //       toast.error(t(err.message));
-  //     });
-  //   })();
-
-//     try {
-//       const config = {
-//         headers: { Authorization: `Bearer ${auth.user.accessToken}` }
-//       };
-// console.log('auth.user.accessToken:', auth.user.accessToken);
-//       const result = await axios.get(
-//         "/api/user/",
-//         config
-//         );
-//       //const res = await result.json();
-// console.log("result:", result);
-//       setData(result.data);
-//     } catch(err) {
-//       console.log("Fetch error:", err); // TODO...
-//       toast.error(t(err.message));
-//     }
-//   }, [t]);
 
   return (
     <div className={classes.adminPanel}>
@@ -116,7 +76,6 @@ function AdminPanel() {
                       {t("Verified") + ":"} {user.isVerified ? t("yes") : t("no")}
                     </Typography>
                     <Typography color="text.secondary">
-                      {// TODO: localize according current language... possibly in a much more outer level}
                       {t("Created on") + ":"} {moment(user.createdAt).locale("it").format("YYYY-MM-DD")}
                     </Typography>
                     <Typography color="text.secondary">

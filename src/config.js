@@ -2,7 +2,7 @@ module.exports = {
   companyName: "AR Sistemi",
   companyHomeSiteName: "arsistemi.it",
   companyHomeSiteUrl: "https://www.arsistemi.it",
-  companyOwner: "Marco Solari", // TODO: Antonio?
+  companyOwner: "Antonio Rossi & Marco Solari",
   companyOwnerFiscalCode: "SLRMRC61M31L219Y",
   companyOwnerStreetAddress: "Strada di Reaglie, 18",
   companyOwnerCity: "Torino",
@@ -14,10 +14,9 @@ module.exports = {
   appTitle: "Appalti190",
   appSiteUrl: "appalti190.arsistemi.it",
   appTermsValidityStartDate: "01-01-2022",
-  startUrl: ".", // TODO: "/" or "." ?
   display: "standalone", // for manifest
   api: {
-    version: 1, // TODO: handle this...
+    version: "1", // semver syntax
     endpoint: {
       development: "http://localhost:5000/api",
       production: "https://appalti190.herokuapp.com/api",
@@ -46,12 +45,6 @@ module.exports = {
     //"Facebook",
     //"Google",
   ],
-  oauth: { // TODO
-    domain: "auth.sistemisolari.com",
-    // OK for Google // scope: [ "phone", "email", "profile", "openid", "aws.cognito.signin.user.admin" ],
-    scope: [ "email", "openid", "aws.cognito.signin.user.admin" ],
-    responseType: "code",
-  },
   oauthRedirectSignInLocal: "http://localhost:5000/",
   oauthRedirectSignInPublic: "https://appalti190.arsistemi.it/",
   oauthRedirectSignOutLocal: "http://localhost:5000/",
@@ -74,12 +67,5 @@ module.exports = {
   data: {
     templateDownloadName: "Appalti190.ots",
     templateDownloadLink: "/data/Appalti190.ots",
-  },
-  spinner: { // TODO: unused
-    delay: 100,
-    type: "Audio",
-    color: "darkred",
-    size: 66,
-    opacity: .50,
   },
 };

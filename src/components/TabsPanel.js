@@ -139,7 +139,6 @@ const TabsPanel = () => {
   const [tabId, setTabId] = useState(0);
 
   function handleChangeTab(event, id) {
-    console.log("handleChangeTab id:", id);
     setTabId(id); // comment to disable the possibility to change tab by clicking on app bar titles
   }
   
@@ -162,10 +161,10 @@ const TabsPanel = () => {
         case "finish!":
           break;
         case "next":
-          id = tabId + 1; // TODO: handle ring
+          id = tabId + 1;
           break;
         case "prev":
-          id = tabId - 1; // TODO: handle ring
+          id = tabId - 1;
           break;
         default:
           console.error(`Unforeseen where specification in goto: ${where}`);

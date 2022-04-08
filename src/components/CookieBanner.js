@@ -30,7 +30,7 @@ function CookieBanner() {
       style={{ fontFamily: "Open Sans", color:"#999999", background: "#2b373b", display: "block" }}
       buttonStyle={{ color: "#4e503b", fontSize: "13px", float: "right" }}
       expires={365}
-      dismissOnScroll={true} // TODO: not handled yet
+      acceptOnScroll={true} // accept on scroll! (is it legal?)
     >
       {t("We use cookies or similar technologies as specified in the")} {" "}
         <Link color="primary" href={"/privacy-policy"}>

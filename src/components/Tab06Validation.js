@@ -4,41 +4,37 @@ import { useTranslation } from "react-i18next";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
-//import { transformXls2Xml } from "../libs/Fetch";
-import { ServiceContext } from "../providers/ServiceProvider";
+import { JobContext } from "../providers/JobProvider";
 import JobService from "../services/JobService";
 
-function Tab06Validation(props) { // TODO: we need file here...
+function Tab06Validation(props) {
   const { t } = useTranslation();
-  //const { service, setService } = useContext(ServiceContext);
-  const { service, setService } = useContext(ServiceContext);
+  const { service, setService } = useContext(JobContext);
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
 
   useEffect(() => {
-    console.log("PROPS:", props);
     if (props.value === props.index) {
       if (!service.outcome) {
         (async () => {
           setStatusLocal({loading: true});
-          await JobService.outcomeCheck().then(
-            response => {
-    console.log("outcomeCheck XXX:", response);
-              if (!response) { // TODO: response.ok ? ...
-                toast.error(errorMessage(response.message));
-                setStatusLocal({error: response.message});
-                return;
+          await JobService.outcomeCheck(
+            service.transform.metadati.annoRiferimento,
+            service.transform.header.codiceFiscaleStrutturaProponente
+          ).then(
+            result => {
+              if (result instanceof Error) { // TODO: always handle errors this way!
+                toast.error(errorMessage(result));
+                return setStatusLocal({ error: errorMessage(result)});
               }
-              console.log("outcomeCheck success:", response.data);
-              // TODO: tell user, and enable CONTINUE button...
-              setService({...service, outcome: response.data.result});
-              setStatusLocal({success: response.data});
+              setService({...service, outcome: result.data.result});
+              setStatusLocal({success: result.data});
               setNextIsEnabled(true);
             },
-            error => { // TODO...
-              console.error('outcome check error:', error);
-              toast.error(errorMessage(error));
-            }
+            // error => { // to be handled...
+            //   console.error('outcome check error:', error);
+            //   toast.error(errorMessage(error));
+            // }
           );
         })();
       }

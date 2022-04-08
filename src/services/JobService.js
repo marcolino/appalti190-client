@@ -4,39 +4,31 @@ const upload = (file) => {
   const formData = new FormData();
   formData.append("file", file);
   
-  return api.post(
-    "/job/upload", 
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      }
+  return api.post("/job/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
     }
-  );
+  });
 };
 
 const transformXls2Xml = (filePath) => {
-  return api.post(
-    "/job/transformXls2Xml/filePath",
+  return api.post("/job/transformXls2Xml/:filePath", {
+    filePath,
+  });
+}
+
+const validateXml = (transform) => {
+  return api.post("/job/validateXml/:transform", {
+    transform,
+  });
+}
+
+const outcomeCheck = (anno, codiceFiscaleAmministrazione) => {
+  return api.post("/job/outcomeCheck/:anno/:codiceFiscaleAmministrazione",
     {
-      filePath,
-    }
-  );
-}
-
-const validateXml = () => {
-  return api.post(
-    "/job/validateXml",
-  );
-}
-
-const outcomeCheck = (/*anno, codiceFiscaleAmministrazione*/) => {
-  return api.post(
-    "/job/outcomeCheck"/*/anno/codiceFiscaleAmministrazione"*/,
-    {/*
       anno,
       codiceFiscaleAmministrazione,
-    */}
+    }
   );
 }
 

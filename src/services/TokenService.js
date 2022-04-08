@@ -19,7 +19,7 @@ const getUser = () => {
 };
 
 const setUser = (user) => {
-  console.log("TokenService setUser:", JSON.stringify(user));
+  //console.log("TokenService setUser:", JSON.stringify(user));
   localStorage.setItem("user", JSON.stringify(user));
 };
 
