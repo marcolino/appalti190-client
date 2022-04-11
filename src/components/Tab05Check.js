@@ -1,75 +1,120 @@
 import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
 import { JobContext } from "../providers/JobProvider";
+import AuthService from "../services/AuthService";
 import JobService from "../services/JobService";
+import Dialog from "./Dialog";
 
 function Tab05Check(props) {
   const { t } = useTranslation();
-  const { service, setService } = useContext(JobContext);
+  const history = useHistory();
+  const { job, setJob } = useContext(JobContext);
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
-  
+  const [dialogTitle, setDialogTitle] = useState(null);
+  const [dialogContent, setDialogContent] = useState(null);
+  const [dialogButtons, setDialogButtons] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const openDialog = (title, content, buttons) => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogButtons(buttons);
+    setDialogOpen(true);    
+  }
+
   useEffect(() => {
     if (props.active) {
-      if (service.file && !service.transform) {
+      if (job.file && !job.transform) {
         (async () => {
           setStatusLocal({loading: true});
-          await JobService.transformXls2Xml(service.file.path).then(
-            /*async*/ result => {
-              if (result instanceof Error) { // TODO: always handle errors this way!
-                setService({...service, transform: result});
+          await JobService.transformXls2Xml(job.file.path).then(
+            result => {
+              if (result instanceof Error) {
+                setJob({...job, transform: result});
                 toast.error(errorMessage(result));
                 return setStatusLocal({ error: errorMessage(result)});
               }
-              setService({...service, transform: result.data.result});
+              setJob({...job, transform: result.data.result});
               setStatusLocal({success: result.data});
               //setNextIsEnabled(true);
             },
-            // error => {
-            //   console.error('transformXls2Xml error:', error);
-            //   setService({...service, transform: error}); // to stop repeated calls...
-            //   toast.error(errorMessage(error));
-            // }
           );
         })();
       }
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props, service/*, setService*/]);
+  }, [props, job/*, setJob*/]);
+
+  useEffect(() => {
+    checkUserPlan();
+  }, [job.transform]);
 
   useEffect(() => {
     if (props.active) {
-      if (service.file && service.transform && !service.validateXml) {
+      if (job.file && job.transform && !job.validateXml) {
         (async () => {
           setStatusLocal({loading: true});
-          await JobService.validateXml(service.transform).then(
+          await JobService.validateXml(job.transform).then(
             response => {
-              if (response instanceof Error) { // TODO: always handle errors this way!
-                setService({...service, validateXml: response});
+              if (response instanceof Error) {
+                setJob({...job, validateXml: response});
                 toast.error(errorMessage(response));
                 return setStatusLocal({ error: errorMessage(response)});
               }
-              setService({...service, validateXml: response.data.result});
+              setJob({...job, validateXml: response.data.result});
               setStatusLocal({success: response.data});
-              setNextIsEnabled(true);
             },
-            // error => {
-            //   setService({...service, validateXml: error}); // to stop repeated calls...
-            //   toast.error(errorMessage(error));
-            // }
           );
         })();
       }
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props, service/*, setService*/]);
+  }, [props, job/*, setJob*/]);
 
   const onNext = () => {
     props.goto("next");
+  };
+
+  const checkUserPlan = async() => {
+    if (job.transform) {
+      const user = AuthService.getCurrentUser();
+      console.log("PLAN:", user.plan.cigNumberAllowed, job.transform.cigCount);
+      if (
+        (user.plan.cigNumberAllowed === "unlimited") ||
+        (parseInt(user.plan.cigNumberAllowed) < job.transform.cigCount)
+      ) {
+        const planRequired = {}; // TODO: ask server for plans...
+        planRequired.name = "Better";
+        openDialog(
+          t("Please upgrade your plan"),
+          t("You need to upgrade your plan to proceed.") + "\n" +
+          t(`Your current plan is "${user.plan.name}".`) + "\n" +
+          t(`To elaborate ${job.transform.cigCount} CIGs you need at least plan "${planRequired.name}"`),
+          [
+            {
+              text: t("Upgrade plan"),
+              close: true,
+              callback: () => {
+                setJob({...job, redirect2Tab: props.tabId});
+                history.push("/profile"); // TODO: plans will be handled in /profile route?
+              },
+            },
+            {
+              text: t("Cancel"),
+              close: true,
+            }
+          ],
+        );
+      } else {
+        setNextIsEnabled(true);
+      }
+    }
   };
 
   return (
@@ -79,7 +124,7 @@ function Tab05Check(props) {
           {t("Check")}
         </TabTitle>
         <TabParagraph>
-         {/* SL:  {JSON.stringify(status.service?.transform)} */}
+         {/* SL:  {JSON.stringify(status.job?.transform)} */}
           {statusLocal && "loading" in statusLocal && `Elaborazione in corso...`}
           {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
           {statusLocal && "success" in statusLocal && `Elaborazione completata`}
@@ -88,7 +133,7 @@ function Tab05Check(props) {
         {((statusLocal && "success" in statusLocal) || (statusLocal && "error" in statusLocal)) && (
           <pre>
             {
-              JSON.stringify(service, null, 2)
+              JSON.stringify(job, null, 2)
             }
           </pre>
         )}
@@ -97,6 +142,15 @@ function Tab05Check(props) {
       <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
         {`${t("Continue")}`}
       </TabNextButton>
+
+      <Dialog
+        dialogOpen={dialogOpen}
+        dialogSetOpen={setDialogOpen}
+        dialogTitle={dialogTitle}
+        dialogContent={dialogContent}
+        dialogButtons={dialogButtons}
+      />
+
     </TabContainer>
   );
 }

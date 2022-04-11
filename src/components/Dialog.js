@@ -1,15 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Typography from "@material-ui/core/Typography";
-import Dialog from "@material-ui/core/Dialog";
+import DialogMui from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { FormButton } from "./FormElements";
+import { FormButton } from "../components/FormElements";
 
-const DynDialog = (props) => {
+const Dialog = (props) => {
   return (
-    <Dialog
+    <DialogMui
       open={props.dialogOpen}
       onClose={() => props.dialogSetOpen(false)}
       aria-labelledby="alert-dialog-title"
@@ -41,11 +41,11 @@ const DynDialog = (props) => {
           </FormButton>
         ))}
       </DialogActions>
-    </Dialog>
+    </DialogMui>
   );
 }
 
-DynDialog.propTypes = {
+Dialog.propTypes = {
   dialogId: PropTypes.string,
   dialogOpen: PropTypes.bool,
   dialogSetOpen: PropTypes.func,
@@ -60,7 +60,7 @@ DynDialog.propTypes = {
   ),
 };
 
-DynDialog.defaultProps = {
+Dialog.defaultProps = {
   dialogOpen: false,
   dialogButtons: [
     {
@@ -71,4 +71,4 @@ DynDialog.defaultProps = {
   ],
 };
 
-export default React.memo(DynDialog);
+export default React.memo(Dialog);

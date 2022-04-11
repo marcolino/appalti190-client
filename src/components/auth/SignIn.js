@@ -98,19 +98,15 @@ function SignIn() {
       password
     }).then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
+        if (result instanceof Error) {
           toast.error(errorMessage(result));
           setError({}); // we don't know which field to blame
           return;
         }
-        console.info(`signin by ${email}`); // TODO: audit to the cloud?
+        console.info(`signin by ${email}`);
         EventBus.dispatch("login");
         history.push("/");
       },
-      // (error) => {
-      //   console.error("signin error:", error);
-      //   toast.error(errorMessage(error));
-      // }
     );
   };
 

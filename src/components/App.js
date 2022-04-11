@@ -17,20 +17,18 @@ import theme from "../themes/default"; // here we choose the theme
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      {/* <AuthProvider> */}
-        <OnlineStatusProvider>
-          <JobProvider>
-            <CssBaseline />
-            <BrowserRouter>
-              <Loader />
-              <Contents />
-              <CookieBanner />
-              {/* <FloatingActionButton/> */}
-            </BrowserRouter>
-            {/* <PushNotifications /> */}
-          </JobProvider>
-        </OnlineStatusProvider>
-      {/* </AuthProvider> */}
+      <OnlineStatusProvider>
+        <JobProvider>
+          <CssBaseline />
+          <BrowserRouter>
+            <Loader />
+            <Contents />
+            <CookieBanner />
+            {/* <FloatingActionButton/> */}
+          </BrowserRouter>
+          {/* <PushNotifications /> */}
+        </JobProvider>
+      </OnlineStatusProvider>
     </ThemeProvider>
   );
 }

@@ -142,11 +142,10 @@ function SignUp() {
       lastName
     }).then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
+        if (result instanceof Error) {
           switch (result.response.data.code) {
             case "EmailExistsException":
               setError({ email: errorMessage(result) }); // since we use email as username, we blame email field as guilty
-              //toast.warning(errorMessage(result));
               openDialog(
                 t("Email exists already"),
                 t("This email is already present") + `.\n` +
@@ -162,7 +161,6 @@ function SignUp() {
                     text: t("No, I will retry with a different email"),
                     close: true,
                   }
-
                 ],
               );
       
@@ -194,7 +192,7 @@ function SignUp() {
       code
     }).then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
+        if (result instanceof Error) {
           console.error("signupConfirm error:", result);
           toast.error(errorMessage(result));
           return setError({ code: result.message });
@@ -223,8 +221,7 @@ function SignUp() {
       email,
     }).then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
-          console.error("signupConfirm error:", result);
+        if (result instanceof Error) {
           toast.error(errorMessage(result));
           return setError({ code: errorMessage(result) });
         }

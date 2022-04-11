@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton, TabTooltip } from "./TabsComponents";
+
 function Tab01Start(props) {
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();

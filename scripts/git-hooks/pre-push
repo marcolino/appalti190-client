@@ -9,6 +9,7 @@ if [ ! -f ".env" ]; then
 fi
 
 if [ ".env" -nt ".env.gpg" ]; then # encript again only if .env file is newer
+  echo "Crypting .env, please give a passphrase"
   gpg --batch --yes -c ".env"
   if [ $? -ne 0 ]; then
     echo "Failed encrypting .env file"

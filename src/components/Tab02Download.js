@@ -1,19 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
+import AuthService from "../services/AuthService";
+import { JobContext } from "../providers/JobProvider";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
+import Dialog from "./Dialog";
 import config from "../config";
 
 function Tab02Download(props) {
   const { t } = useTranslation();
+  const history = useHistory();
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
+  const { job, setJob } = useContext(JobContext);
+  const [dialogTitle, setDialogTitle] = useState(null);
+  const [dialogContent, setDialogContent] = useState(null);
+  const [dialogButtons, setDialogButtons] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const openDialog = (title, content, buttons) => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogButtons(buttons);
+    setDialogOpen(true);    
+  }
 
   const onNext = () => {
     props.goto("next");
   };
 
   const onDownload = () => {
+    const user = AuthService.getCurrentUser();
+    if (!user) { // user is not authenticated
+        openDialog(
+        t("Please log in or register"),
+        t("You need to be authenticated to proceed"),
+        [
+          {
+            text: t("Login"),
+            close: true,
+            callback: () => {
+              setJob({...job, redirect2Tab: props.tabId});
+              history.push("/signin");
+            },
+          },
+          {
+            text: t("Register"),
+            close: true,
+            callback: () => history.push("/signup"),
+          },
+          {
+            text: t("Cancel"),
+            close: true,
+          }
+        ],
+      );
+      return;
+    }
+
     const link = document.createElement("a");
     link.download = config.data.templateDownloadName;
     link.href = config.data.templateDownloadLink;
@@ -46,6 +91,15 @@ function Tab02Download(props) {
       <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
         {`${t("Continue")}`}
       </TabNextButton>
+
+      <Dialog
+        dialogOpen={dialogOpen}
+        dialogSetOpen={setDialogOpen}
+        dialogTitle={dialogTitle}
+        dialogContent={dialogContent}
+        dialogButtons={dialogButtons}
+      />
+
     </TabContainer>
   );
 }

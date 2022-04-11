@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -9,6 +9,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 //import { StatusContext } from "../providers/StatusProvider";
+import { JobContext } from "../providers/JobProvider";
 import Tab01Start from "./Tab01Start";
 import Tab02Download from "./Tab02Download";
 import Tab03FillData from "./Tab03FillData";
@@ -134,9 +135,10 @@ const useStyles = makeStyles(theme => ({
 
 const TabsPanel = () => {
   const classes = useStyles();
-  const { t } = useTranslation();
   //const { status, setStatus } = useContext(StatusContext);
-  const [tabId, setTabId] = useState(0);
+  const { job } = useContext(JobContext);
+  const [tabId, setTabId] = useState(job.redirect2Tab !== undefined ? job.redirect2Tab : 0);
+  const { t } = useTranslation();
 
   function handleChangeTab(event, id) {
     setTabId(id); // comment to disable the possibility to change tab by clicking on app bar titles
@@ -209,25 +211,25 @@ const TabsPanel = () => {
       </AppBar>
 
       <TabPanel value={tabId} index={0}>
-        <Tab01Start active={tabId === 0} goto={(where) => goto(where)} />
+        <Tab01Start active={tabId === 0} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={1}>
-        <Tab02Download active={tabId === 1} goto={(where) => goto(where)} />
+        <Tab02Download active={tabId === 1} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={2}>
-        <Tab03FillData active={tabId === 2} goto={(where) => goto(where)} />
+        <Tab03FillData active={tabId === 2} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={3}>
-        <Tab04Upload active={tabId === 3} goto={(where) => goto(where)} />
+        <Tab04Upload active={tabId === 3} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={4}>
-        <Tab05Check active={tabId === 4} _value={tabId} _index={4} goto={(where) => goto(where)} />
+        <Tab05Check active={tabId === 4} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={5}>
-        <Tab06Validation active={tabId === 5} value={tabId} index={5} goto={(where) => goto(where)} />
+        <Tab06Validation active={tabId === 5} tabId={tabId} goto={(where) => goto(where)} />
       </TabPanel>
       <TabPanel value={tabId} index={6}>
-        <Tab07Finished active={tabId === 6} value={tabId} index={6} goto={(where) => goto(where)} />
+        <Tab07Finished active={tabId === 6} tabId={tabId} /*value={tabId} index={6}*/ goto={(where) => goto(where)} />
       </TabPanel>
     </div>
   );

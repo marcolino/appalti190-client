@@ -1,12 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { useTranslation } from "react-i18next";
 import Button from "@material-ui/core/Button";
 import useDragAndDrop from "../hooks/useDragAndDrop";
+import AuthService from "../services/AuthService";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
 import { errorMessage } from "../libs/Misc";
 import { toast } from "./Toast";
+import Dialog from "./Dialog";
 import { JobContext } from "../providers/JobProvider";
 import JobService from "../services/JobService";
 
@@ -36,9 +39,15 @@ function Tab04Upload(props) {
   const classes = useStyles();
   const { t } = useTranslation();
   /* eslint-disable no-unused-vars */
-  const { service, setService } = useContext(JobContext);
+  const { job, setJob } = useContext(JobContext);
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
+  const history = useHistory();
+  const [dialogTitle, setDialogTitle] = useState(null);
+  const [dialogContent, setDialogContent] = useState(null);
+  const [dialogButtons, setDialogButtons] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [ file, setFile ] = useState(null);
+
   const {
     dragOver,
     setDragOver,
@@ -47,6 +56,45 @@ function Tab04Upload(props) {
     fileDropError,
     setFileDropError,
   } = useDragAndDrop();
+
+  const openDialog = (title, content, buttons) => {
+    setDialogTitle(title);
+    setDialogContent(content);
+    setDialogButtons(buttons);
+    setDialogOpen(true);    
+  }
+
+  useEffect(() => {
+    if (props.active) {
+      const user = AuthService.getCurrentUser();
+      if (!user) { // user is not authenticated
+          openDialog(
+          t("Please log in or register"),
+          t("You need to be authenticated to proceed"),
+          [
+            {
+              text: t("Login"),
+              close: true,
+              callback: () => {
+                setJob({...job, redirect2Tab: props.tabId});
+                history.push("/signin");
+              },
+            },
+            {
+              text: t("Register"),
+              close: true,
+              callback: () => history.push("/signup"),
+            },
+            {
+              text: t("Cancel"),
+              close: true,
+            }
+          ],
+        );
+        return;
+      }
+    }
+  }, [props, job, setJob, history, t]);
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -104,19 +152,16 @@ function Tab04Upload(props) {
   const fileUpload = async () => {
     await JobService.upload(file).then(
       result => {
-        if (result instanceof Error) {
-          setFileDropError(errorMessage(result)); // TODO: handle upload errors in a separate state variable
-          toast.error(errorMessage(result));
-          return;
-        }
-
         //console.log('Upload success, file path', result.data.file);
-        setService({file: result.data.file});
-        //console.log("service:", service);
+        setJob({file: result.data.file});
+        //console.log("job:", job);
       },
-      // (error) => { // TODO...
-      //   console.error('Upload error:', error);
-      // }
+      error => {
+        console.error('Upload error:', error);
+        setFileDropError(errorMessage(error)); // TODO: handle upload errors in a separate state variable
+        toast.error(errorMessage(error));
+        return;
+      }
     );
   };
 
@@ -167,6 +212,15 @@ function Tab04Upload(props) {
       <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
         {`${t("Continue")}`}
       </TabNextButton>
+
+      <Dialog
+        dialogOpen={dialogOpen}
+        dialogSetOpen={setDialogOpen}
+        dialogTitle={dialogTitle}
+        dialogContent={dialogContent}
+        dialogButtons={dialogButtons}
+      />
+
     </TabContainer>
   );
 }

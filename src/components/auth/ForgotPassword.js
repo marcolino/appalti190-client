@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -39,7 +40,7 @@ function ForgotPassword() {
   const [dialogContent, setDialogContent] = useState(null);
   const [dialogButtons, setDialogButtons] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
-
+  const history = useHistory();
   const { t } = useTranslation();
  
   const openDialog = (title, content, buttons) => {
@@ -92,7 +93,7 @@ function ForgotPassword() {
 
     AuthService.forgotPassword({email}).then(
       (result) => {
-        if (result instanceof Error) { // TODO: always handle errors this way!
+        if (result instanceof Error) {
           toast.error(errorMessage(result));
           return setError({ email: errorMessage(result)});
         }
@@ -106,21 +107,9 @@ function ForgotPassword() {
               t("Verification code sent"),
               t(`Verification code sent via {{medium}} to {{email}}.`, {medium, email}) + `\n` +
               t(`Please copy and paste it here.`),
-              // [
-              //   {
-              //     text: t("Ok"),
-              //     close: true,
-              //     callback: () => console.log("Post OK close action"),
-              //   }
-              // ]
             );
         }
       },
-//       (error) => { // TODO: THIS IS NEVER REACHED!!!
-// console.error("E forgotPassword error:", error);
-//         toast.error(errorMessage(error));
-//         setError({ email: errorMessage(error)}); // TODO: always do setError( ... errorMessage(error) ...)
-//       }
     );
   };
   
@@ -135,9 +124,14 @@ function ForgotPassword() {
       code,
     }).then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
-          toast.error(errorMessage(error));
-          return setError({ password: errorMessage(error)}); // TODO: which field to blame?
+        if (result instanceof Error) {
+console.log("EC", result.response.data.code, Object.keys(result), Object.values(result));
+          const code = result.response.data.code;
+          toast.error(errorMessage(result));
+          return code === "code" ? 
+            setError({ confirmationCode: errorMessage(result) }) :
+            setError({ password: errorMessage(result) })
+          ;
         }
         setWaitingForCode(false);
         setEmail("");
@@ -147,13 +141,13 @@ function ForgotPassword() {
         openDialog(
           t(`Password reset success`),
           t(`You can now sign in with your new password`),
-          // [
-          //   {
-          //     text: t("Ok"),
-          //     close: true,
-          //     callback: () => console.log("Post OK close action"),
-          //   }
-          // ]
+          [
+            {
+              text: t("Ok"),
+              close: true,
+              callback: () => history.push("/signin"),
+            }
+          ]
         );
       },
     );
@@ -172,9 +166,8 @@ function ForgotPassword() {
           toast.error(errorMessage(result));
           return;
         }
-        // TODO: CHECK IF IN DATA WE HAVE MESSAGE TO SHOW TO THE USER resendResetPasswordCode
-  console.log("CHECK IF IN DATA WE HAVE MESSAGE TO SHOW TO THE USER resendResetPasswordCode", result);
-        toast.info("Code resent successfully");
+        toast.info(`A verification code has been sent via ${result.codeDeliveryMedium} to ${email}`);
+        //toast.info("Code resent successfully");
       }
     );
   };

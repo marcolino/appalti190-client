@@ -17,7 +17,15 @@ const getAdminBoard = () => {
 };
 
 const getAdminPanel = () => {
-  return api.get("/admin/getAdminPanel");
+  return api.get("/admin/getAdminPanel"
+  ).then(
+    (response) => {
+      return response.data;
+    },
+    (error) => {
+      return error;
+    }
+  );
 };
 
 const UserService = {

@@ -12,11 +12,11 @@ function SignOut() {
   const history = useHistory();
 
   useEffect(() => {
-    if (AuthService.getCurrentUser()) { // TODO: do we need this?
+    //if (AuthService.getCurrentUser()) { // we don't need this...
       AuthService.logout();
       history.push("/");
       EventBus.dispatch("logout");
-    }
+    //}
   }, [history]);
 
   return null; // returning null is required

@@ -13,7 +13,7 @@ const signup = ({/*username, */email, password, firstName, lastName}) => {
     response => {
       return response.data;
     },
-    error => { // TODO: thest this use case!
+    error => {
       return error;
     }
   );
@@ -27,7 +27,7 @@ const signupConfirm = ({email, code}) => {
     response => {
       return response.data;
     },
-    error => { // TODO: thest this use case!
+    error => {
       return error;
     }
   );
@@ -46,7 +46,7 @@ const signin = ({/*username,*/email, password}) => {
       }
       return response.data;
     },
-    error => { // TODO: thest this use case!
+    error => {
       return error;
     }
   );

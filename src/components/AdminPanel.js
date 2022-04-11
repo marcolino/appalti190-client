@@ -4,6 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import { useTranslation } from "react-i18next";
 import { errorMessage } from "../libs/Misc";
 import UserService from "../services/UserService";
+//import AuthService from "../services/AuthService";
+//import Dialog from "./Dialog";
 import { toast } from "./Toast";
 //import moment from "moment";
 //import "moment/locale/it"; // import all needed locales...
@@ -26,18 +28,12 @@ function AdminPanel() {
   useEffect(() => {
     UserService.getAdminPanel().then(
       result => {
-        if (result instanceof Error) { // TODO: test this code...
+        if (result instanceof Error) {
           toast.error(errorMessage(result));
-          return setContent(errorMessage(result));
+          return; // setContent(errorMessage(result));
         }
-        setContent(result.data);
+        setContent(result);
       },
-      // (error) => {
-      //   setContent(errorMessage(error));
-      //   // if (error.response && error.response.status === 403) {
-      //   //   EventBus.dispatch("logout");
-      //   // }
-      // }
     );
   }, []);
 

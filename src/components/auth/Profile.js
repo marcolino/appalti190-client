@@ -17,7 +17,7 @@ function Profile() {
   const { t } = useTranslation();
   const currentUser = AuthService.getCurrentUser();
 
-  // TODO: if (auth.user) useEffect(fetch("/api/user")) ...
+  // if (auth.user) useEffect(fetch("/api/user")) ...
 
   return (
     <div className={classes.profile}>
