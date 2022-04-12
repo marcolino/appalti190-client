@@ -68,7 +68,7 @@ function Tab04Upload(props) {
     if (props.active) {
       const user = AuthService.getCurrentUser();
       if (!user) { // user is not authenticated
-          openDialog(
+        openDialog(
           t("Please log in or register"),
           t("You need to be authenticated to proceed"),
           [

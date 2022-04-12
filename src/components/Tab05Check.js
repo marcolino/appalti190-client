@@ -83,6 +83,12 @@ function Tab05Check(props) {
 
   const checkUserPlan = async() => {
     if (job.transform) {
+
+      /**
+       * TODO: check job.transform.code === "TRUNCATED_DUE_TO_PLAN_LIMIT" from server,
+       * not user.plan.cigNumberAllowed...
+       */
+
       const user = AuthService.getCurrentUser();
       console.log("PLAN:", user.plan.cigNumberAllowed, job.transform.cigCount);
       if (
@@ -106,7 +112,11 @@ function Tab05Check(props) {
               },
             },
             {
-              text: t("Cancel"),
+              text: t(`Proceed with the first ${user.plan.cigNumberAllowed} CIGs`),
+              callback: () => {
+                setNextIsEnabled(true);
+                onNext();
+              },
               close: true,
             }
           ],
