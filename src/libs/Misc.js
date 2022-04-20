@@ -4,11 +4,11 @@ import React from "react";
  * Try to extrapolate the error description from a generic error object
  */
 export const errorMessage = error => {
-console.log("errorMessage error.request.data.message:", error?.request?.data?.message);
-console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
-console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
-console.log("errorMessage error.message:", error.message);
-console.log("errorMessage error.toString:", error.toString());
+// console.log("errorMessage error.request.data.message:", error?.request?.data?.message);
+// console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
+// console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
+//console.log("errorMessage error.message:", error?.message);
+//console.log("errorMessage error.toString:", error?.toString());
   return (
     (
       error.request &&

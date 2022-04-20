@@ -27,6 +27,53 @@ const removeUser = () => {
   localStorage.removeItem("user");
 };
 
+const getJob = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  //console.log("TokenService getJob:", user.job);
+  return user?.job ? user.job : {};
+};
+
+const setJob = (job) => {
+console.log("++++++++++++++++++++++++++++++++++++++++++++++ TokenService setJob:", JSON.stringify(job));
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    user.job = job;
+    localStorage.setItem("user", JSON.stringify(user));
+  }
+};
+
+const removeJob = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    delete user.job;
+    localStorage.setItem("job");
+  }
+};
+
+// const getRedirect = () => {
+//   return JSON.parse(localStorage.getItem("redirect"));
+// };
+
+// const setRedirect = (redirect) => {
+//   localStorage.setItem("redirect", JSON.stringify(redirect));
+// };
+
+// const removeRedirect = () => {
+//   localStorage.removeItem("redirect");
+// };
+
+const get = (key) => {
+  if (key) return JSON.parse(localStorage.getItem(key));
+};
+
+const set = (key, value) => {
+  if (key && value) localStorage.setItem(key, JSON.stringify(value));
+};
+
+const remove = (key) => {
+  if (key) localStorage.removeItem(key);
+};
+
 const TokenService = {
   getLocalRefreshToken,
   getLocalAccessToken,
@@ -34,6 +81,15 @@ const TokenService = {
   getUser,
   setUser,
   removeUser,
+  get,
+  set,
+  remove,
+  getJob,
+  setJob,
+  removeJob,
+  // getRedirect,
+  // setRedirect,
+  // removeRedirect,
 };
 
 export default TokenService;

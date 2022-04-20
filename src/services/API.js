@@ -46,7 +46,13 @@ instance.interceptors.response.use(
   // (res) => {
   //   return res;
   // },
-  (res) => res,
+  (res) => {
+    // if (res) console.log("RES:", Object.keys(res));
+    // if (res) console.log("RES.REQUEST:", Object.keys(res.request));
+    // console.log("RES.CONFIG:", Object.keys(res?.config));
+    // console.log("RES.CONFIG.DATA:", Object.keys(res?.config?.data));
+    return res;
+  }, // res,
   async (err) => {
     const originalConfig = err.config;
 

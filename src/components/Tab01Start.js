@@ -6,7 +6,7 @@ import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton,
 function Tab01Start(props) {
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
-  const [ nextIsEnabled /*, setNextIsEnabled*/ ] = useState(true);
+  const [ nextIsEnabled ] = useState(true);
 
   const onNext = () => {
     props.goto("next");

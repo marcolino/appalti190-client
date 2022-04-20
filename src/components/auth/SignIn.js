@@ -95,7 +95,7 @@ function SignIn() {
 
     AuthService.signin({
       email,
-      password
+      password,
     }).then(
       result => {
         if (result instanceof Error) {

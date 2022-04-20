@@ -14,7 +14,7 @@ const firebaseConfig = {
 // console.firebase.com - Project - Projetc Settings - Cloud Messaging - Certificati Web Push - Coppia di chiavi
 const vapidKey = "BJAzYrLnCaD13Cwv61jZGEiTA8yP7SVmPMY2_m0QO0VI8GFDhs_yKap6_3SrZlmf8eAYrdK7UJIsedyOXyY5ulY";
 const tokenKey = "firebaseMessagingToken";
-const tokenMaxValidityTimeSpan = 7 * 60 * 60 * 24 * 1000; // one week (in milliseconds)
+const tokenMaxValidityTimeSpan = 7 * 24 * 60 * 60 * 1000; // one week (in milliseconds)
 
 if (!firebase.apps.length) { // if never inizialized, inizialize app
   firebase.initializeApp(firebaseConfig);

@@ -1,23 +1,33 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
+// import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import AuthService from "../services/AuthService";
-import { JobContext } from "../providers/JobProvider";
-import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
+import TokenService from "../services/TokenService";
+//import JobService from "../services/JobService";
+//import { JobContext } from "../providers/JobProvider";
+import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 import Dialog from "./Dialog";
 import config from "../config";
 
+
+
 function Tab02Download(props) {
+  //const classes = useStyles(); // TODO: REMOVEME
   const { t } = useTranslation();
   const history = useHistory();
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
-  const { job, setJob } = useContext(JobContext);
-  const [dialogTitle, setDialogTitle] = useState(null);
-  const [dialogContent, setDialogContent] = useState(null);
-  const [dialogButtons, setDialogButtons] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  //const job = TokenService.getJob();
+  //const job = JobService.get();
+  //const [ job, setJob ] = useState(TokenService.getJob());
+  const [ prevIsEnabled, ] = useState(true);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.download : false);
+  const [ dialogTitle, setDialogTitle ] = useState(null);
+  const [ dialogContent, setDialogContent ] = useState(null);
+  const [ dialogButtons, setDialogButtons ] = useState([]);
+  const [ dialogOpen, setDialogOpen ] = useState(false);
 
   const openDialog = (title, content, buttons) => {
     setDialogTitle(title);
@@ -26,14 +36,17 @@ function Tab02Download(props) {
     setDialogOpen(true);    
   }
 
+  const onPrev = () => {
+    props.goto("prev");
+  };
+
   const onNext = () => {
     props.goto("next");
   };
 
-  const onDownload = () => {
-    const user = AuthService.getCurrentUser();
-    if (!user) { // user is not authenticated
-        openDialog(
+  const userIsAuthenticated = () => {
+    if (!AuthService.getCurrentUser()) { // user is not authenticated
+      openDialog(
         t("Please log in or register"),
         t("You need to be authenticated to proceed"),
         [
@@ -41,7 +54,7 @@ function Tab02Download(props) {
             text: t("Login"),
             close: true,
             callback: () => {
-              setJob({...job, redirect2Tab: props.tabId});
+              TokenService.set("redirect", props.tabId);
               history.push("/signin");
             },
           },
@@ -56,16 +69,24 @@ function Tab02Download(props) {
           }
         ],
       );
-      return;
+      return false;
     }
+    return true;
+  }
 
-    const link = document.createElement("a");
-    link.download = config.data.templateDownloadName;
-    link.href = config.data.templateDownloadLink;
-    link.click();
-    setNextIsEnabled(true);
+  const onDownload = () => {
+    if (userIsAuthenticated()) {
+      const link = document.createElement("a");
+      link.download = config.data.templateDownloadName;
+      link.href = config.data.templateDownloadLink;
+      link.click();
+      setNextIsEnabled(true);
+      props.setJob({...props.job, download: true});
+    }
   };
 
+//  if (!props.active) return null;
+  
   return (
     <TabContainer>
       <TabBodyScrollable>
@@ -88,9 +109,18 @@ function Tab02Download(props) {
         </TabParagraph> */}
       </TabBodyScrollable>
 
-      <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-        {`${t("Continue")}`}
-      </TabNextButton>
+      <Grid container>
+        <Grid item xs={6}>
+          <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
+            {`${t("Back")}`}
+          </TabPrevButton>
+        </Grid>
+        <Grid item xs={6}>
+          <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
+            {`${t("Continue")}`}
+          </TabNextButton>
+        </Grid>
+      </Grid>
 
       <Dialog
         dialogOpen={dialogOpen}

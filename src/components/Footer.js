@@ -25,7 +25,7 @@ function Footer(props) {
   const { t } = useTranslation();
 
   const on = t("on"), off = t("off");
-  const [language, setLanguage] = getCurrentLanguage(i18n);
+  const [language, setLanguage] = useState(getCurrentLanguage(i18n));
   const [languageIcon, setLanguageIcon] = useState(config.languages.supported[getCurrentLanguage(i18n)].icon);
 
   const changeLanguage = () => { // simply toggle en <=> it, just to debug

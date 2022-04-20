@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
+import Grid from "@material-ui/core/Grid";
 import { useTranslation } from "react-i18next";
-import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton } from "./TabsComponents";
+import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 
 const useStyles = makeStyles(theme => ({
   xul: {
@@ -14,12 +15,19 @@ function Tab03FillData(props) {
   const classes = useStyles();
   //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
-  const [ nextIsEnabled/*, setNextIsEnabled*/ ] = useState(true);
+  const [ prevIsEnabled ] = useState(true);
+  const [ nextIsEnabled ] = useState(true);
+
+  const onPrev = () => {
+    props.goto("prev");
+  };
 
   const onNext = () => {
     props.goto("next");
   };
 
+  //if (!props.active) return null;
+  
   return (
     <TabContainer>
       <TabBodyScrollable>
@@ -52,9 +60,19 @@ function Tab03FillData(props) {
         </TabParagraph>
       </TabBodyScrollable>
 
-      <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-        {`${t("Continue")}`}
-      </TabNextButton>
+      <Grid container>
+        <Grid item xs={6}>
+          <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
+            {`${t("Back")}`}
+          </TabPrevButton>
+        </Grid>
+        <Grid item xs={6}>
+          <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
+            {`${t("Continue")}`}
+          </TabNextButton>
+        </Grid>
+      </Grid>
+
     </TabContainer>
   );
 }

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import useDragAndDrop from "../hooks/useDragAndDrop";
-//import { JobContext } from "../providers/JobProvider";
 import AuthService from "../services/AuthService";
 import JobService from "../services/JobService";
 import TokenService from "../services/TokenService";
@@ -41,10 +40,6 @@ function Tab04Upload(props) {
   const classes = useStyles();
   const { t } = useTranslation();
   const history = useHistory();
-  //const { job, setJob } = useContext(JobContext);
-  //const job = JobService.get();
-  //const job = TokenService.get();
-  //const [ job, setJob ] = useState(TokenService.getJob());
   const [ prevIsEnabled ] = useState(true);
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
   const [ dialogTitle, setDialogTitle ] = useState(null);
@@ -73,44 +68,40 @@ function Tab04Upload(props) {
   //   TokenService.setJob(job);
   // }, [job]);
 
-  // const setJob = (job) => {
-  //   props.updateJob(job);
-  // }
-
-  useEffect(() => {
-    //if (props.active) {
-      // check if user is authenticated
-      const user = AuthService.getCurrentUser();
-      if (!user) { // user is not authenticated
-        openDialog(
-          t("Please log in or register"),
-          t("You need to be authenticated to proceed"),
-          [
-            {
-              text: t("Login"),
-              close: true,
-              callback: () => {
-                TokenService.set("redirect", props.tabId);
-                history.push("/signin");
-              },
-            },
-            {
-              text: t("Register"),
-              close: true,
-              callback: () => history.push("/signup"),
-            },
-            {
-              text: t("Cancel"),
-              close: true,
-              callback: () => props.goto("prev"),
-            }
-          ],
-        );
-        return false;
-      }
-      return true;
-    //}
-  }, [props, history, t]);
+  // useEffect(() => {
+  //   //if (props.active) {
+  //     // check if user is authenticated
+  //     const user = AuthService.getCurrentUser();
+  //     if (!user) { // user is not authenticated
+  //       openDialog(
+  //         t("Please log in or register"),
+  //         t("You need to be authenticated to proceed"),
+  //         [
+  //           {
+  //             text: t("Login"),
+  //             close: true,
+  //             callback: () => {
+  //               TokenService.set("redirect", props.tabId);
+  //               history.push("/signin");
+  //             },
+  //           },
+  //           {
+  //             text: t("Register"),
+  //             close: true,
+  //             callback: () => history.push("/signup"),
+  //           },
+  //           {
+  //             text: t("Cancel"),
+  //             close: true,
+  //             callback: () => props.goto("prev"),
+  //           }
+  //         ],
+  //       );
+  //       return false;
+  //     }
+  //     return true;
+  //   //}
+  // }, [props, history, t]);
 
   const onDrop = (e) => {
     e.preventDefault();
@@ -124,7 +115,7 @@ function Tab04Upload(props) {
     fileSelect(selectedFile);
   };
 
-  const fileSelect = async(selectedFile) => {
+  const fileSelect = async (selectedFile) => {
     setDragOver(false);
     if (selectedFile) {
       const error = fileValidate(selectedFile);
@@ -174,6 +165,7 @@ function Tab04Upload(props) {
 console.log('Upload success, file path', result.data.file);
         //JobService.set({...job, file: result.data.file});
 console.log('Upload success, props.job:', props.job);
+        //setJob({...props.job, file: result.data.file});
         props.setJob({...props.job, file: result.data.file});
         //JobSet({...job, file: result.data.file});
         //console.log("job:", job);
@@ -192,6 +184,7 @@ console.log('Upload success, props.job:', props.job);
   };
 
   const onNext = async () => {
+//console.log("OnNext - job now is:", props.job);
     props.goto("next");
   };
 

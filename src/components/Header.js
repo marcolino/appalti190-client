@@ -97,8 +97,6 @@ function Header() {
   // handle auth
   useEffect(() => {
     const user = AuthService.getCurrentUser();
-    //console.log("HEADER - CURRENT USER:", user);
-
     if (user) {
       setCurrentUser(user);
       //setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
@@ -106,10 +104,10 @@ function Header() {
     }
 
     EventBus.on("login", () => {
-      logIn();
+      onLogIn();
     });
     EventBus.on("logout", () => {
-      logOut();
+      onLogOut();
     });
 
     return () => {
@@ -131,14 +129,14 @@ function Header() {
     };
   }, []);
 
-  const logIn = () => {
+  const onLogIn = () => {
     //console.log("HEADER LOGIN");
     //setShowModeratorBoard(false);
     //setShowAdminBoard(false);
     setCurrentUser(AuthService.getCurrentUser());
   };
 
-  const logOut = () => {
+  const onLogOut = () => {
     //console.log("HEADER LOGOUT");
     AuthService.logout();
     //setShowModeratorBoard(false);

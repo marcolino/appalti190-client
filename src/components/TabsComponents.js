@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   box: {
     display: "flex",
   },
+  boxLeft: {
+    justifyContent: "flex-start",
+  },
   boxRight: {
     justifyContent: "flex-end",
   },
@@ -148,6 +151,32 @@ TabParagraph.defaultProps = {
   class: null,
 };
 
+const TabPrevButton = React.memo(props => {
+  const classes = useStyles();
+  return (
+    <Box
+      component="span"
+      m={1} // margin
+      className={`${classes.box} ${classes.boxLeft}`}
+    >
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={props.onPrev}
+        disabled={!props.prevIsEnabled}
+      >
+        {props.children}
+      </Button>
+    </Box>
+  );
+});
+TabPrevButton.propTypes = {
+  onPrev: PropTypes.func.isRequired,
+  prevIsEnabled: PropTypes.bool.isRequired,
+};
+TabPrevButton.defaultProps = {
+};
+
 const TabNextButton = React.memo(props => {
   const classes = useStyles();
   return (
@@ -199,4 +228,4 @@ TabTooltip.defaultProps = {
   anchor: "*",
 };
 
-export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton, TabTooltip};
+export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton, TabTooltip};

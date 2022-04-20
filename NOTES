@@ -8,6 +8,7 @@ Setup
  - use Cloudflare function to handle Strict-Transport-Security, not a
    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
 
+ - we dev-depend on react-error-overlay.6.0.9 to avoid "Uncaught ReferenceError: process is not defined" errors
 
 Security
  - .env files are excluded by git repositories; .env.gpg files are not;

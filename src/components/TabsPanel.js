@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -8,8 +8,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-//import { StatusContext } from "../providers/StatusProvider";
-import { JobContext } from "../providers/JobProvider";
+import TokenService from "../services/TokenService";
 import Tab01Start from "./Tab01Start";
 import Tab02Download from "./Tab02Download";
 import Tab03FillData from "./Tab03FillData";
@@ -17,6 +16,9 @@ import Tab04Upload from "./Tab04Upload";
 import Tab05Check from "./Tab05Check";
 import Tab06Validation from "./Tab06Validation";
 import Tab07Finished from "./Tab07Finished";
+import config from "../config";
+
+
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -40,7 +42,7 @@ function TabPanel(props) {
 TabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired
+  value: PropTypes.any.isRequired,
 };
 
 const a11yProps = (index) => {
@@ -50,70 +52,11 @@ const a11yProps = (index) => {
   };
 }
 
-// const LinkTab = (props) => {
-//   return (
-//     <Tab
-//       component="a"
-//       onClick={(event) => {
-//         event.preventDefault();
-//       }}
-//       {...props}
-//     />
-//   );
-// };
-
-// const AntTab = withStyles((theme) => ({
-//   root: {
-//     opacity: 0.3  ,
-//     textTransform: 'none',
-//     minWidth: 72,
-//     fontWeight: theme.typography.fontWeightRegular,
-//     marginRight: theme.spacing(4),
-//     fontFamily: [
-//       '-apple-system',
-//       'BlinkMacSystemFont',
-//       '"Segoe UI"',
-//       'Roboto',
-//       '"Helvetica Neue"',
-//       'Arial',
-//       'sans-serif',
-//       '"Apple Color Emoji"',
-//       '"Segoe UI Emoji"',
-//       '"Segoe UI Symbol"',
-//     ].join(','),
-//     '&:hover': {
-//       color: '#40a9ff',
-//       opacity: 1,
-//     },
-//     '&$selected': {
-//       color: '#1890ff',
-//       fontWeight: theme.typography.fontWeightMedium,
-//     },
-//     '&:focus': {
-//       color: '#40a9ff',
-//     },
-//   },
-//   selected: {},
-// }))((props) => <Tab {...props} />);
-
 const StyledTab = withStyles((theme) => ({
   root: {
-    opacity: 0.8, //0.8,
-    //textTransform: 'none',
-    //color: '#444',
-    //fontWeight: theme.typography.fontWeightRegular,
-    //fontSize: theme.typography.pxToRem(15),
-    //marginRight: theme.spacing(1),
-    // '&:focus': {
-    //   opacity: 1,
-    // },
-    // backgroundColor: "blue",
-    // 
-    // "&$selected": {
-    //   color: "red",
-    // }
+    opacity: 0.8,
   },
-}))((props) => {
+}))(props => {
   return (
     <Tab {...props} />
   );
@@ -122,26 +65,49 @@ const StyledTab = withStyles((theme) => ({
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    //width: "100%",
     //backgroundColor: theme.palette.background.paper,
   },
-  // tabs: {
-  //   "& .MuiTabs-indicator": {
-  //     //display: "none",
-  //     backgroundColor: "orange",
-  //   }
-  // }
+  tabs: {
+    "& .MuiTabs-indicator": {
+      //display: "none",
+      backgroundColor: "orange",
+    }
+  }
 }));
 
 const TabsPanel = () => {
   const classes = useStyles();
-  //const { status, setStatus } = useContext(StatusContext);
-  const { job } = useContext(JobContext);
-  const [tabId, setTabId] = useState(job.redirect2Tab !== undefined ? job.redirect2Tab : 0);
+  const [ job, setJob ] = useState(() => TokenService.getJob());
+  //const { job, setJob } = useContext(JobContext);
+  //const [ job, setJob ] = useState(JobService.get());
+  //const [ job, setJob ] = useState(TokenService.getJob());
+  //const redirect = TokenService.getRedirect();
+  //const [ tabId, setTabId ] = useState(TokenService.getJob());
   const { t } = useTranslation();
 
-  function handleChangeTab(event, id) {
-    setTabId(id); // comment to disable the possibility to change tab by clicking on app bar titles
+  useEffect(() => {
+    const redirect = TokenService.get("redirect");
+    console.log("REDIRECT:", redirect);
+    if (redirect) {
+      setJob({...job, tabId: redirect });
+      TokenService.remove("redirect");
+    }
+  }, [job]);
+  
+  useEffect(() => { // to serialize job
+console.log("--------------- TabsPanel useEffect setjob, job:", job);
+    TokenService.setJob(job);
+    // TODO: serialize to user document, too
+  }, [job]);
+
+  function changeTab(id) {
+    setJob({...job, tabId: id });
+  }
+
+  function forceTab(event, id) {
+    if (config.ui.userCanForceTabChange) { // user can force tab change by clicking on app bar titles
+      changeTab(id);
+    }
   }
   
   function goto(where) {
@@ -163,25 +129,27 @@ const TabsPanel = () => {
         case "finish!":
           break;
         case "next":
-          id = tabId + 1;
+          id = job ? job.tabId + 1 : 0;
           break;
         case "prev":
-          id = tabId - 1;
+          id = job ? job.tabId - 1 : 0;
           break;
         default:
           console.error(`Unforeseen where specification in goto: ${where}`);
           return;
       }
     }
-    setTabId(id);
+    changeTab(id);
   }
 
+  if (!job?.tabId) job.tabId = 0;
+  console.log("TabsPanel render - job.tabId:", job?.tabId, "job:", job);
   return (
     <div className={classes.root}>
       <AppBar position="fixed" elevation={0} style={{/*backgroundColor: "transparent",*/ top: 50}}>
         {/* <Tabs
-          value={tabId}
-          onChange={handleChangeTab}
+          value={job.tabId}
+          onChange={forceTab}
           indicatorColor="primary"
           // textColor="primary"
           variant="scrollable"
@@ -191,12 +159,12 @@ const TabsPanel = () => {
         > */}
         <Paper elevation={0} square>
           <Tabs
-            value={tabId}
+            value={job?.tabId}
             //indicatorColor="secondary"
             //textColor="secondary"
             variant="scrollable"
             scrollButtons="auto"
-            onChange={handleChangeTab}
+            onChange={forceTab}
             aria-label="current section"
           >
             <StyledTab label={`${t("Start")} 🪄`} {...a11yProps(0)} />
@@ -210,27 +178,74 @@ const TabsPanel = () => {
         </Paper>
       </AppBar>
 
-      <TabPanel value={tabId} index={0}>
-        <Tab01Start active={tabId === 0} tabId={tabId} goto={(where) => goto(where)} />
+      <>
+        {(job?.tabId === 0) && (
+          <TabPanel index={0} value={job.tabId}>
+            <Tab01Start goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 1) && (
+          <TabPanel index={1} value={job.tabId}>
+            <Tab02Download goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 2) && (
+          <TabPanel index={2} value={job.tabId}>
+            <Tab03FillData goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 3) && (
+          <TabPanel index={3} value={job.tabId}>
+            <Tab04Upload goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 4) && (
+          <TabPanel index={4} value={job.tabId}>
+            <Tab05Check goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 5) && (
+          <TabPanel index={5} value={job.tabId}>
+            <Tab06Validation goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 6) && (
+          <TabPanel index={6} value={job.tabId}>
+            <Tab07Finished goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+      </>
+      {/* <>
+        <Tab01Start active={job?.tabId === 0} tabId={job?.tabId} goto={(where) => goto(where)} />
+        <Tab02Download active={job?.tabId === 1} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+        <Tab03FillData active={job?.tabId === 2} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+        <Tab04Upload active={job?.tabId === 3} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+        <Tab05Check active={job?.tabId === 4} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+        <Tab06Validation active={job?.tabId === 5} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+        <Tab07Finished active={job?.tabId === 6} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+      </> */}
+
+      {/* <TabPanel value={job?.tabId || 0} index={0}>
+        <Tab01Start active={job?.tabId === 0} tabId={job?.tabId} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={1}>
-        <Tab02Download active={tabId === 1} tabId={tabId} goto={(where) => goto(where)} />
+      <TabPanel value={job?.tabId || 0} index={1}>
+        <Tab02Download active={job?.tabId === 1} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={2}>
-        <Tab03FillData active={tabId === 2} tabId={tabId} goto={(where) => goto(where)} />
+      <TabPanel value={job?.tabId || 0} index={2}>
+        <Tab03FillData active={job?.tabId === 2} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={3}>
-        <Tab04Upload active={tabId === 3} tabId={tabId} goto={(where) => goto(where)} />
+      <TabPanel value={job?.tabId || 0} index={3}>
+        <Tab04Upload active={job?.tabId === 3} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={4}>
-        <Tab05Check active={tabId === 4} tabId={tabId} goto={(where) => goto(where)} />
+      <TabPanel value={job?.tabId || 0} index={4}>
+        <Tab05Check active={job?.tabId === 4} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={5}>
-        <Tab06Validation active={tabId === 5} tabId={tabId} goto={(where) => goto(where)} />
+      <TabPanel value={job?.tabId || 0} index={5}>
+        <Tab06Validation active={job?.tabId === 5} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
       </TabPanel>
-      <TabPanel value={tabId} index={6}>
-        <Tab07Finished active={tabId === 6} tabId={tabId} /*value={tabId} index={6}*/ goto={(where) => goto(where)} />
-      </TabPanel>
+      <TabPanel value={job?.tabId || 0} index={6}>
+        <Tab07Finished active={job?.tabId === 6} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
+      </TabPanel> */}
     </div>
   );
 }

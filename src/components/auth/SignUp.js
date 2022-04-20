@@ -139,7 +139,11 @@ function SignUp() {
       email,
       password,
       firstName,
-      lastName
+      lastName,
+      address: {
+        street: "Via dei Ciclamini, 0",
+        city: "Florence",
+      },
     }).then(
       result => {
         if (result instanceof Error) {

@@ -25,7 +25,7 @@ module.exports = {
       "Content-Type": "application/json",
       "Content-Type-BACKUP": "x-www-form-urlencoded",
     },
-    redirect: "follow",
+    //redirect: "follow",
     backendType: "NodeJsExpress", // NodeJsExpress / SpringBoot
   },
   languages: {
@@ -35,9 +35,12 @@ module.exports = {
     },
     fallback: "it",
   },
-  // sounds: {
-  //   buttonClick,
-  // },
+  ui: {
+    userCanForceTabChange: true,
+    // sounds: {
+    //   buttonClick,
+    // },
+  },
   footerHeight: "1.5rem",
   extraSmallWatershed: 600,
   mobileDesktopWatershed: 900,

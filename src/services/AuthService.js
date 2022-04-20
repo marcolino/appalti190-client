@@ -2,13 +2,14 @@
 import api from "./API";
 import TokenService from "./TokenService";
 
-const signup = ({/*username, */email, password, firstName, lastName}) => {
+const signup = ({/*username, */email, password, firstName, lastName, address}) => {
   return api.post("/auth/signup", {
     //username,
     email,
     password,
     firstName,
     lastName,
+    address,
   }).then(
     response => {
       return response.data;
@@ -42,6 +43,7 @@ const signin = ({/*username,*/email, password}) => {
   .then(
     response => {
       if (response.data.accessToken) {
+console.log("SIGNIN response user:", response.data);
         TokenService.setUser(response.data);
       }
       return response.data;
@@ -112,7 +114,7 @@ const logout = () => {
   TokenService.removeUser();
 };
 
-const getCurrentUser = () => {
+const getCurrentUser = () => { // TODO: REMOVEME, use getUser below
   return TokenService.getUser();
 };
 
