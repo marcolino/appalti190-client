@@ -1,10 +1,10 @@
 {
   "name": "appalti190-client",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "private": true,
   "scripts": {
-    "start-local": "export PORT=3000 & react-scripts start",
-    "start-local-build-serve": "yarn build && serve -s build -p 3000",
+    "start-dev": "export PORT=3000 & react-scripts start",
+    "start-dev-build-serve": "yarn build && serve -s build -p 3000",
     "start-nodemon-rawbuild": "nodemon -w '.' -e 'js,json,css' --ignore build/ --exec 'yarn rawbuild'",
     "prebuild": "yarn install-pre-push-hook && yarn sitemap-build && yarn favicons-build && yarn manifest-build && rm -rf build/",
     "build": "react-scripts build",
@@ -78,10 +78,13 @@
     "babel-plugin-named-asset-import": "^0.3.8",
     "lighthouse": "^8.1.0",
     "react-router-sitemap": "^1.2.0",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "4.0.3",
     "react-test-renderer": "^17.0.2",
     "serve": "^13.0.2",
     "sitemap": "^7.0.0",
     "translate-json-object": "^2.3.7"
+  },
+  "resolutions": {
+    "react-error-overlay": "6.0.9"
   }
 }
