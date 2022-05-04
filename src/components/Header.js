@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from '@mui/styles/makeStyles';
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Drawer from "@material-ui/core/Drawer";
-import Grid from "@material-ui/core/Grid";
-import Link from "@material-ui/core/Link";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuIcon from "@material-ui/icons/Menu";
-import HomeIcon from "@material-ui/icons/Home";
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-//import ListAltIcon from "@material-ui/icons/ListAlt";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import SecurityIcon from '@material-ui/icons/Security';
-import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Drawer from "@mui/material/Drawer";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+//import ListAltIcon from "@mui/icons-material/ListAlt";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SecurityIcon from '@mui/icons-material/Security';
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
@@ -71,10 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menuItem: {
     borderBottom: "1px solid #eaeaea",
-    paddingLeft: theme.spacing(1.5),
-    paddingRight: theme.spacing(1.5),
-    paddingTop: theme.spacing(1.2), /*"1.5vw",*/
-    paddingBottom: theme.spacing(1.2), /*"1.5vw",*/
+    paddingTop: theme.spacing(2), /*"1.5vw",*/
   },
   menuPadding: {
     padding: 0,
@@ -300,13 +297,15 @@ function Header() {
 
           {/* drawer button */}
           {state.view === "mobile" &&
-            <IconButton {...{ // mobile only
-              edge: "start",
-              color: "inherit",
-              "aria-label": "menu",
-              "aria-haspopup": "true",
-              onClick: handleDrawerOpen,
-            }}>
+            <IconButton
+              {...{ // mobile only
+                edge: "start",
+                color: "inherit",
+                "aria-label": "menu",
+                "aria-haspopup": "true",
+                onClick: handleDrawerOpen,
+              }}
+              size="large">
               <MenuIcon />
             </IconButton>
           }
@@ -348,7 +347,7 @@ function Header() {
               aria-haspopup="true"
               onClick={handleUserMenuOpen}
               color="inherit"
-            >
+              size="large">
               {currentUser.profileImage ?
                 <ImageCustom src={/*auth.user.*/currentUser.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
               :

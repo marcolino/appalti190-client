@@ -3,31 +3,31 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useBeforeunload } from "react-beforeunload";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import Avatar from "@material-ui/core/Avatar";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
-import Tooltip from "@material-ui/core/Tooltip";
-import AccountBoxOutlined from "@material-ui/icons/AccountBoxOutlined";
-import Person from "@material-ui/icons/Person";
-import IconEmail from "@material-ui/icons/Email";
-import IconFiscalCode from "@material-ui/icons/AssignmentInd";
-import IconBusinessName from "@material-ui/icons/Business";
-import IconAddressStreet from "@material-ui/icons/House";
-import IconAddressStreetNo from "@material-ui/icons/LooksOne";
-import IconAddressCity from "@material-ui/icons/LocationCity";
-import IconAddressProvince from "@material-ui/icons/Room";
-import IconAddressZip from "@material-ui/icons/Code";
-import IconAddressCountry from "@material-ui/icons/Language";
+import makeStyles from '@mui/styles/makeStyles';
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import IconAvatar from "@mui/icons-material/AccountBoxOutlined";
+import IconPerson from "@mui/icons-material/Person";
+import IconEmail from "@mui/icons-material/Email";
+import IconFiscalCode from "@mui/icons-material/AssignmentInd";
+import IconBusinessName from "@mui/icons-material/Business";
+import IconAddressStreet from "@mui/icons-material/House";
+import IconAddressStreetNo from "@mui/icons-material/LooksOne";
+import IconAddressCity from "@mui/icons-material/LocationCity";
+import IconAddressProvince from "@mui/icons-material/Room";
+import IconAddressZip from "@mui/icons-material/Code";
+import IconAddressCountry from "@mui/icons-material/Language";
 import { errorMessage, capitalize } from "../../libs/Misc";
 import UserService from "../../services/UserService";
 import TokenService from "../../services/TokenService";
@@ -255,7 +255,7 @@ function Profile(props) {
     });
   }, [addressStreet, addressStreetNo, addressCity, addressProvince, addressZip, addressCountry]);
 
-  const formProfileupdate = (e) => {
+  const formProfileUpdate = (e) => {
     e.preventDefault();
     setError({});
 
@@ -346,7 +346,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
 
         <Grid container justifyContent="center">
           <Avatar className={classes.avatar}>
-            <AccountBoxOutlined />
+            <IconAvatar />
           </Avatar>
         </Grid>
 
@@ -357,7 +357,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
             value={tabValue}
             onChange={handleChangeTabValue}
             variant="standard"
-            aria-label="tabs for user's personal"
+            aria-label="tabs for user's personal profile"
           >
             <Tab label={t("Your profile")} {...a11yProps(0)} />
             <Tab label={t("Your plan")} {...a11yProps(1)} />
@@ -411,7 +411,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                         value={firstName}
                         onChange={v => { setAnyChanges(true); setFirstName(v); }}
                         placeholder={t("First Name")}
-                        startAdornmentIcon={<Person />}
+                        startAdornmentIcon={<IconPerson />}
                         error={error.firstName}
                       />
                     </Grid>
@@ -427,7 +427,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                         value={lastName}
                         onChange={v => { setAnyChanges(true); setLastName(v); }}
                         placeholder={t("Last Name")}
-                        startAdornmentIcon={<Person />}
+                        startAdornmentIcon={<IconPerson />}
                         error={error.lastName}
                       />
                     </Grid>
@@ -679,7 +679,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
             fullWidth={false}
             className={"buttonSecondary"}
             autoFocus={true}
-            onClick={formProfileupdate}
+            onClick={formProfileUpdate}
           >
             {
               (tabValue !== PROFILE_PLAN) ?

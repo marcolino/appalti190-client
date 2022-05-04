@@ -1,6 +1,6 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
-import Link from "@material-ui/core/Link";
+import { makeStyles } from "@mui/styles";
+import Link from "@mui/material/Link";
 import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles(theme => ({

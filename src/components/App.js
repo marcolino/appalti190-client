@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 import { BrowserRouter, useLocation } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
 import Routes from "./Routes";
@@ -15,18 +15,20 @@ import theme from "../themes/default"; // here we choose the theme
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <OnlineStatusProvider>
-        <CssBaseline />
-        <BrowserRouter>
-          <Loader />
-          <Contents />
-          <CookieBanner />
-          {/* <FloatingActionButton/> */}
-        </BrowserRouter>
-        {/* <PushNotifications /> */}
-      </OnlineStatusProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <OnlineStatusProvider>
+          <CssBaseline />
+          <BrowserRouter>
+            <Loader />
+            <Contents />
+            <CookieBanner />
+            {/* <FloatingActionButton/> */}
+          </BrowserRouter>
+          {/* <PushNotifications /> */}
+        </OnlineStatusProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

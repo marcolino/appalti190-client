@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { Container, Button, lightColors, darkColors } from "react-floating-action-button";
-import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 //import useSound from "use-sound";
 import { StatusContext } from "../providers/StatusProvider";
 //import config from "../config";

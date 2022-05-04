@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 import AuthService from "../services/AuthService";
 import JobService from "../services/JobService";
 import TokenService from "../services/TokenService";
@@ -178,7 +178,11 @@ function Tab04Upload(props) {
           <TabParagraph>
             {props?.job?.file?.originalname && t("Selected file") + `: ${props?.job?.file?.originalname}`}
             <br />
-            {props?.job?.file?.originalname && <Button variant="contained" size="small" color="default" onClick={fileReset} title={t("Remove file")}> 🗑 </Button>}
+            {props?.job?.file?.originalname && <Button
+              variant="contained"
+              size="small"
+              onClick={fileReset}
+              title={t("Remove file")}> 🗑 </Button>}
           </TabParagraph>
         </div>
 

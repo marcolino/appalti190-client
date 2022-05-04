@@ -1,20 +1,20 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { makeStyles } from "@material-ui/styles";
-import Avatar from "@material-ui/core/Avatar";
-import ShareIcon from '@material-ui/icons/Share';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Typography from "@material-ui/core/Typography";
-import red from '@material-ui/core/colors/red';
+import { makeStyles } from "@mui/styles";
+import Avatar from "@mui/material/Avatar";
+import ShareIcon from '@mui/icons-material/Share';
+import IconButton from '@mui/material/IconButton';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Typography from "@mui/material/Typography";
 import { StatusContext } from "../providers/StatusProvider";
 import config from "../config";
+import { red } from '@mui/material/colors';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,7 +79,7 @@ export default function Notifications(props) {
                 <Avatar sx={{ bgcolor: red }} src={state.notification.image} aria-label="notification avatar" />
               }
               action={
-                <IconButton aria-label="settings">
+                <IconButton aria-label="settings" size="large">
                   <MoreVertIcon />
                 </IconButton>
               }
@@ -98,16 +98,19 @@ export default function Notifications(props) {
             </CardContent>
 
             <CardActions>
-              <IconButton aria-label="share">
+              <IconButton aria-label="share" size="large">
                 <ShareIcon  onClick={() => shareMessage(index)}/>
               </IconButton>
-              <IconButton aria-label="delete forever" onClick={() => deleteForeverMessage(index)} >
+              <IconButton
+                aria-label="delete forever"
+                onClick={() => deleteForeverMessage(index)}
+                size="large">
                 <DeleteForeverIcon />
               </IconButton>
             </CardActions>
 
           </Card>
-        )
+        );
       })}
     </div>
   );

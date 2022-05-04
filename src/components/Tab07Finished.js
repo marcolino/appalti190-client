@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
-import Grid from "@material-ui/core/Grid";
+import Grid from "@mui/material/Grid";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton } from "./TabsComponents";
 
 function Tab07Finished(props) {

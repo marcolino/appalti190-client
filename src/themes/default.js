@@ -1,14 +1,8 @@
-import { createTheme } from "@material-ui/core/styles";
-//import { createMuiTheme } from "@material-ui/core/styles";
-//import { unstable_createMuiStrictModeTheme as createMuiTheme } from "@material-ui/core/styles"; // TEMPORARY: temporary, to solve material-ui drawer "findDOMNode is deprecated in StrictModefindDOMNode is deprecated in StrictMode" warning
-//import blueGrey from "@material-ui/core/colors/blueGrey";
-import lightGreen from "@material-ui/core/colors/lightGreen";
-import lightBlue from "@material-ui/core/colors/lightBlue";
-import grey from "@material-ui/core/colors/grey";
-import amber from "@material-ui/core/colors/amber";
-//import { red } from "@material-ui/core/colors";
+import { createTheme, adaptV4Theme } from "@mui/material/styles";
+import { lightGreen, lightBlue, grey, amber } from '@mui/material/colors';
+//import { red } from "@mui/material/colors";
 
-export default createTheme({
+export default createTheme(adaptV4Theme({
   typography: {
     fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', 'Roboto', 'Oxygen',
       'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif`,
@@ -86,6 +80,11 @@ export default createTheme({
       main: lightGreen[300],
       dark: lightGreen[500],
     },
+    tertiary: {
+      light: amber[50],
+      main: amber[100],
+      dark: amber[200],
+    },
     title: {
       color: grey[600],
       backgroundColor: amber[200],
@@ -103,4 +102,4 @@ export default createTheme({
       },
     },
   },
-});
+}));

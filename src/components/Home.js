@@ -1,6 +1,6 @@
 import React from "react";
 // import { useContext } from "react";
-import { makeStyles } from "@material-ui/styles";
+import { makeStyles } from "@mui/styles";
 // import { useTranslation } from "react-i18next";
 // import { AuthContext } from "../providers/AuthProvider";
 import { TabsPanel } from "./TabsPanel";
