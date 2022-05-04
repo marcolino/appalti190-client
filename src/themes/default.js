@@ -72,7 +72,7 @@ export default createTheme({
   },
   palette: {
     primary: {
-      light: "#42c2f5",
+      light: "#c2d4fb",
       main: "rgba(0,0,0,0.5)",
       dark: "#778899",
       //contrastText: "red", //"#fff"
@@ -85,6 +85,10 @@ export default createTheme({
       light: lightGreen[100],
       main: lightGreen[300],
       dark: lightGreen[500],
+    },
+    title: {
+      color: grey[600],
+      backgroundColor: amber[200],
     },
     header: {
       color: grey[900],

@@ -23,10 +23,27 @@ module.exports = {
     },
     headers: {
       "Content-Type": "application/json",
-      "Content-Type-BACKUP": "x-www-form-urlencoded",
+      "Content-Type-BACKUP": "x-www-form-urlencoded", // TODO: ???
     },
     //redirect: "follow",
     backendType: "NodeJsExpress", // NodeJsExpress / SpringBoot
+    rolesNames: [
+      "user",
+      "admin",
+    ],
+    rolesNamesDefault: [ "user" ],
+    planNames: [
+      "free",
+      "standard",
+      "unlimited",
+    ],
+    planNameDefault: "free",
+  },
+  showcase: {
+    endpoint: {
+      development: "http://localhost:5000/api/prices", // TODO...
+      production: "https://appalti190-showcase.herokuapp.com/prices",
+    },
   },
   languages: {
     supported: {

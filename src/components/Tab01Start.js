@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabNextButton, TabTooltip } from "./TabsComponents";
 
 function Tab01Start(props) {
-  //const { auth } = useContext(AuthContext);
   const { t } = useTranslation();
   const [ nextIsEnabled ] = useState(true);
 

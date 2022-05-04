@@ -131,3 +131,11 @@ input::-webkit-inner-spin-button {
   display: inline-block;
   margin-top: 1em;
 } */
+
+.dropzone-div {
+  text-align: center;
+  padding: 20px;
+  border: 3px purple dashed;
+  width: 60%;
+  margin: auto;
+}

@@ -3,7 +3,7 @@ DOCUMENTATION
 Setup
 
  - activities for every new project:
-    - register Firebase project, and update public/firebase-messaging-sw.js:firebaseConfig.
+    - register Firebase project, and update public/firebase-messaging-sw.js:firebaseConfig (or .env)
 
  - use Cloudflare function to handle Strict-Transport-Security, not a
    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload" />
@@ -15,6 +15,13 @@ Security
    when adding some secret to .env, crypt it with yarn env-crypt (or better
    add a pre-push hook to encrypt it); it can be later decrypted with `yarn env-decrypt`.
 
+Code:
+ - clone an object except for one key
+   - copy property b from x into variable b and then copy rest of properties into variable y:
+      let x = {a: 1, b: 2, c: 3, z: 26};
+      /* eslint-disable no-unused-variables */
+      let {b, ...y} = x;
+      console.log(y);
 
 REFERENCES
 
@@ -75,6 +82,10 @@ I18n
  - Language flags: https://apps.timwhitlock.info/emoji/tables/iso3166
  - yarn global add i18next-parser
 
+Drag and Drop
+ - react-dropzone: https://react-dropzone.js.org/
+ - How to implement drag and drop in React with React DnD: https://blog.logrocket.com/drag-and-drop-react-dnd/
+
 E-Commerce
  - 9 Must-Have Features of a Progressive Web App (PWA) for E-Commerce: https://www.simicart.com/blog/progressive-web-apps-features-for-ecommerce
 
@@ -84,5 +95,8 @@ Push Notifications
  - Firebase Push Notifications In React: https://www.smashingmagazine.com/2020/06/firebase-push-notifications-react
  - Best practices for FCM registration token management: https://firebase.google.com/docs/cloud-messaging/manage-tokens
 
- Sounds
+Sounds
  - Announcing “use-sound”, a React Hook for Sound Effects: https://www.joshwcomeau.com/react/announcing-use-sound-react-hook/
+
+CRUD table editing
+ - React CRUD Table: https://www.npmjs.com/package/react-crud-table

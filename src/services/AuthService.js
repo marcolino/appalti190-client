@@ -1,5 +1,6 @@
 //import { RepeatTwoTone } from "@material-ui/icons";
 import api from "./API";
+import { i18nLogout } from "../i18n";
 import TokenService from "./TokenService";
 
 const signup = ({/*username, */email, password, firstName, lastName, address}) => {
@@ -43,7 +44,6 @@ const signin = ({/*username,*/email, password}) => {
   .then(
     response => {
       if (response.data.accessToken) {
-console.log("SIGNIN response user:", response.data);
         TokenService.setUser(response.data);
       }
       return response.data;
@@ -112,9 +112,10 @@ const resendResetPasswordCode = ({email}) => {
     
 const logout = () => {
   TokenService.removeUser();
+  i18nLogout();
 };
 
-const getCurrentUser = () => { // TODO: REMOVEME, use getUser below
+const getCurrentUser = () => {
   return TokenService.getUser();
 };
 

@@ -73,8 +73,8 @@ const useStyles = makeStyles((theme) => ({
     borderBottom: "1px solid #eaeaea",
     paddingLeft: theme.spacing(1.5),
     paddingRight: theme.spacing(1.5),
-    paddingTop: "1.5vw",
-    paddingBottom: "1.5vw",
+    paddingTop: theme.spacing(1.2), /*"1.5vw",*/
+    paddingBottom: theme.spacing(1.2), /*"1.5vw",*/
   },
   menuPadding: {
     padding: 0,
@@ -99,8 +99,8 @@ function Header() {
     const user = AuthService.getCurrentUser();
     if (user) {
       setCurrentUser(user);
-      //setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
-      //setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
+      //setShowModeratorBoard(user.roles.includes("moderator"));
+      //setShowAdminBoard(user.roles.includes("admin"));
     }
 
     EventBus.on("login", () => {
@@ -254,7 +254,7 @@ function Header() {
   };
 
   const getDesktopMainHeaderItems = () => {
-    return mainItems.filter(item => item.showInDesktopMode !== false).map(({ label, icon, href }) => (
+    return mainItems.filter(item => item.showInDesktopMode).map(({ label, icon, href }) => (
       <Link {...{
         key: label,
         component: RouterLink,

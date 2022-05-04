@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/styles";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { JobProvider } from "../providers/JobProvider";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
 import Routes from "./Routes";
@@ -18,16 +17,14 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <OnlineStatusProvider>
-        <JobProvider>
-          <CssBaseline />
-          <BrowserRouter>
-            <Loader />
-            <Contents />
-            <CookieBanner />
-            {/* <FloatingActionButton/> */}
-          </BrowserRouter>
-          {/* <PushNotifications /> */}
-        </JobProvider>
+        <CssBaseline />
+        <BrowserRouter>
+          <Loader />
+          <Contents />
+          <CookieBanner />
+          {/* <FloatingActionButton/> */}
+        </BrowserRouter>
+        {/* <PushNotifications /> */}
       </OnlineStatusProvider>
     </ThemeProvider>
   );

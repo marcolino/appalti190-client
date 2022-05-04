@@ -34,12 +34,24 @@ const styles = theme => ({
   fieldset: {
     border: 0,
   },
+  title: {
+    width: "100%",
+    color: theme.palette.title.color,
+    //backgroundColor: '#ccc', //theme.palette.title.backgroundColor,
+    //borderRadius: 3,
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: 3,
+    paddingBottom: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
 });
 const useStyles = makeStyles((theme) => (styles(theme)));
 
 
 
-function SignUp() {
+function SignUp(props) {
   const classes = useStyles();
   const history = useHistory();
   const [firstName, setFirstName] = useState("");
@@ -65,6 +77,15 @@ function SignUp() {
     setDialogOpen(true);    
   }
 
+  useEffect(() => { // check user has unverified email; if so, show waiting for code mode
+    const query = new URLSearchParams(props.location.search);
+    const unverifiedEmail = query.get("unverifiedEmail");
+    if (unverifiedEmail) {
+      setWaitingForCode(true);
+      setCodeDeliveryMedium("email");
+    }
+  }, [props]);
+  
   // set up event listener to set correct grid rowSpacing based on inner width
   useEffect(() => {
     const setResponsiveness = () => {
@@ -141,8 +162,8 @@ function SignUp() {
       firstName,
       lastName,
       address: {
-        street: "Via dei Ciclamini, 0",
-        city: "Florence",
+        //street: "Via dei Ciclamini, 0",
+        //city: "Florence",
       },
     }).then(
       result => {
@@ -153,7 +174,6 @@ function SignUp() {
               openDialog(
                 t("Email exists already"),
                 t("This email is already present") + `.\n` +
-                //errorMessage(result) + `\n` +
                 t("Do you want to sign in with that email?"),
                 [
                   {
@@ -176,8 +196,6 @@ function SignUp() {
           return;
         }
         console.info(`signup code sent to ${email}`);
-        //EventBus.dispatch("login");
-        //history.push("/");
         const medium = result?.codeDeliveryMedium?.toLowerCase();
         toast.info(t("Confirmation code just sent by {{medium}}", {medium}));
         setCodeDeliveryMedium(medium);
@@ -220,7 +238,6 @@ function SignUp() {
   const formResendSignUpCode = (e) => {
     e.preventDefault();
     setError({});
-    //console.log("resendSignUpCode email:", email);
     AuthService.resendSignUpCode({
       email,
     }).then(
@@ -229,7 +246,6 @@ function SignUp() {
           toast.error(errorMessage(result));
           return setError({ code: errorMessage(result) });
         }
-        //console.log("resendSignUpCode success:", result);
         toast.info(t("Code resent successfully by {{codeDeliveryMedium}}", {codeDeliveryMedium}));
       }
     );
@@ -246,7 +262,7 @@ function SignUp() {
     <Container maxWidth="xs">
 
       <form className={classes.form} noValidate autoComplete="off">
-        <fieldset /*disabled={promiseInProgress}*/ className={classes.fieldset}>
+        <fieldset className={classes.fieldset}>
           {!waitingForCode && (
             <>
 
@@ -261,12 +277,12 @@ function SignUp() {
               <Box m={3} />
 
               <Grid container justifyContent="flex-start">
-                <FormText>
+                <FormText variant="subtitle1" className={classes.title}>
                   {t("Register with your data")}
                 </FormText>
               </Grid>
 
-              <Box m={1} />
+              <Box m={3} />
 
               <Grid container direction={"row"} spacing={formState.rowSpacing} >
                 <Grid item xs={12} sm={6}>
@@ -362,14 +378,15 @@ function SignUp() {
                 {t("Confirm Sign Up")}
               </FormButton>
 
+              <Box m={2} />
+
               <Grid container justifyContent="flex-end">
-                <FormButton
+                <FormLink
+                  decoration="underline"
                   onClick={formResendSignUpCode}
-                  fullWidth={false}
-                  className={"buttonSecondary"}
                 >
                   {t("Resend code")}
-                </FormButton>
+                </FormLink>
               </Grid>
             </>
           )}

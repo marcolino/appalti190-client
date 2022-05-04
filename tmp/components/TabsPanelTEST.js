@@ -130,7 +130,6 @@ console.log("changeTab JOB BEFORE SETJOB in tabspanel:", job);
     changeTab(id);
   }
 
-  console.log("TabsPanel render - job.tabId:", job?.tabId, "job:", job);
   return (
     <div className={classes.root}>
       <AppBar position="fixed" elevation={0} style={{/*backgroundColor: "transparent",*/ top: 50}}>

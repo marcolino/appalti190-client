@@ -44,9 +44,7 @@ function Routes() {
         <Route path="/signout" component={SignOut} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/forgot-password" component={ForgotPassword} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/notifications" component={Notifications} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.2} */}
-        {/* <Route path="/privacy-policyOLD" component={PrivacyPolicy[getCurrentLanguage(i18n)]} /> */}
         <Route path="/privacy-policy" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"privacyPolicy"} /> } />
-        {/* <Route path="/terms-of-useOLD" component={TermsOfUse[getCurrentLanguage(i18n)]} /> */}
         <Route path="/terms-of-use" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"termsOfUse"} /> } />
         <Route path="/admin-panel" component={AdminPanel} /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="" component={NotFound} />

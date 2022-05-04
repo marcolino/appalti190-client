@@ -9,6 +9,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import TokenService from "../services/TokenService";
+import JobService from "../services/JobService";
 import Tab01Start from "./Tab01Start";
 import Tab02Download from "./Tab02Download";
 import Tab03FillData from "./Tab03FillData";
@@ -87,7 +88,6 @@ const TabsPanel = () => {
 
   useEffect(() => {
     const redirect = TokenService.get("redirect");
-    console.log("REDIRECT:", redirect);
     if (redirect) {
       setJob({...job, tabId: redirect });
       TokenService.remove("redirect");
@@ -95,9 +95,8 @@ const TabsPanel = () => {
   }, [job]);
   
   useEffect(() => { // to serialize job
-console.log("--------------- TabsPanel useEffect setjob, job:", job);
-    TokenService.setJob(job);
-    // TODO: serialize to user document, too
+    TokenService.setJob(job); // serialize locally, on local storage
+    JobService.set(job); // serialize remotely, on server db
   }, [job]);
 
   function changeTab(id) {
@@ -143,7 +142,6 @@ console.log("--------------- TabsPanel useEffect setjob, job:", job);
   }
 
   if (!job?.tabId) job.tabId = 0;
-  console.log("TabsPanel render - job.tabId:", job?.tabId, "job:", job);
   return (
     <div className={classes.root}>
       <AppBar position="fixed" elevation={0} style={{/*backgroundColor: "transparent",*/ top: 50}}>

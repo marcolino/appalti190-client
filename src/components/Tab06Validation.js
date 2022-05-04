@@ -5,26 +5,22 @@ import Grid from "@material-ui/core/Grid";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
-//import { JobContext } from "../providers/JobProvider";
-//import TokenService from "../services/TokenService";
 import JobService from "../services/JobService";
+
+
 
 function Tab06Validation(props) {
   const { t } = useTranslation();
-  //const job = JobService.get();
-  //const [ job, setJob ] = useState(TokenService.getJob());
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
   const [ prevIsEnabled ] = useState(true);
 
-  // useEffect(() => { // to serialize job
-  //   TokenService.setJob(job);
-  // }, [job]);
-
   useEffect(() => {
-    //if (props.value === props.index) {
-      if (props.job && props.job.transform && !props.job.outcome) {
-console.log("VALIDATE - job:", props.job);
+    if (props.job && props.job.transform) {
+      if (props.job.outcome) {
+        setNextIsEnabled(true);
+        setStatusLocal({success: props.job.outcome.esitoUltimoTentativoAccessoUrl === "successo"});
+      } else {
         (async () => {
           setStatusLocal({loading: true});
           await JobService.outcomeCheck(
@@ -36,13 +32,12 @@ console.log("VALIDATE - job:", props.job);
                 toast.error(errorMessage(result));
                 return setStatusLocal({ error: errorMessage(result)});
               }
-              props.setJob({...props.job, outcome: result.data.result});
+              //console.log("OUTCOMECHECK result:", result);
+              props.setJob({...props.job, outcome: result.data});
               setStatusLocal({success: result.data});
               setNextIsEnabled(true);
             },
             error => {
-              console.log("OC ERROR REQ:", error.request.data);
-              console.log("OC ERROR RES:", error.response.data);
               toast.error(errorMessage(error));
               props.setJob({...props.job, outcome: error.response.data.message});
               return setStatusLocal({ error: errorMessage(error)});
@@ -50,8 +45,8 @@ console.log("VALIDATE - job:", props.job);
           );
         })();
       }
-    //}
-    /* eslint-disable react-hooks/exhaustive-deps */
+    }
+  /* eslint-disable react-hooks/exhaustive-deps */
   }, [props.job.transform, props.job.outcome]);
 
   const onPrev = () => {
@@ -71,16 +66,16 @@ console.log("VALIDATE - job:", props.job);
           {t("Attendi la validazione da parte dell'ANAC")}
         </TabTitle>
         <TabParagraph>
+          {statusLocal && "success" in statusLocal && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
+            <pre>
+              <img src="images/success.ico" width="64" alt="success"></img> {props.job?.outcome?.dataUltimoTentativoAccessoUrl}
+            </pre>
+          )}
           <pre>
-            J: {JSON.stringify(props.job, null, 2)}
+            JOB: {JSON.stringify(props.job, null, 2)}
           </pre>
         </TabParagraph>
         {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
-        {statusLocal && "success" in statusLocal && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
-          <pre>
-            <img src="images/success.ico" width="64" alt="success"></img> {props.job?.outcome?.dataUltimoTentativoAccessoUrl}
-          </pre>
-        )}
       </TabBodyScrollable>
 
       <Grid container>

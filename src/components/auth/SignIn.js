@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-//import { usePromiseTracker } from "react-promise-tracker";
 import { useTranslation } from "react-i18next";
 import { makeStyles } from "@material-ui/styles";
 import Avatar from "@material-ui/core/Avatar";
@@ -43,6 +42,18 @@ const styles = theme => ({
   fieldset: {
     border: 0,
   },
+  title: {
+    width: "100%",
+    color: theme.palette.title.color,
+    //backgroundColor: '#ccc', //theme.palette.title.backgroundColor,
+    //borderRadius: 3,
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: 3,
+    paddingBottom: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
+  }
 });
 const useStyles = makeStyles((theme) => (styles(theme)));
 
@@ -99,6 +110,13 @@ function SignIn() {
     }).then(
       result => {
         if (result instanceof Error) {
+          if (result?.response?.data?.code === "UnverifiedUser") {
+            // redirect to signup, with a flag indicating "UnverifiedUser", to show signupConfirm screen with this email ...
+            // TODO...
+            toast.error(t("This account is not yet verified. Please verify it before you use it."));
+            history.push(`/signup?unverifiedEmail=${email}`);
+            return;
+          }
           toast.error(errorMessage(result));
           setError({}); // we don't know which field to blame
           return;
@@ -124,7 +142,7 @@ function SignIn() {
       <form className={classes.form} noValidate autoComplete="off">
         <fieldset /*disabled={promiseInProgress}*/ className={classes.fieldset}>
 
-          <Box m={0} />
+          <Box m={1} />
 
           <Grid container justifyContent="center">
             <Avatar className={classes.avatar}>
@@ -132,15 +150,15 @@ function SignIn() {
             </Avatar>
           </Grid>
 
-          <Box m={2} />
+          <Box m={3} />
 
           <Grid container justifyContent="flex-start">
-            <FormText>
+            <FormText variant="subtitle1" className={classes.title}>
               {t("Sign in with email and password")}
             </FormText>
           </Grid>
 
-          <Box m={0} />
+          <Box m={3} />
 
           <FormInput
             autoFocus

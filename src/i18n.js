@@ -33,4 +33,8 @@ i18n
   })
 ;
 
-export { i18n, resources };
+const i18nLogout = () => {
+  localStorage.removeItem("i18nextLng");
+}
+
+export { i18n, resources, i18nLogout };

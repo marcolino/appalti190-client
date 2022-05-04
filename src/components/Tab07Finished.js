@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import Grid from "@material-ui/core/Grid";
@@ -6,33 +6,23 @@ import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton 
 
 function Tab07Finished(props) {
   const { t } = useTranslation();
-  const [ statusLocal, setStatusLocal ] = useState({});
   const [ prevIsEnabled ] = useState(true);
-
-  useEffect(() => {
-    if (props.value === props.index) {
-      (async () => {
-        setStatusLocal({loading: true});
-      })();
-    }
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props]);
 
   const onPrev = () => {
     props.goto("prev");
   };
 
-  if (!props.active) return null;
-  
   return (
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
-          {t("Finished! 🏁")}
+          {t("Finished")}!
         </TabTitle>
         <TabParagraph>
+          <div style={{fontSize: 128, textAlign: "center"}}>
+            🏁
+          </div>
         </TabParagraph>
-        {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
       </TabBodyScrollable>
 
       <Grid container>

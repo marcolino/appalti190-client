@@ -13,7 +13,7 @@ import LockOpen from "@material-ui/icons/LockOpen";
 import { errorMessage } from "../../libs/Misc";
 import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
-import { FormInput, FormButton, FormText } from "../FormElements";
+import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, validatePassword } from "../../libs/Validation";
 import Dialog from "../Dialog";
 
@@ -23,6 +23,18 @@ const styles = theme => ({
   },
   fieldset: {
     border: 0,
+  },
+  title: {
+    width: "100%",
+    color: theme.palette.title.color,
+    //backgroundColor: '#ccc', //theme.palette.title.backgroundColor,
+    //borderRadius: 3,
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: 3,
+    paddingBottom: 50,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
 const useStyles = makeStyles((theme) => (styles(theme)));
@@ -191,7 +203,7 @@ console.log("EC", result.response.data.code, Object.keys(result), Object.values(
               <Box m={3} />
 
               <Grid container justifyContent="flex-start">
-                <FormText>
+                <FormText variant="subtitle1" className={classes.title}>
                   {t("Reset password")}
                 </FormText>
               </Grid>
@@ -259,14 +271,15 @@ console.log("EC", result.response.data.code, Object.keys(result), Object.values(
                 {t("Confirm Password Reset")}
               </FormButton>
 
+              <Box m={2} />
+
               <Grid container justifyContent="flex-end">
-                <FormButton
+                <FormLink
+                  decoration="underline"
                   onClick={formResendResetPasswordCode}
-                  fullWidth={false}
-                  className={"buttonSecondary"}
                 >
                   {t("Resend code")}
-                </FormButton>
+                </FormLink>
               </Grid>
 
             </>

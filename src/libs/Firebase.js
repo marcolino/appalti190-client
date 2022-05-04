@@ -1,20 +1,19 @@
 import firebase from "firebase/app";
 import "firebase/messaging";
 
-// TODO: put this in env!
 const firebaseConfig = {
-  apiKey: "AIzaSyAN-T9JMI8W5oF2Gip2Pcu-E_xtXBB2gE0",
-  authDomain: "sistemisolari-quiccasa.firebaseapp.com",
-  projectId: "sistemisolari-quiccasa",
-  storageBucket: "sistemisolari-quiccasa.appspot.com",
-  messagingSenderId: "748892040096",
-  appId: "1:748892040096:web:69200876ed8ffa8615d2c5",
-  //measurementId: "G-HQVK7VFN1W",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  //measurementId: process.env.REACT_APP_MEASUREMENT_ID,"G-HQVK7VFN1W",
 };
 // console.firebase.com - Project - Projetc Settings - Cloud Messaging - Certificati Web Push - Coppia di chiavi
-const vapidKey = "BJAzYrLnCaD13Cwv61jZGEiTA8yP7SVmPMY2_m0QO0VI8GFDhs_yKap6_3SrZlmf8eAYrdK7UJIsedyOXyY5ulY";
-const tokenKey = "firebaseMessagingToken";
-const tokenMaxValidityTimeSpan = 7 * 24 * 60 * 60 * 1000; // one week (in milliseconds)
+const vapidKey = process.env.REACT_APP_VAPID_KEY;
+const tokenKey = process.env.REACT_APP_TOKEN_KEY;
+const tokenMaxValidityTimeSpan = process.env.REACT_APP_TOKEN_MAX_VALIDITY_TIME_SPAN;
 
 if (!firebase.apps.length) { // if never inizialized, inizialize app
   firebase.initializeApp(firebaseConfig);
@@ -48,8 +47,7 @@ export const getToken = (setToken) => {
     if (token) {
       //console.log("PushNotifications - Firebase - current token for client:", token);
       if (setToken) setToken(token);
-      // TODO: track the token -> client mapping, by sending to backend server, and
-      // show on the UI that permission is secured
+      // TODO: track the token -> client mapping, by sending to backend server, and show on the UI that permission is secured
       localStorage.setItem(tokenKey, JSON.stringify({value: token, timestamp: new Date().getTime()}));
     } else {
       //console.log("No registration token available, requesting permission to generate one...");

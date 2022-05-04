@@ -1,5 +1,63 @@
 import api from "./API";
 
+const getProfile = () => {
+  return api.get("/user/getProfile").then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
+const updateProfile = ({/*username, */email, password, firstName, lastName, address, fiscalCode, businessName, plan, roles}) => {
+  return api.post("/user/updateProfile", {
+    //username,
+    email,
+    password,
+    firstName,
+    lastName,
+    address,
+    fiscalCode,
+    businessName,
+  }).then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
+const updatePlan = plan => {
+  console.log("updatePlan - plan:", plan);
+  return api.post("/user/updatePlan",
+    plan,
+  ).then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
+const updateRoles = roles => {
+  return api.post("/user/updateRoles",
+    roles,
+  ).then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
 const getPublicContent = () => {
   return api.get("/test/all");
 };
@@ -29,6 +87,10 @@ const getAdminPanel = () => {
 };
 
 const UserService = {
+  getProfile,
+  updateProfile,
+  updatePlan,
+  updateRoles,
   getPublicContent,
   getUserBoard,
   getModeratorBoard,

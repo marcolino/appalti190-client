@@ -265,6 +265,7 @@ const FormLink = React.memo((props) => {
   const styles = theme => ({
     normal: {
       cursor: "pointer",
+      textDecoration: props.decoration ? props.decoration : "none",
     },
     disabled: {
       color: "grey",

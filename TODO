@@ -87,6 +87,8 @@
 - ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
 - integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre)
 - verificare OnlineStatusProvider quando si parte offline
+- check scripts/translate-auto.js
+
 
 x Antonio:
 - serve sia un template ODS che XLS? Su Excel funzionano entrambi?

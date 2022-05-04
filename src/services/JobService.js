@@ -1,31 +1,34 @@
 import api from "./API";
-//import TokenService from "./TokenService";
+import TokenService from "./TokenService";
 
-// // get job status
-// const get = async () => {
-//   // const user = TokenService.getUser();
-//   // if (!user) {
-//   //   return null;
-//   // }
-//   // return api.get("/job/get"/*, {
-//   //   userId: user._id,
-//   // }*/);
+// get job status
+const get = async () => {
+  // const user = TokenService.getUser();
+  // if (!user) {
+  //   return null;
+  // }
+  // return api.get("/job/get", {
+  //   userId: user._id,
+  // });
 
-// const retval = await api.get("/job/get");
-//   return api.get("/job/get");
-// };
+  //const retval = await api.get("/job/get");
 
-// // set job status
-// const set = (job) => {
-//   const user = TokenService.getUser();
-//   if (!user) {
-//     return null;
-//   }
-//   return api.put("/job/set", {
-//     userId: user._id,
-//     job
-//   });
-// };
+  const user = TokenService.getUser();
+  if (!user) {
+    return null;
+  }
+  return await api.get("/job/get");
+};
+
+// set job status
+const set = (job) => {
+  const user = TokenService.getUser();
+  if (!user) {
+    return null;
+  }
+
+  return api.put("/job/set", {job});
+};
 
 // upload a file
 const upload = (file) => {
@@ -51,6 +54,11 @@ const validateXml = (transform) => {
   return api.post("/job/validateXml/:transform", {
     transform,
   });
+  // const retval = api.post("/job/validateXml/:transform", {
+  //   transform,
+  // });
+  // console.log("****************** validateXml retval:", retval);
+  // return retval;
 }
 
 // check ANAC periodic verification outcome
@@ -74,14 +82,25 @@ const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
   );
 }
 
+// just to ignore big xml when debug printing...
+const sanitizeJob = (job) => {
+  if (!job?.transform?.xml) {
+    return job;
+  }
+  let j = job;
+  j.transform.xml = "…";
+  return j;
+}
+
 const JobService = {
-  // get,
-  // set,
+  get,
+  set,
   upload,
   transformXls2Xml,
   validateXml,
   outcomeCheck,
   outcomeFailureDetails,
+  sanitizeJob,
 };
 
 export default JobService;

@@ -4,6 +4,8 @@
 const tjo = require("translate-json-object")();
 const fs = require("fs");
 
+require("dotenv").config();
+
 const localesFolder = "./src/locales";
 const localesNamespace = "translation";
 const languageReference = "en";
@@ -12,12 +14,13 @@ const translationAutomaticTag = "🤖 ";
 // choose the service to use google/yandex (if you provide both yandex will be used as the default)
 tjo.init({
   //googleApiKey: "it is a payed subscription API now",
-  yandexApiKey: "trnsl.1.1.20170728T161359Z.fb1440f8e3592d56.9ab7fa4c8d96af96b7ff0ae7ff029cb790595934",
+  yandexApiKey: process.env.YANDEX_API_KEY,
 });
 
 // read all defined locales files
 fs.readdir(localesFolder, function(err, folders) {
   if (err) throw(err);
+  folders = folders.filter(folder => folder !== "index.js");
   console.log("languages in folder:", folders);
   translate(folders);
 });
@@ -26,7 +29,10 @@ const translate = async(folders) => {
   const resourceReference = getResourceFromFileSync(localesFolder + "/" + languageReference + "/" + localesNamespace + ".json")
   for (var i = 0; i < folders.length; i++) {
     language = folders[i];
-    if (language == languageReference) continue; // do not translate reference language
+    if (language === languageReference) {
+      console.log(`skipping reference language ${languageReference}`);
+      continue; // do not translate reference language
+    }
     try {
       const resourceTranslated = await tjo.translate(resourceReference, language);
       //console.log("resource translated for language " + language + ":", resourceTranslated);
@@ -58,6 +64,7 @@ const getResourceFromFileSync = (filePath) => {
 
 const putResourceToFileSync = (resource, filePath) => {
   try {
+    //console.log("writing to", filePath);
     fs.writeFileSync(filePath, JSON.stringify(resource, null, 2));
     return true;
   } catch(err) {

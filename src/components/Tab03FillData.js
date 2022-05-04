@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 
 const useStyles = makeStyles(theme => ({
-  xul: {
-    padding: 15,
+  ul: {
+    padding: 32,
   }
 }));
 
@@ -26,8 +26,6 @@ function Tab03FillData(props) {
     props.goto("next");
   };
 
-  //if (!props.active) return null;
-  
   return (
     <TabContainer>
       <TabBodyScrollable>

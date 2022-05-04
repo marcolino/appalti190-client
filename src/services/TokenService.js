@@ -34,7 +34,7 @@ const getJob = () => {
 };
 
 const setJob = (job) => {
-console.log("++++++++++++++++++++++++++++++++++++++++++++++ TokenService setJob:", JSON.stringify(job));
+  //console.log("TokenService setting job:", JobService.sanitizeJob(job));
   const user = JSON.parse(localStorage.getItem("user"));
   if (user) {
     user.job = job;
@@ -75,21 +75,18 @@ const remove = (key) => {
 };
 
 const TokenService = {
-  getLocalRefreshToken,
-  getLocalAccessToken,
-  updateLocalAccessToken,
-  getUser,
-  setUser,
-  removeUser,
   get,
   set,
   remove,
+  getUser,
+  setUser,
+  removeUser,
   getJob,
   setJob,
   removeJob,
-  // getRedirect,
-  // setRedirect,
-  // removeRedirect,
+  getLocalRefreshToken,
+  getLocalAccessToken,
+  updateLocalAccessToken,
 };
 
 export default TokenService;

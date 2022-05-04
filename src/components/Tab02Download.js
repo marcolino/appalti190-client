@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
@@ -7,8 +6,6 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import AuthService from "../services/AuthService";
 import TokenService from "../services/TokenService";
-//import JobService from "../services/JobService";
-//import { JobContext } from "../providers/JobProvider";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 import Dialog from "./Dialog";
 import config from "../config";
@@ -16,12 +13,8 @@ import config from "../config";
 
 
 function Tab02Download(props) {
-  //const classes = useStyles(); // TODO: REMOVEME
   const { t } = useTranslation();
   const history = useHistory();
-  //const job = TokenService.getJob();
-  //const job = JobService.get();
-  //const [ job, setJob ] = useState(TokenService.getJob());
   const [ prevIsEnabled, ] = useState(true);
   const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.download : false);
   const [ dialogTitle, setDialogTitle ] = useState(null);
@@ -85,8 +78,6 @@ function Tab02Download(props) {
     }
   };
 
-//  if (!props.active) return null;
-  
   return (
     <TabContainer>
       <TabBodyScrollable>
