@@ -13,8 +13,9 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef/*, GridValueGetterParams*/ } from "@mui/x-data-grid";
+import { DataGrid, itIT, /* TODO: add all supported languages */ GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import IconAvatar from "@mui/icons-material/Security";
+import IconDelete from "@mui/icons-material/Delete";
 //import { errorMessage } from "../libs/Misc";
 import UserService from "../services/UserService";
 import TokenService from "../services/TokenService";
@@ -161,65 +162,91 @@ function AdminPanel(props) {
   const [anyChanges/*, setAnyChanges*/] = React.useState(false);
 
   const columns: GridColDef[] = [
+    {
+      field: 'actions',
+      type: 'actions',
+      getActions: (params: GridRowParams) => [
+        <GridActionsCellItem icon={<IconDelete />} onClick={(e) => {console.log("DELETE", e)}} label={t("Delete")} />,
+        // <GridActionsCellItem icon={...} onClick={...} label="Print" showInMenu />,
+      ]
+    },
     // {
     //   field: "id",
     //   headerName: "ID",
-    //   width: 350,
+    //   minWidth: 350,
     //   editable: false,
     //   sortable: false,
     // },
     {
       field: "firstName",
       headerName: t("First Name"),
-      width: 100,
+      minWidth: 100,
+      flex: 1, // TODO: add fles for all columns...s
       editable: true,
     },
     {
       field: "lastName",
       headerName: t("Last Name"),
-      width: 120,
+      minWidth: 120,
+      flex: 1,
       editable: true,
     },
     {
       field: "email",
       headerName: t("Email"),
-      width: 240,
+      minWidth: 240,
+      flex: 1,
       editable: true,
     },
     {
       field: "businessName",
       headerName: t("Business name"),
-      width: 150,
+      minWidth: 150,
+      flex: 1,
       editable: true,
     },
     {
       field: "fiscalCode",
       headerName: t("Fiscal code"),
-      width: 180,
+      minWidth: 180,
+      flex: 1,
       editable: true,
     },
     {
-      field: "role",
-      headerName: t("Roles"),
-      width: 120,
+      field: "roles",
+      headerName: t("Role"),
+      minWidth: 170,
+      flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.roles.map(role => role.name).join(", ") || ""}`,
+      // valueGetter: (params: GridValueGetterParams) =>
+      //   `${params.row.roles.map(role => role.name).join(", ") || ""}`,
+      type: "singleSelect",
+      valueOptions: ["user", "admin"],
+      // multiple select is not supported yet...
+      // here is a dempo how to implement it: https://codesandbox.io/s/columntypesgrid-material-demo-forked-4bbcrv?file=/demo.js
     },
     {
       field: "plan",
       headerName: t("Plan"),
-      width: 150,
+      minWidth: 150,
+      flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${t(params.row.plan.name) || t("free")}`,
-      //type: "singleSelect",
-      //valueOptions: [t("free"), t("standard"), t("unlimited")],
+      // valueGetter: (params: GridValueGetterParams) => {
+      //   console.log("plan valueGetter", params);
+      //   return `${t(params.row.plan.name) || t("free")}`;
+      // },
+      // valueSetter: (params: GridValueSetterParams) => {
+      //   console.log("plan valueSetter", params);
+      //   return { ...params.row, plan: { ...params.row.plan, name: `${t(params.value) || t("free")}` }};
+      // },
+      type: "singleSelect",
+      valueOptions: [t("free"), t("standard"), t("unlimited")],
     },
     {
       field: "address.street",
       headerName: t("Street"),
-      width: 180,
+      minWidth: 180,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.street || ""}`,
@@ -227,7 +254,8 @@ function AdminPanel(props) {
     {
       field: "address.streetno",
       headerName: t("N°"),
-      width: 10,
+      minWidth: 10,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.streetNo || ""}`,
@@ -235,7 +263,8 @@ function AdminPanel(props) {
     {
       field: "address.city",
       headerName: t("City"),
-      width: 70,
+      minWidth: 70,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.city || ""}`,
@@ -243,7 +272,8 @@ function AdminPanel(props) {
     {
       field: "address.zip",
       headerName: t("ZIP"),
-      width: 70,
+      minWidth: 70,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.zip || ""}`,
@@ -251,7 +281,8 @@ function AdminPanel(props) {
     {
       field: "address.province",
       headerName: t("Pr."),
-      width: 15,
+      minWidth: 15,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.province || ""}`,
@@ -259,7 +290,8 @@ function AdminPanel(props) {
     {
       field: "address.country",
       headerName: t("Country"),
-      width: 80,
+      minWidth: 80,
+      flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.address.country || ""}`,
@@ -321,8 +353,16 @@ function AdminPanel(props) {
           return setError({ code: result.message });
         }
         console.log(`getAdminPanel got successfully:`, result.users);
-        result.users = result.users.map(user => ({ ...user, id: user._id})); // copy _id to id, a requiste of DataGrid
 
+        result.users = result.users.map(user => ({
+          ...user,
+          id: user._id, // copy _id to id, a requiste of DataGrid
+          plan: user.plan.name, // flatten plan
+          //roles: user.roles.map(role => role.name).join(", ",)
+          roles: user.roles[0].name, // get the first role only, we don't implement yet multiple select...
+        }));
+
+//result.users = result.users.slice(0, 1);
         // TODO: debug olnly - multiplicate users...
         if (result.users.length >= 3) {
           for (var i = 0; i < 1000; i++) {
@@ -334,7 +374,7 @@ function AdminPanel(props) {
         setUsers(result.users); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
       }
     );
-  }, [user?.id, setError, setProfile]);
+  }, [user?.id, setError, setProfile, t]);
   
   // const formAdminPanelUpdate = (e) => {
   //   e.preventDefault();
@@ -394,6 +434,8 @@ function AdminPanel(props) {
             <DataGridStyled
               rows={users}
               columns={columns}
+              localeText={itIT.components.MuiDataGrid.defaultProps.localeText /* TDO: usee current language*/}
+              experimentalFeatures={{ newEditingApi: true } /* TODO: remove with @mui/x-data-grid v6 */ }
               autoHeight
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -405,6 +447,9 @@ function AdminPanel(props) {
               getRowClassName={() => "adminpanel-table--row"}
               onCellEditCommit={(e) => console.log(`Edited row - id: ${e.id}, field: ${e.field}, value: ${e.value}`, e) /* TODO: handle edit commit serialization */}
               rowHeight={36}
+              /* available only in the PRO version...
+                initialState={{ pinnedColumns: { / *left: ['name'],* / right: ['actions'] }}}
+              */
             />
           {/* </div> */}
         </AdminPanelTabPanel>
