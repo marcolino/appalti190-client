@@ -69,12 +69,20 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     //backgroundColor: theme.palette.background.paper,
   },
-  tabs: {
-    "& .MuiTabs-indicator": {
-      //display: "none",
-      backgroundColor: "orange",
-    }
+  // tabs: {
+  //   "& .MuiTabs-indicator": {
+  //     //display: "none",
+  //     backgroundColor: "orange",
+  //   }
+  // }
+  tab: {
+    backgroundColor: theme.palette.secondary.light,
+  },
+  tabIndicator: {
+    backgroundColor: theme.palette.secondary.dark,
+    height: 1,
   }
+
 }));
 
 const TabsPanel = () => {
@@ -145,7 +153,7 @@ const TabsPanel = () => {
   if (!job?.tabId) job.tabId = 0;
   return (
     <div className={classes.root}>
-      <AppBar position="fixed" elevation={0} style={{/*backgroundColor: "transparent",*/ top: 50}}>
+      <AppBar elevation={0} position="fixed" style={{/*backgroundColor: "transparent",*/ top: 50}}>
         {/* <Tabs
           value={job.tabId}
           onChange={forceTab}
@@ -156,7 +164,7 @@ const TabsPanel = () => {
           aria-label="scrollable auto tabs"
           className={classes.tabs}
         > */}
-        <Paper elevation={0} square>
+        <Paper elevation={1} square>
           <Tabs
             value={job?.tabId}
             //indicatorColor="secondary"
@@ -165,6 +173,10 @@ const TabsPanel = () => {
             scrollButtons="auto"
             onChange={forceTab}
             aria-label="current section"
+            classes={{
+              indicator: classes.tabIndicator
+            }}
+            className={classes.tab}
           >
             <StyledTab label={`${t("Start")} 🪄`} {...a11yProps(0)} />
             <StyledTab label={`${t("Download")} ⬇`} {...a11yProps(1)} />

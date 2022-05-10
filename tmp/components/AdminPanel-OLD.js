@@ -1,11 +1,13 @@
+// ADMINPANEL2 - NEW CODE - BAD STYLING
+
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { withStyles } from "@mui/styles";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useBeforeunload } from "react-beforeunload";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
-import Paper from '@mui/material/Paper';
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
@@ -13,12 +15,9 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { IconButton } from "@mui/material";
-import { Tooltip } from "@mui/material";
 import { DataGrid, itIT, /* TODO: add all supported languages */ GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import IconAvatar from "@mui/icons-material/Security";
 import IconDelete from "@mui/icons-material/Delete";
-import IconForceLogout from "@mui/icons-material/Lock";
 //import { errorMessage } from "../libs/Misc";
 import UserService from "../services/UserService";
 import TokenService from "../services/TokenService";
@@ -26,43 +25,17 @@ import { toast } from "./Toast";
 //import config from "../config";
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-  },
   datagrid: {
-    // disable data-grid outlines
-    "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus, &.MuiDataGrid-root .MuiDataGrid-cell:focus": {
-      outline: "none",
-    },
-    "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus": {
-      outline: "none",
-    },
-    "& .MuiDataGrid-columnHeaderCheckbox:focus-within, & .MuiDataGrid-columnHeaderCheckbox:focus": {
-      outline: "none",
-    },
-
     "& .adminpanel-table--row": {
       borderRadius: 1, //defaultBorderRadius,
       backgroundColor: theme.palette.tertiary.light,
-      outline: "none",
     },
-    // "& .adminpanel-table--cell": {
-    //   border: "none",
-    //   outline: "none",
-    // },
-    // "&.MuiDataGrid-root .MuiDataGrid-columnHeader:focus, &.MuiDataGrid-root .MuiDataGrid-cell:focus, &.MuiDataGrid-root .MuiDataGrid-cellCheckbox:focus, &.MuiDataGrid-root .MuiDataGrid-sortIcon:focus": {
-    //   outline: "none",
-    // },
-    // "&.MuiCheckbox-root .MuiDataGrid-cellCheckbox:focus": {
-    //   outline: "none !important",
-    // },
-    // "& .MuiDataGrid-columnHeader,  .MuiDataGrid-cell,  .MuiDataGrid-cellCheckbox":
-    //     {
-    //       border: 0,
-    //       "& :focus-within": {
-    //         outline: "none"
-    //       }
-    //     },
+    "& .adminpanel-table--cell": {
+      border: "none",
+    },
+  },
+  root: {
+    flexGrow: 1,
   },
   avatar: {
     backgroundColor: theme.palette.success.main,
@@ -125,10 +98,26 @@ const styles = theme => ({
   tabIndicator: {
     backgroundColor: theme.palette.secondary.dark,
     height: 1,
-  },
+  }
 });
 
 const useStyles = makeStyles((theme) => (styles(theme)));
+
+const DataGridStyled = withStyles({
+  root: {
+    "& .MuiDataGrid-renderingZone": {
+      maxHeight: "5px !important",
+    },
+    "& .MuiDataGrid-cell": {
+      lineHeight: "none !important",
+      maxHeight: "5px !important",
+      whiteSpace: "normal",
+    },
+    "& .MuiDataGrid-row": {
+      maxHeight: "5px !important",
+    },
+  },
+})(DataGrid);
 
 function a11yProps(index) {
   return {
@@ -173,7 +162,6 @@ function AdminPanel(props) {
   const [users, setUsers] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [rowsPerPageOptions/*, setRowsPerPageOptions*/] = useState([5, 10, 20, 50, 100]);
-  const [selectedRowsCount, setSelectedRowsCount] = useState(0);
   const [/*profile*/, setProfile] = useState(false);
   const [/*error*/, setError] = useState(false);
   //const [formState, setFormState] = useState({ xs: true, horizontalSpacing: 0 });
@@ -185,21 +173,11 @@ function AdminPanel(props) {
   const columns: GridColDef[] = [
     {
       field: 'actions',
-      headerName: t("Actions"),
       type: 'actions',
-      width: 90,
       getActions: (params: GridRowParams) => [
-        <GridActionsCellItem
-          label={t("Delete")}
-          icon={<IconDelete />}
-          onClick={(e) => {console.log("DELETE", e)}}
-        />,
-        <GridActionsCellItem
-          label={t("Force logout")}
-          icon={<IconForceLogout />}
-          onClick={(e) => {console.log("FORCE LOGOUT", e)}}
-        />,
-      ],
+        <GridActionsCellItem icon={<IconDelete />} onClick={(e) => {console.log("DELETE", e)}} label={t("Delete")} />,
+        // <GridActionsCellItem icon={...} onClick={...} label="Print" showInMenu />,
+      ]
     },
     // {
     //   field: "id",
@@ -285,7 +263,7 @@ function AdminPanel(props) {
     {
       field: "address.streetno",
       headerName: t("N°"),
-      minWidth: 40,
+      minWidth: 10,
       flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
@@ -312,7 +290,7 @@ function AdminPanel(props) {
     {
       field: "address.province",
       headerName: t("Pr."),
-      minWidth: 50,
+      minWidth: 15,
       flex: 1,
       editable: true,
       valueGetter: (params: GridValueGetterParams) =>
@@ -332,14 +310,6 @@ function AdminPanel(props) {
   const handleChangeTabValue = (event, newValue) => {
     setTabValue(newValue);
   };
-  
-  // check user is authenticated
-  useEffect(() => {
-    if (!user?.id) {
-      toast.error(t("User must be authenticated"));
-      history.goBack();
-    }
-  }, [user?.id, history, t]);
   
   // avoid page unload when unsaved changes present
   useBeforeunload((event) => {
@@ -404,7 +374,7 @@ function AdminPanel(props) {
 //result.users = result.users.slice(0, 1);
         // TODO: debug olnly - multiplicate users...
         if (result.users.length >= 3) {
-          for (var i = 0; i < 36; i++) {
+          for (var i = 0; i < 1000; i++) {
             result.users.push(JSON.parse(JSON.stringify(result.users[i%3])));
             result.users[result.users.length-1].id = result.users[result.users.length-1].id  + "-" + Math.floor(Math.random() * 999999999);
           }
@@ -449,24 +419,15 @@ function AdminPanel(props) {
 
         <Box m={3} />
 
-        <AppBar elevation={0} position="static">
-          <Paper elevation={1} square>
-            <Tabs
-              value={tabValue}
-              onChange={handleChangeTabValue}
-              variant="standard"
-              aria-label="tabs administrator's panel"
-              classes={{
-                indicator: classes.tabIndicator
-              }}
-              className={classes.tab}
-              >
-              <Tab
-                label={t("Users")}
-                {...a11yProps(0)}
-              />
-            </Tabs>
-          </Paper>
+        <AppBar position="static">
+          <Tabs
+            value={tabValue}
+            onChange={handleChangeTabValue}
+            variant="standard"
+            aria-label="tabs administrator's panel"
+          >
+            <Tab label={t("Users")} {...a11yProps(0)} />
+          </Tabs>
         </AppBar>
 
         <AdminPanelTabPanel value={tabValue} index={ADMINPANEL_USERS}>
@@ -478,60 +439,28 @@ function AdminPanel(props) {
 
           <Box m={3} />
 
-          <DataGrid
-            rows={users}
-            columns={columns}
-            localeText={itIT.components.MuiDataGrid.defaultProps.localeText /* TODO: use current language*/}
-            //experimentalFeatures={{ newEditingApi: true, preventCommitWhileValidating: true, warnIfFocusStateIsNotSynced: true } /* TODO: remove with @mui/x-data-grid v6 */ }
-            autoHeight
-            pageSize={pageSize}
-            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-            rowsPerPageOptions={rowsPerPageOptions}
-            pagination
-            checkboxSelection
-            disableSelectionOnClick
-            className={classes.datagrid}
-            getRowClassName={() => "adminpanel-table--row"}
-            onCellEditCommit={(params: GridCellEditCommitParams) => {
-              console.log(`Edited row - id: ${params.id}, field: ${params.field}, value: ${params.value}`, params)
-            }}
-            onSelectionChange={newSelection => {
-              console.warn(newSelection.rows + " selected users");
-            }}
-            onRowSelected={x => console.warn(x.api.current.getSlectedRows() + " selected users")}
-            onSelectionModelChange={ids => {
-              const selectedIDs = new Set(ids);
-              setSelectedRowsCount(users.filter(user => selectedIDs.has(user.id.toString())).length);
-            }}
-            rowHeight={40}
-            /* available only in the PRO version...
-              initialState={{ pinnedColumns: { / *left: ['name'],* / right: ['actions'] }}}
-            */
-          />
-
-          <Box m={3} />
-
-          {(selectedRowsCount > 0) && (
-            <div>
-              <Tooltip
-                title={t("Delete all selected users")}
-                placement="top"
-              >
-                <IconButton aria-label="delete all selected users" onClick={() => alert("delete all selected...")}>
-                  <IconDelete />
-                </IconButton>
-              </Tooltip>
-              <Tooltip
-                title={t("Force logout for all selected users")}
-                placement="top"
-              >
-                <IconButton /*color="secondary"*/ aria-label="force logout for all selected users" onClick={() => alert("logout all selected...")}>
-                  <IconForceLogout />
-                </IconButton>
-              </Tooltip>
-            </div>
-          )}
-
+          {/* <div style={{ height: "500px", width: "100%" }}>TODO: height should be proportional with window.height */}
+            <DataGridStyled
+              rows={users}
+              columns={columns}
+              localeText={itIT.components.MuiDataGrid.defaultProps.localeText /* TDO: usee current language*/}
+              experimentalFeatures={{ newEditingApi: true } /* TODO: remove with @mui/x-data-grid v6 */ }
+              autoHeight
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={rowsPerPageOptions}
+              pagination
+              checkboxSelection
+              disableSelectionOnClick
+              className={classes.datagrid}
+              getRowClassName={() => "adminpanel-table--row"}
+              onCellEditCommit={(e) => console.log(`Edited row - id: ${e.id}, field: ${e.field}, value: ${e.value}`, e) /* TODO: handle edit commit serialization */}
+              rowHeight={36}
+              /* available only in the PRO version...
+                initialState={{ pinnedColumns: { / *left: ['name'],* / right: ['actions'] }}}
+              */
+            />
+          {/* </div> */}
         </AdminPanelTabPanel>
 
         {/* <Grid container justifyContent="center">

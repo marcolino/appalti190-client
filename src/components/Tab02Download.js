@@ -88,7 +88,7 @@ function Tab02Download(props) {
           Scarica il modello Excel in cui potrai inserire i dati degli appalti, uno per riga.
         </TabParagraph>
         <TabParagraph>
-          <Button onClick={onDownload} variant="contained" color="primary">
+          <Button onClick={onDownload} variant="contained" color="tertiary">
             {t("Download")} ⬇
           </Button>
         </TabParagraph>

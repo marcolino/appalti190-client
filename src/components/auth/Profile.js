@@ -28,7 +28,8 @@ import IconAddressCity from "@mui/icons-material/LocationCity";
 import IconAddressProvince from "@mui/icons-material/Room";
 import IconAddressZip from "@mui/icons-material/Code";
 import IconAddressCountry from "@mui/icons-material/Language";
-import { errorMessage, capitalize } from "../../libs/Misc";
+import Pricing from "../../components/Pricing";
+import { errorMessage/*, capitalize*/ } from "../../libs/Misc";
 import UserService from "../../services/UserService";
 import TokenService from "../../services/TokenService";
 import { toast } from "../Toast";
@@ -96,6 +97,13 @@ const styles = theme => ({
   },
   formControlSelectRole: {
     minWidth: 200,
+  },
+  tab: {
+    backgroundColor: theme.palette.secondary.light,
+  },
+  tabIndicator: {
+    backgroundColor: theme.palette.secondary.dark,
+    height: 1,
   },
 });
 
@@ -340,7 +348,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
   return (
     <div className={classes.root}>
 
-      <Container maxWidth="sm">
+      <Container maxWidth="md">
 
         <Box m={1} />
 
@@ -358,6 +366,10 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
             onChange={handleChangeTabValue}
             variant="standard"
             aria-label="tabs for user's personal profile"
+            classes={{
+              indicator: classes.tabIndicator
+            }}
+            className={classes.tab}
           >
             <Tab label={t("Your profile")} {...a11yProps(0)} />
             <Tab label={t("Your plan")} {...a11yProps(1)} />
@@ -369,14 +381,6 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
       
           <form className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
-
-              {/* <Box m={1} /> */}
-
-              {/* <Grid container justifyContent="flex-start">
-                <FormText variant="subtitle1" className={classes.title}>
-                  {t("Your profile")}
-                </FormText>
-              </Grid> */}
 
               <Box m={3} />
 
@@ -593,10 +597,10 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
           <form className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
 
-              <Box m={3} />
+              <Pricing onPlanSelected={formProfileUpdate} />
 
-              {/* <fieldset className={classes.fieldsetPersonalData}>
-                <legend>{t("Plan")}</legend> */}
+              {/*
+                <Box m={3} />
 
                 <Tooltip
                   title={t("Usage plan")}
@@ -612,7 +616,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                         onChange={e => {
                         /**
                          * We don't want a not-admin user to change plan here... She should just see the possible plans list...
-                         */
+                         * /
                           if (userCanUpdatePlan()) {
                             setAnyChanges(true); setPlan(e.target.value);
                           }
@@ -626,7 +630,7 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                     </FormControl>
                   </Grid>
                 </Tooltip>
-              {/* </fieldset> */}
+              */}
             </fieldset>
           </form>
         </ProfileTabPanel>
@@ -636,9 +640,6 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
             <fieldset className={classes.fieldset}>
 
               <Box m={3} />
-
-              {/* <fieldset className={classes.fieldsetPersonalData}>
-                <legend>{t("Plan")}</legend> */}
 
                 <Tooltip
                   /* eslint-disable no-useless-concat */
@@ -669,26 +670,22 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                     </FormControl>
                   </Grid>
                 </Tooltip>
-              {/* </fieldset> */}
             </fieldset>
           </form>
         </ProfileTabPanel>
 
-        <Grid container justifyContent="center">
-          <FormButton
-            fullWidth={false}
-            className={"buttonSecondary"}
-            autoFocus={true}
-            onClick={formProfileUpdate}
-          >
-            {
-              (tabValue !== PROFILE_PLAN) ?
-                t("Update")
-              :
-                t("Buy a new plan")
-            }
-          </FormButton>
-        </Grid>
+        {(tabValue !== PROFILE_PLAN) && (
+          <Grid container justifyContent="center">
+            <FormButton
+              fullWidth={false}
+              className={"buttonSecondary"}
+              autoFocus={true}
+              onClick={formProfileUpdate}
+            >
+              {t("Update")}
+            </FormButton>
+          </Grid>
+        )}
 
         <Box m={1} />
 

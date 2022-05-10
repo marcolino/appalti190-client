@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { makeStyles } from "@mui/styles";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
+import ModalProvider from "mui-modal-provider";
 import CssBaseline from "@mui/material/CssBaseline";
 import { OnlineStatusProvider, OnlineStatusContext } from "../providers/OnlineStatusProvider";
 import Header from "./Header";
@@ -16,18 +17,20 @@ import theme from "../themes/default"; // here we choose the theme
 function App() {
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <OnlineStatusProvider>
-          <CssBaseline />
-          <BrowserRouter>
-            <Loader />
-            <Contents />
-            <CookieBanner />
-            {/* <FloatingActionButton/> */}
-          </BrowserRouter>
-          {/* <PushNotifications /> */}
-        </OnlineStatusProvider>
-      </ThemeProvider>
+      <ModalProvider>
+        <ThemeProvider theme={theme}>
+          <OnlineStatusProvider>
+            <CssBaseline />
+            <BrowserRouter>
+              <Loader />
+              <Contents />
+              <CookieBanner />
+              {/* <FloatingActionButton/> */}
+            </BrowserRouter>
+            {/* <PushNotifications /> */}
+          </OnlineStatusProvider>
+        </ThemeProvider>
+      </ModalProvider>
     </StyledEngineProvider>
   );
 }
