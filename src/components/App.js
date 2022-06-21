@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme => ({
 const Contents = () => {
   const location = useLocation();
   const isOnline = useContext(OnlineStatusContext);
-	const classes = useStyles({footerHeight: isAuthLocation(location) ? 0 : config.footerHeight }); // hide footer while in auth screens
+	const classes = useStyles({footerHeight: isAuthLocation(location) ? 0 : config.ui.footerHeight }); // hide footer while in auth screens
 
   return (
     <div className={classes.contentsContainer}>

@@ -11,7 +11,7 @@ const getProfile = () => {
   );
 };
 
-const updateProfile = ({/*username, */email, password, firstName, lastName, address, fiscalCode, businessName, plan, roles}) => {
+const updateProfile = ({/*username, */email, password, firstName, lastName, address, fiscalCode, businessName}) => {
   return api.post("/user/updateProfile", {
     //username,
     email,
@@ -31,11 +31,37 @@ const updateProfile = ({/*username, */email, password, firstName, lastName, addr
   );
 };
 
+const updateUserProperty = ({userId, propertyName, propertyValue}) => {
+  return api.post("/user/updateUserProperty", {
+    userId,
+    propertyName,
+    propertyValue,
+  }).then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
 const updatePlan = plan => {
   console.log("updatePlan - plan:", plan);
   return api.post("/user/updatePlan",
     plan,
   ).then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
+const getRoles = roles => {
+  return api.get("/user/getRoles").then(
     response => {
       return response.data;
     },
@@ -89,7 +115,9 @@ const getAdminPanel = () => {
 const UserService = {
   getProfile,
   updateProfile,
+  updateUserProperty,
   updatePlan,
+  getRoles,
   updateRoles,
   getPublicContent,
   getUserBoard,

@@ -1,3 +1,8 @@
+const serverBaseUrl = `${process.env.NODE_ENV === "production" ?
+  "https://appalti190.herokuapp.com" :
+  "http://localhost:5000"
+}`;
+
 module.exports = {
   companyName: "AR Sistemi",
   companyHomeSiteName: "arsistemi.it",
@@ -15,39 +20,25 @@ module.exports = {
   appSiteUrl: "appalti190.arsistemi.it",
   appTermsValidityStartDate: "01-01-2022",
   display: "standalone", // for manifest
+  service: {
+    endpoint: `${serverBaseUrl}/`
+  },
+  checkout: {
+    endpoint: `${serverBaseUrl}/create-checkout-session`,
+  },
   api: {
     version: "1", // semver syntax
-    endpoint: {
-      development: "http://localhost:5000/api",
-      production: "https://appalti190.herokuapp.com/api",
-    },
+    endpoint: `${serverBaseUrl}/api`,
     headers: {
       "Content-Type": "application/json",
-      "Content-Type-BACKUP": "x-www-form-urlencoded", // TODO: ???
     },
-    //redirect: "follow",
     backendType: "NodeJsExpress", // NodeJsExpress / SpringBoot
-    rolesNames: [
-      "user",
-      "admin",
-    ],
     rolesNamesDefault: [ "user" ],
-    planNames: [
-      "free",
-      "standard",
-      "unlimited",
-    ],
-    planNameDefault: "free",
-  },
-  showcase: {
-    endpoint: {
-      development: "http://localhost:5000/api/prices", // TODO...
-      production: "https://appalti190-showcase.herokuapp.com/prices",
-    },
   },
   languages: {
     supported: {
       "en": { icon: "🇬🇧" },
+      "fr": { icon: "🇫🇷" },
       "it": { icon: "🇮🇹" },
     },
     fallback: "it",
@@ -57,10 +48,10 @@ module.exports = {
     // sounds: {
     //   buttonClick,
     // },
+    footerHeight: "1.5rem",
+    extraSmallWatershed: 600,
+    mobileDesktopWatershed: 900,
   },
-  footerHeight: "1.5rem",
-  extraSmallWatershed: 600,
-  mobileDesktopWatershed: 900,
   federatedSigninProviders: [ // we currently handle "Facebook", "Google"
     //"Facebook",
     //"Google",
@@ -69,21 +60,6 @@ module.exports = {
   oauthRedirectSignInPublic: "https://appalti190.arsistemi.it/",
   oauthRedirectSignOutLocal: "http://localhost:5000/",
   oauthRedirectSignOutPublic: "https://appalti190.arsistemi.it/",
-  debugAwsAmplify: false,
-  indexedDb: {
-    name: 'sw-background-push-messages',
-    version: 1,
-    objectStoresMeta: [
-      {
-        store: 'messages',
-        storeConfig: { keyPath: 'id', autoIncrement: true },
-        storeSchema: [
-          { name: 'name', keypath: 'name', options: { unique: false } },
-          { name: 'email', keypath: 'email', options: { unique: false } }
-        ]
-      }
-    ]
-  },
   data: {
     templateDownloadName: "Appalti190.ots",
     templateDownloadLink: "/data/Appalti190.ots",

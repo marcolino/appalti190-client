@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
     color: "#222",
     fontWeight: 700,
     fontSize: "1.5em",
+    textDecoration: "none",
   },
   toolbar: {
     display: "flex",
@@ -106,6 +107,9 @@ function Header() {
     EventBus.on("logout", () => {
       onLogOut();
     });
+    EventBus.on("roles-change", () => {
+      onRolesChange();
+    });
 
     return () => {
       EventBus.remove("logout");
@@ -115,7 +119,7 @@ function Header() {
   // handle responsiveness
   useEffect(() => {
     const setResponsiveness = () => {
-      return window.innerWidth < config.mobileDesktopWatershed
+      return window.innerWidth < config.ui.mobileDesktopWatershed
         ? setState((prevState) => ({ ...prevState, view: "mobile" }))
         : setState((prevState) => ({ ...prevState, view: "desktop" }));
     };
@@ -141,6 +145,13 @@ function Header() {
     setCurrentUser(undefined);
   };
   
+  const onRolesChange = () => {
+console.log("HEADER ROLES CHANGE");
+    //setShowModeratorBoard(false);
+    //setShowAdminBoard(false);
+    setCurrentUser(AuthService.getCurrentUser());
+  };
+
   const [state, setState] = useState({
     view: "mobile", // mobile / desktop
     drawerOpen: false,
@@ -328,10 +339,10 @@ function Header() {
           </RouterLink>
 
           {/* main brand logo text */}
-          <div className={classes.title}>
+          <RouterLink to="/" className={classes.title}>
             {config.appTitle}
-          </div>
-
+          </RouterLink>
+          
           {state.view === "desktop" &&
             <div>
               {getDesktopMainHeaderItems()}

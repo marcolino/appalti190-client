@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useModal } from "mui-modal-provider";
 import { makeStyles } from "@mui/styles";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
@@ -15,7 +16,7 @@ import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, validatePassword } from "../../libs/Validation";
-import Dialog from "../Dialog";
+import FlexibleDialog from "../FlexibleDialog";
 
 const styles = theme => ({
   avatar: {
@@ -48,19 +49,10 @@ function ForgotPassword() {
   const [waitingForCode, setWaitingForCode] = useState(false);
   const [codeDeliveryMedium, setCodeDeliveryMedium] = useState("");
   const [code, setCode] = useState("");
-  const [dialogTitle, setDialogTitle] = useState(null);
-  const [dialogContent, setDialogContent] = useState(null);
-  const [dialogButtons, setDialogButtons] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const history = useHistory();
   const { t } = useTranslation();
- 
-  const openDialog = (title, content, buttons) => {
-    setDialogTitle(title);
-    setDialogContent(content);
-    setDialogButtons(buttons);
-    setDialogOpen(true);    
-  }
+  const { showModal } = useModal();
+  const openDialog = (props) => showModal(FlexibleDialog, props);
 
   const validateForm = () => { // validate email formally
     if (!waitingForCode) {
@@ -115,11 +107,20 @@ function ForgotPassword() {
           default: // in future we could treat EMAIL/SMS/... separately...
             const medium = result.codeDeliveryMedium;
             setCodeDeliveryMedium(medium);
-            openDialog(
-              t("Verification code sent"),
-              t(`Verification code sent via {{medium}} to {{email}}.`, {medium, email}) + `\n` +
-              t(`Please copy and paste it here.`),
-            );
+            openDialog({
+              title: t("Verification code sent"),
+              contentText:
+                t(`Verification code sent via {{medium}} to {{email}}.`, {medium, email}) + `\n` +
+                t(`Please copy and paste it here.`),
+                actions: [
+                  {
+                    text: t("Ok"),
+                    closeModal: true,
+                    autoFocus: true,
+                    callback: console.log("Ok"),
+                  },
+                ],
+            });
         }
       },
     );
@@ -150,17 +151,18 @@ console.log("EC", result.response.data.code, Object.keys(result), Object.values(
         setPassword("");
         setPasswordConfirmed("");
         setCode("");
-        openDialog(
-          t(`Password reset success`),
-          t(`You can now sign in with your new password`),
-          [
+        openDialog({
+          title: t(`Password reset success`),
+          contentText: t(`You can now sign in with your new password`),
+          actions: [
             {
               text: t("Ok"),
-              close: true,
+              autoFocus: true,
+              closeModal: true,
               callback: () => history.push("/signin"),
             }
-          ]
-        );
+          ],
+        });
       },
     );
   };
@@ -286,14 +288,6 @@ console.log("EC", result.response.data.code, Object.keys(result), Object.values(
           )}
         </fieldset>
       </form>
-
-      <Dialog
-        dialogOpen={dialogOpen}
-        dialogSetOpen={setDialogOpen}
-        dialogTitle={dialogTitle}
-        dialogContent={dialogContent}
-        dialogButtons={dialogButtons}
-      />
 
     </Container>
   );

@@ -13,15 +13,18 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import { IconButton } from "@mui/material";
 import { Tooltip } from "@mui/material";
-import { DataGrid, itIT, /* TODO: add all supported languages */ GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, itIT, frFR, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import IconAvatar from "@mui/icons-material/Security";
 import IconDelete from "@mui/icons-material/Delete";
 import IconForceLogout from "@mui/icons-material/Lock";
-//import { errorMessage } from "../libs/Misc";
+import i18n from "i18next";
+import { errorMessage, flattenObject } from "../libs/Misc";
 import UserService from "../services/UserService";
 import TokenService from "../services/TokenService";
+import { getCurrentLanguage } from "../libs/I18n";
 import { toast } from "./Toast";
 //import config from "../config";
 
@@ -169,19 +172,27 @@ AdminPanelTabPanel.propTypes = {
 function AdminPanel(props) {
   const classes = useStyles();
   const history = useHistory();
-  const [user/*, setUser*/] = useState(TokenService.getUser());
+  const [user] = useState(TokenService.getUser());
   const [users, setUsers] = useState([]);
+  const [usersLoaded, setUsersLoaded] = useState(false);
   const [pageSize, setPageSize] = useState(10);
   const [rowsPerPageOptions/*, setRowsPerPageOptions*/] = useState([5, 10, 20, 50, 100]);
   const [selectedRowsCount, setSelectedRowsCount] = useState(0);
-  const [/*profile*/, setProfile] = useState(false);
   const [/*error*/, setError] = useState(false);
-  //const [formState, setFormState] = useState({ xs: true, horizontalSpacing: 0 });
   const { t } = useTranslation();
-
-  const [tabValue, setTabValue] = React.useState(props.tabValue);
-  const [anyChanges/*, setAnyChanges*/] = React.useState(false);
-
+  const [tabValue, setTabValue] = useState(props.tabValue);
+  const [anyChanges] = useState(false);
+  const [language] = useState(getCurrentLanguage(i18n));
+  const [localeText] = useState(() => { /* use current language for MuiDataGrid locale text */
+    switch (language) {
+      case "it":
+        return itIT.components.MuiDataGrid.defaultProps.localeText;
+      case "fr":
+        return frFR.components.MuiDataGrid.defaultProps.localeText;
+      default:
+        return null; // use default language for MuiDataGrid locale text
+    }
+  });
   const columns: GridColDef[] = [
     {
       field: 'actions',
@@ -212,8 +223,9 @@ function AdminPanel(props) {
       field: "firstName",
       headerName: t("First Name"),
       minWidth: 100,
-      flex: 1, // TODO: add fles for all columns...s
+      flex: 1,
       editable: true,
+      preProcessEditCellProps: params => preProcessEditCellValidation("firstName", params),
     },
     {
       field: "lastName",
@@ -221,6 +233,7 @@ function AdminPanel(props) {
       minWidth: 120,
       flex: 1,
       editable: true,
+      preProcessEditCellProps: params => preProcessEditCellValidation("lastName", params),
     },
     {
       field: "email",
@@ -228,6 +241,7 @@ function AdminPanel(props) {
       minWidth: 240,
       flex: 1,
       editable: true,
+      preProcessEditCellProps: params => preProcessEditCellValidation("email", params),
     },
     {
       field: "businessName",
@@ -235,6 +249,7 @@ function AdminPanel(props) {
       minWidth: 150,
       flex: 1,
       editable: true,
+      preProcessEditCellProps: params => preProcessEditCellValidation("businessName", params),
     },
     {
       field: "fiscalCode",
@@ -242,6 +257,7 @@ function AdminPanel(props) {
       minWidth: 180,
       flex: 1,
       editable: true,
+      preProcessEditCellProps: params => preProcessEditCellValidation("fiscalCode", params),
     },
     {
       field: "roles",
@@ -252,9 +268,7 @@ function AdminPanel(props) {
       // valueGetter: (params: GridValueGetterParams) =>
       //   `${params.row.roles.map(role => role.name).join(", ") || ""}`,
       type: "singleSelect",
-      valueOptions: ["user", "admin"],
-      // multiple select is not supported yet...
-      // here is a dempo how to implement it: https://codesandbox.io/s/columntypesgrid-material-demo-forked-4bbcrv?file=/demo.js
+      valueOptions: ["user", "admin"], // TODO: read from server
     },
     {
       field: "plan",
@@ -271,34 +285,55 @@ function AdminPanel(props) {
       //   return { ...params.row, plan: { ...params.row.plan, name: `${t(params.value) || t("free")}` }};
       // },
       type: "singleSelect",
-      valueOptions: [t("free"), t("standard"), t("unlimited")],
+      valueOptions: [t("free"), t("standard"), t("unlimited")], // TODO: read from server
     },
     {
-      field: "address.street",
+      field: "addressStreet",
       headerName: t("Street"),
       minWidth: 180,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.street || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("addressStreet", params),
     },
+    // {
+    //   field: "addressstreet",
+    //   headerName: t("Street"),
+    //   minWidth: 180,
+    //   flex: 1,
+    //   editable: true,
+    //   preProcessEditCellProps: params => preProcessEditCellValidation("addressstreet", params),
+    //   // valueGetter: (params: GridValueGetterParams) =>
+    //   //   `${params.row.address?.street || ""}`,
+    //   //valueFormatter: params => {console.log("£££££££££££", params); return params.row?.address?.street},
+    //   // valueGetter: (params) => {
+    //   //   console.log({ params });
+    //   //   return params?.row?.address?.street ? params.row.address.street : "NOSTREET";
+    //   // },
+    //   // valueSetter: (params) => {
+    //   //   console.log({ params });
+    //   //   return params?.row;
+    //   // },
+    //   //valueGetter: params => params.row["address.street"],
+    //   //valueSetter: params => params.row,
+    //   //renderCell: params => params.row["address_street"],
+    // },
     {
-      field: "address.streetno",
+      field: "address.streetNo",
       headerName: t("N°"),
-      minWidth: 40,
+      minWidth: 50,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.streetNo || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("address.streetNo", params),
+      renderCell: (params) => params.row["address.streetNo"],
     },
     {
       field: "address.city",
       headerName: t("City"),
-      minWidth: 70,
+      minWidth: 90,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.city || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("address.city", params),
+      renderCell: (params) => params.row["address.city"],
     },
     {
       field: "address.zip",
@@ -306,8 +341,8 @@ function AdminPanel(props) {
       minWidth: 70,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.zip || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("address.zip", params),
+      renderCell: (params) => params.row["address.zip"],
     },
     {
       field: "address.province",
@@ -315,8 +350,8 @@ function AdminPanel(props) {
       minWidth: 50,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.province || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("address.province", params),
+      renderCell: (params) => params.row["address.province"],
     },
     {
       field: "address.country",
@@ -324,8 +359,8 @@ function AdminPanel(props) {
       minWidth: 80,
       flex: 1,
       editable: true,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.address.country || ""}`,
+      preProcessEditCellProps: params => preProcessEditCellValidation("address.country", params),          
+      renderCell: (params) => params.row["address.country"],
     },
   ];
   
@@ -333,6 +368,38 @@ function AdminPanel(props) {
     setTabValue(newValue);
   };
   
+  const preProcessEditCellValidation = async(property, params) => {
+console.log("*** preProcessEditCellValidation property, params:", property, params);
+    return new Promise((resolve, reject) => {
+      return UserService.updateUserProperty({
+        userId: params.id,
+        propertyName: property,
+        propertyValue: params.props.value,
+      }).then(
+        result => {
+          if (result instanceof Error) {
+            toast.dismiss(); // avoid too high toasts stack
+            toast.warn(errorMessage(result));
+            reject({...params.props, error: true});
+          } else {
+            //toast.success(result.message);
+console.log("*** preProcessEditCellValidation result:", result);
+            params.props.value = result.propertyValue; // update value if normalized serverside
+            resolve({...params.props, error: false});
+          }
+        },
+      )
+    });
+  };
+
+  const onCellEditCommit = (params) => {
+    toast.success(t("Field updated"));
+  }
+
+  const onSelectionChange = newSelection => {
+    console.warn(newSelection.rows + " selected users");
+  };
+
   // check user is authenticated
   useEffect(() => {
     if (!user?.id) {
@@ -362,27 +429,6 @@ function AdminPanel(props) {
     };
   }, [anyChanges, history, t]);
   
-  useEffect(() => {
-    if (!user?.id) {
-      toast.error(t("User must be authenticated"));
-      history.goBack();
-    }
-  }, [user?.id, history, t]);
-
-  // // set up event listener to set correct grid rowSpacing based on inner width
-  // useEffect(() => {
-  //   const setResponsiveness = () => {
-  //     window.innerWidth < config.extraSmallWatershed
-  //       ? setFormState((prevState) => ({ ...prevState, xs: true, rowSpacing: 0 }))
-  //       : setFormState((prevState) => ({ ...prevState, xs: false, rowSpacing: 2 }));
-  //   };
-  //   setResponsiveness();
-  //   window.addEventListener("resize", () => setResponsiveness());
-  //   return () => {
-  //     window.removeEventListener("resize", () => setResponsiveness());
-  //   };
-  // }, []);
-
   // get user profile on load
   useEffect(() => {
     UserService.getAdminPanel().then(
@@ -394,46 +440,29 @@ function AdminPanel(props) {
         console.log(`getAdminPanel got successfully:`, result.users);
 
         result.users = result.users.map(user => ({
-          ...user,
+          //...user,
+          ...flattenObject(user, "address"), // user with flattened address
           id: user._id, // copy _id to id, a requiste of DataGrid
           plan: user.plan.name, // flatten plan
-          //roles: user.roles.map(role => role.name).join(", ",)
-          roles: user.roles[0].name, // get the first role only, we don't implement yet multiple select...
+          roles: user.roles[0].name, // get the first role only, we don't yet use multiple select here...
         }));
 
-//result.users = result.users.slice(0, 1);
-        // TODO: debug olnly - multiplicate users...
-        if (result.users.length >= 3) {
-          for (var i = 0; i < 36; i++) {
-            result.users.push(JSON.parse(JSON.stringify(result.users[i%3])));
-            result.users[result.users.length-1].id = result.users[result.users.length-1].id  + "-" + Math.floor(Math.random() * 999999999);
-          }
-        }
+        // DEBUG ONLY: multiplicate users
+        // if (result.users.length >= 3) {
+        //   for (var i = 0; i < 36; i++) {
+        //     result.users.push(JSON.parse(JSON.stringify(result.users[i%3])));
+        //     result.users[result.users.length-1].id = result.users[result.users.length-1].id  + "-" + Math.floor(Math.random() * 999999999);
+        //   }
+        // }
 
+console.log(`getAdminPanel got successfully after flattening:`, result.users);
         setUsers(result.users); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
+        setUsersLoaded(true); // to distinguish an empty users set and a grid not yet loaded
       }
     );
-  }, [user?.id, setError, setProfile, t]);
+  }, [user?.id, setError, t]);
   
-  // const formAdminPanelUpdate = (e) => {
-  //   e.preventDefault();
-  //   setError({});
-
-  //   UserService.updateProfile({
-  //     /*... */
-  //   }).then(
-  //     result => {
-  //       if (result instanceof Error) {
-  //         console.error("profileUpdate error:", result);
-  //         toast.warn(errorMessage(result));
-  //         return setError({ code: result.message });
-  //       }
-  //       setAnyChanges(false);
-  //       toast.success(`User updated successfully`);
-  //     }
-  //   );
-  // };
-
+console.log("USERS:", users);
   return (
     <div className={classes.root}>
 
@@ -481,8 +510,7 @@ function AdminPanel(props) {
           <DataGrid
             rows={users}
             columns={columns}
-            localeText={itIT.components.MuiDataGrid.defaultProps.localeText /* TODO: use current language*/}
-            //experimentalFeatures={{ newEditingApi: true, preventCommitWhileValidating: true, warnIfFocusStateIsNotSynced: true } /* TODO: remove with @mui/x-data-grid v6 */ }
+            localeText={localeText}
             autoHeight
             pageSize={pageSize}
             onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
@@ -492,11 +520,13 @@ function AdminPanel(props) {
             disableSelectionOnClick
             className={classes.datagrid}
             getRowClassName={() => "adminpanel-table--row"}
-            onCellEditCommit={(params: GridCellEditCommitParams) => {
-              console.log(`Edited row - id: ${params.id}, field: ${params.field}, value: ${params.value}`, params)
+
+            onCellEditCommit={(params: GridCellEditStopParams) => {
+              onCellEditCommit(params);
             }}
+
             onSelectionChange={newSelection => {
-              console.warn(newSelection.rows + " selected users");
+              onSelectionChange(newSelection);
             }}
             onRowSelected={x => console.warn(x.api.current.getSlectedRows() + " selected users")}
             onSelectionModelChange={ids => {
@@ -507,6 +537,23 @@ function AdminPanel(props) {
             /* available only in the PRO version...
               initialState={{ pinnedColumns: { / *left: ['name'],* / right: ['actions'] }}}
             */
+            components={{
+              NoRowsOverlay: () => (
+                <Stack height="100%" alignItems="center" justifyContent="center">
+                  {usersLoaded ? t("No users found") : t("Loading") + "..."}
+                </Stack>
+              ),
+              // this does not seem to be working...
+              // NoResultsOverlay: () => (
+              //   <Stack height="100%" alignItems="center" justifyContent="center">
+              //     Local filter returns no result
+              //   </Stack>
+              // )
+            }}
+            experimentalFeatures={{
+              preventCommitWhileValidating: true,
+              //newEditingApi: true,
+            }}
           />
 
           <Box m={3} />
@@ -533,21 +580,6 @@ function AdminPanel(props) {
           )}
 
         </AdminPanelTabPanel>
-
-        {/* <Grid container justifyContent="center">
-          <FormButton
-            fullWidth={false}
-            className={"buttonSecondary"}
-            autoFocus={true}
-            onClick={formAdminPanelUpdate}
-          >
-            {
-              t("Update")
-            }
-          </FormButton>
-        </Grid>
-
-        <Box m={1} /> */}
 
       </Container>
 

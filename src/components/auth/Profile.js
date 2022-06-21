@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+import { useHistory/*, useLocation*/} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useBeforeunload } from "react-beforeunload";
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,7 +16,7 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
+//import Tooltip from "@mui/material/Tooltip";
 import IconAvatar from "@mui/icons-material/AccountBoxOutlined";
 import IconPerson from "@mui/icons-material/Person";
 import IconEmail from "@mui/icons-material/Email";
@@ -32,6 +32,8 @@ import Pricing from "../../components/Pricing";
 import { errorMessage/*, capitalize*/ } from "../../libs/Misc";
 import UserService from "../../services/UserService";
 import TokenService from "../../services/TokenService";
+import PaymentService from "../../services/PaymentService";
+import EventBus from "../../libs/EventBus";
 import { toast } from "../Toast";
 import { FormInput, FormButton } from "../FormElements";
 import config from "../../config";
@@ -80,18 +82,18 @@ const styles = theme => ({
     borderColor: "#aaa",
     borderRadius: 5,
   },
-  title: {
-    width: "100%",
-    color: theme.palette.title.color,
-    //backgroundColor: '#ccc', //theme.palette.title.backgroundColor,
-    //borderRadius: 3,
-    display: "flex",
-    justifyContent: "center",
-    paddingTop: 3,
-    paddingBottom: 50,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
+  // title: {
+  //   width: "100%",
+  //   color: theme.palette.title.color,
+  //   //backgroundColor: '#ccc', //theme.palette.title.backgroundColor,
+  //   //borderRadius: 3,
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   paddingTop: 3,
+  //   paddingBottom: 50,
+  //   paddingLeft: 10,
+  //   paddingRight: 10,
+  // },
   formControlSelectPlan: {
     minWidth: 200,
   },
@@ -148,8 +150,11 @@ ProfileTabPanel.propTypes = {
 };
 
 function Profile(props) {
+//console.log("PROFILE - props:", props);
   const classes = useStyles();
   const history = useHistory();
+  //const location = useLocation();
+//console.log("PROFILE - location.state:", location.state);
   const [user, setUser] = useState(TokenService.getUser());
   const [profile, setProfile] = useState(false);
   const [email, setEmail] = useState("");
@@ -164,14 +169,15 @@ function Profile(props) {
   const [addressProvince, setAddressProvince] = useState("");
   const [addressZip, setAddressZip] = useState("");
   const [addressCountry, setAddressCountry] = useState("");
-  const [plan, setPlan] = useState(config.api.planNameDefault);
-  const [roles, setRoles] = useState(config.api.rolesNamesDefault);
+  const [paymentMode, setPaymentMode] = useState("");
+  const [plan, setPlan] = useState(null/*config.api.planNameDefault*/);
+  const [roles, setRoles] = useState([]);
+  const [rolesNames, setRolesNames] = useState([]);
   const [error, setError] = useState({});
-  const [formState, setFormState] = useState({ xs: true, horizontalSpacing: 0 });
   const { t } = useTranslation();
-
-  const [tabValue, setTabValue] = React.useState(props.tabValue);
-  const [anyChanges, setAnyChanges] = React.useState(false);
+  const [tabValue, setTabValue] = React.useState(props?.location?.state?.tabValue ? props?.location?.state?.tabValue : 0);
+  const [anyProfileChanges, setAnyProfileChanges] = React.useState(false);
+  const [anyRolesChanges, setAnyRolesChanges] = React.useState(false);
 
   const handleChangeTabValue = (event, newValue) => {
     setTabValue(newValue);
@@ -179,15 +185,16 @@ function Profile(props) {
   
   // avoid page unload when unsaved changes present
   useBeforeunload((event) => {
-    if (anyChanges) {
+    if (anyProfileChanges || anyRolesChanges) {
       event.preventDefault();
     }
   });
   
   // avoid history route change when unsaved changes present
   useEffect(() => {
+console.log("useeffect block");
     const unblock = history.block((location, action) => {
-      if (anyChanges) {
+      if (anyProfileChanges || anyRolesChanges) {
         return window.confirm(t("Are you sure to ignore unsaved data?"));
       }
       return true;
@@ -196,9 +203,10 @@ function Profile(props) {
     return () => {
       unblock();
     };
-  }, [anyChanges, history, t]);
+  }, [anyProfileChanges, anyRolesChanges, history, t]);
   
   useEffect(() => {
+console.log("useeffect profile");
     if (profile) {
       setEmail(profile.email ? profile.email : "");
       setFirstName(profile.firstName ? profile.firstName : "");
@@ -211,35 +219,24 @@ function Profile(props) {
       setAddressProvince(profile.address.province ? profile.address.province : "");
       setAddressZip(profile.address.zip ? profile.address.zip : "");
       setAddressCountry(profile.address.country ? profile.address.country : "");
-      setPlan(profile.plan ? profile.plan.name : config.api.planNameDefault);
+      setPlan(profile.plan ? profile.plan.name : ""/*config.api.planNameDefault*/);
       setRoles(profile.roles ? profile.roles.map(role => role.name) : []);
-      setAnyChanges(false);
+      setAnyProfileChanges(false);
+      setAnyRolesChanges(false);
     }
   }, [profile]);
 
   useEffect(() => {
+console.log("useeffect user.id");
     if (!user?.id) {
       toast.error(t("User must be authenticated"));
       history.goBack();
     }
   }, [user?.id, history, t]);
 
-  // set up event listener to set correct grid rowSpacing based on inner width
-  useEffect(() => {
-    const setResponsiveness = () => {
-      window.innerWidth < config.extraSmallWatershed
-        ? setFormState((prevState) => ({ ...prevState, xs: true, rowSpacing: 0 }))
-        : setFormState((prevState) => ({ ...prevState, xs: false, rowSpacing: 2 }));
-    };
-    setResponsiveness();
-    window.addEventListener("resize", () => setResponsiveness());
-    return () => {
-      window.removeEventListener("resize", () => setResponsiveness());
-    };
-  }, []);
-
   // get user profile on load
   useEffect(() => {
+console.log("useeffect getProfile");
     UserService.getProfile().then(
       result => {
         if (result instanceof Error) {
@@ -250,9 +247,31 @@ function Profile(props) {
         setProfile(result.user); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
       }
     );
+console.log("useeffect getRoles");
+    UserService.getRoles().then(
+      result => {
+        if (result instanceof Error) {
+          console.error("getRoles error:", result);
+          return setError({ code: result.message });
+        }
+console.log(`roles got successfully:`, result);
+        setRolesNames(result.map(role => role.name));
+      }
+    );
+    PaymentService.mode().then(
+      result => {
+        if (result instanceof Error) {
+          console.error("mode error:", result);
+          return setError({ code: result.message });
+        }
+        console.log("mode:", result);
+        setPaymentMode(result.mode);
+      }
+    );
   }, [user?.id]);
   
   useEffect(() => {
+console.log("useeffect setAddress");
     setAddress({
       street: addressStreet,
       streetNo: addressStreetNo,
@@ -263,58 +282,25 @@ function Profile(props) {
     });
   }, [addressStreet, addressStreetNo, addressCity, addressProvince, addressZip, addressCountry]);
 
+  const createCheckoutSession = (product) => {
+    PaymentService.createCheckoutSession({product}).then(
+      result => {
+        if (result instanceof Error) { // TODO: handle error...
+          console.error("createCheckoutSession error:", result);
+          return toast.error(errorMessage(result));
+        }
+        console.log(`createCheckoutSession got successfully:`, result);
+        if (!result?.session?.url) {
+          return toast.error(t("Sorry, could not get the payment page"));
+        }
+        window.location = result.session.url; // redirect to payment session success_url
+      },
+    );
+  };
+
   const formProfileUpdate = (e) => {
     e.preventDefault();
     setError({});
-
-    if (tabValue === PROFILE_ROLES) {
-      // refresh user roles in local state and in token service (local storage) too
-      user.roles = ((String)(roles)).split(",");
-console.log("USER.ROLES:", user.roles, typeof user.roles);
-      if (!user.roles || !user.roles.length || user.roles.every(role => role === "")) {
-        user.roles = config.api.rolesNamesDefault; // if empty roles, use rolesNamesDefault
-        setRoles(user.roles);
-console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
-      }
-      setUser(user);
-      TokenService.setUser(user);
-      UserService.updateRoles({
-        roles: user.roles,
-      }).then(
-        result => {
-          if (result instanceof Error) {
-            console.error("profileUpdate error:", result);
-            toast.error(errorMessage(result));
-            return setError({ code: result.message });
-          }
-          //setAnyChanges(false);
-          //toast.success(`roles updated successfully`);
-        }
-      );
-    }
-
-    if (tabValue === PROFILE_PLAN) { // redirect user to showcase page where she can buy a new plan
-      if (userCanUpdatePlan()) {
-        setUser({...user, plan});
-        TokenService.setUser(user);
-        UserService.updatePlan({
-          plan,
-        }).then(
-          result => {
-            if (result instanceof Error) {
-              console.error("profileUpdate error:", result);
-              toast.error(errorMessage(result));
-              return setError({ code: result.message });
-            }
-            //setAnyChanges(false);
-            //toast.success(`roles updated successfully`);
-          }
-        );
-      } else { // regular user
-        /*return*/ window.location.href = "https://appalti190-showcase.herokuapp.com/prices"; // TODO: REMOVE ME...
-        //window.location.href = config.showcase.endpoint[(window.location.hostname === "localhost") ? "development" : "production"];
-      }
-    }
 
     UserService.updateProfile({
       email,
@@ -331,25 +317,78 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
           toast.warn(errorMessage(result));
           return setError({ code: result.message });
         }
-        setAnyChanges(false);
-        toast.success(`Profile updated successfully`);
+        setAnyProfileChanges(false);
+        toast.success(t("Profile updated successfully"));
       }
     );
   };
 
-  const userCanUpdateRoles = ()  => {
-    return user.roles.includes("admin");
+  const formRolesUpdate = (e) => {
+    // refresh user roles in local state and in token service (local storage) too
+    user.roles = ((String)(roles)).split(",");
+console.log("USER.ROLES:", user.roles, typeof user.roles);
+    if (!user.roles || !user.roles.length || user.roles.every(role => role === "")) {
+      user.roles = config.api.rolesNamesDefault; // if empty roles, use rolesNamesDefault
+      setRoles(user.roles);
+console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
+    }
+console.log("*** USER:", user);
+    setUser(user);
+    TokenService.setUser(user);
+    UserService.updateRoles({
+      roles: user.roles,
+    }).then(
+      result => {
+        if (result instanceof Error) {
+          console.error("profileUpdate error:", result);
+          toast.error(errorMessage(result));
+          return setError({ code: result.message });
+        }
+        setRoles(user.roles);
+        setAnyRolesChanges(false);
+        EventBus.dispatch("roles-change");
+        toast.success(t("Roles updated successfully"));
+      }
+    );
   };
 
-  const userCanUpdatePlan = ()  => {
-    return user.roles.includes("admin");
+  const formPlanSelect = (e, planName) => {
+    // TODO: what to do with free plan selected?
+    // TODO: what to do with plan downgrade?
+    createCheckoutSession(planName);
+  }
+
+  const formPlanForce = (e, planName) => {
+    if (userCanForcePlan()) {
+      TokenService.setUser(user);
+      UserService.updatePlan({
+        plan: planName,
+      }).then(
+        result => {
+          if (result instanceof Error) {
+            console.error("profileUpdate error:", result);
+            toast.error(errorMessage(result));
+            return setError({ code: result.message });
+          }
+          setPlan(planName);
+          toast.success(t("Plan forced successfully"));
+        }
+      );
+    }
+  };
+
+  const userCanUpdateRoles = ()  => {
+    return user?.roles?.includes("admin");
+  };
+
+  const userCanForcePlan = ()  => {
+    return user?.roles?.includes("admin");
   };
   
   return (
     <div className={classes.root}>
 
-      <Container maxWidth="md">
-
+      <Container maxWidth={"sm"}>
         <Box m={1} />
 
         <Grid container justifyContent="center">
@@ -376,10 +415,13 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
             <Tab label={t("Your role(s)")} {...a11yProps(2)} />
           </Tabs>
         </AppBar>
+      </Container>
 
+      <Container maxWidth={(tabValue === PROFILE_PLAN) ? "md" : "sm"}>
+        {(tabValue === PROFILE_PERSONAL) &&
         <ProfileTabPanel value={tabValue} index={PROFILE_PERSONAL}>
       
-          <form className={classes.form} noValidate autoComplete="off">
+          <form name="form" className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
 
               <Box m={3} />
@@ -387,55 +429,55 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
               <fieldset className={classes.fieldsetPersonalData}>
                 <legend>{t("Personal data")}</legend>
 
-                <Tooltip
+                {/* <Tooltip
                   title={t("Email")}
                   placement={"left"}
-                >
+                > */}
                   <Grid item xs={12}>
                     <FormInput
                       id={"email"}
                       value={email}
-                      onChange={v => { setAnyChanges(true); setEmail(v); }}
+                      onChange={v => { setAnyProfileChanges(true); setEmail(v); }}
                       placeholder={t("Email")}
                       startAdornmentIcon={<IconEmail />}
                       error={error.email}
                       autoFocus
                     />
                   </Grid>
-                </Tooltip>
+                {/* </Tooltip> */}
 
-                <Grid container direction={"row"} spacing={formState.rowSpacing}>
-                  <Tooltip
+                <Grid container direction={"row"} columnSpacing={{xs: 1, sm: 2, md: 3, lg: 4}} rowSpacing={0}>
+                  {/* <Tooltip
                     title={t("First name")}
                     placement={"left"}
-                  >
+                  > */}
                     <Grid item xs={12} sm={6}>
                       <FormInput
                         id={"firstName"}
                         value={firstName}
-                        onChange={v => { setAnyChanges(true); setFirstName(v); }}
+                        onChange={v => { setAnyProfileChanges(true); setFirstName(v); }}
                         placeholder={t("First Name")}
                         startAdornmentIcon={<IconPerson />}
                         error={error.firstName}
                       />
                     </Grid>
-                  </Tooltip>
+                  {/* </Tooltip> */}
 
-                  <Tooltip
+                  {/* <Tooltip
                       title={t("Last name")}
                       placement={"left"}
-                    >
+                    > */}
                     <Grid item xs={12} sm={6}>
                       <FormInput
                         id={"lastName"}
                         value={lastName}
-                        onChange={v => { setAnyChanges(true); setLastName(v); }}
+                        onChange={v => { setAnyProfileChanges(true); setLastName(v); }}
                         placeholder={t("Last Name")}
                         startAdornmentIcon={<IconPerson />}
                         error={error.lastName}
                       />
                     </Grid>
-                  </Tooltip>
+                  {/* </Tooltip> */}
                 </Grid>
               </fieldset>
 
@@ -444,213 +486,182 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
               <fieldset className={classes.fieldsetCompanyData}>
                 <legend>{t("Company data")}</legend>
 
-                <Tooltip
-                  title={t("Company fiscal code")}
-                  placement={"left"}
-                >
-                  <Grid item xs={12}>
-                    <FormInput
-                      id={"fiscalCode"}
-                      value={fiscalCode}
-                      onChange={v => { setAnyChanges(true); setFiscalCode(v); }}
-                      placeholder={t("Company fiscal code")}
-                      startAdornmentIcon={<IconFiscalCode />}
-                      error={error.fiscalCode}
-                    />
-                  </Grid>
-                </Tooltip>
+                <Grid container direction={"row"} columnSpacing={{xs: 1, sm: 2, md: 3, lg: 4}} rowSpacing={0}>
+                  {/* <Tooltip
+                    title={t("Company fiscal code")}
+                    placement={"left"}
+                  > */}
+                    <Grid item xs={12}>
+                      <FormInput
+                        id={"fiscalCode"}
+                        value={fiscalCode}
+                        onChange={v => { setAnyProfileChanges(true); setFiscalCode(v); }}
+                        placeholder={t("Company fiscal code")}
+                        startAdornmentIcon={<IconFiscalCode />}
+                        error={error.fiscalCode}
+                      />
+                    </Grid>
+                  {/* </Tooltip> */}
 
-                <Box m={1} />
-
-                <Tooltip
-                  title={t("Company business name")}
-                  placement={"left"}
-                >
-                  <Grid item xs={12}>
-                    <FormInput
-                      id={"businessName"}
-                      value={businessName}
-                      onChange={v => { setAnyChanges(true); setBusinessName(v); }}
-                      placeholder={t("Company business name")}
-                      startAdornmentIcon={<IconBusinessName />}
-                      error={error.businessName}
-                    />
-                  </Grid>
-                </Tooltip>
-                
+                  {/* <Tooltip
+                    title={t("Company business name")}
+                    placement={"left"}
+                  > */}
+                    <Grid item xs={12}>
+                      <FormInput
+                        id={"businessName"}
+                        value={businessName}
+                        onChange={v => { setAnyProfileChanges(true); setBusinessName(v); }}
+                        placeholder={t("Company business name")}
+                        startAdornmentIcon={<IconBusinessName />}
+                        error={error.businessName}
+                      />
+                    </Grid>
+                  {/* </Tooltip> */}
+                </Grid>
+                  
                 <Box m={1} />
 
                 <fieldset className={classes.fieldsetAddress}>
                   <legend>{t("Address")}</legend>
 
-                  <Grid container direction={"row"} spacing={formState.rowSpacing}>
-
-                    <Tooltip
+                  <Grid container direction={"row"} columnSpacing={{xs: 1, sm: 2, md: 3, lg: 4}} rowSpacing={0}>
+                    {/* <Tooltip
                       title={t("Address street")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12} sm={8}>
                         <FormInput
                           id={"addressStreet"}
                           value={addressStreet}
-                          onChange={v => { setAnyChanges(true); setAddressStreet(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressStreet(v); }}
                           placeholder={t("Street")}
                           startAdornmentIcon={<IconAddressStreet />}
                           error={error.addressStreet}
                         />
                       </Grid>
-                    </Tooltip>
+                    {/* </Tooltip> */}
 
-                    <Tooltip
+                    {/* <Tooltip
                       title={t("Address street number")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12} sm={4}>
                         <FormInput
                           id={"addressStreetNo"}
                           value={addressStreetNo}
-                          onChange={v => { setAnyChanges(true); setAddressStreetNo(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressStreetNo(v); }}
                           placeholder={t("N°")}
                           startAdornmentIcon={<IconAddressStreetNo />}
                           error={error.addressStreetNo}
                         />
                       </Grid>
-                    </Tooltip>
+                    {/* </Tooltip> */}
 
-                    <Tooltip
+                    {/* <Tooltip
                       title={t("Address city")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12}>
                         <FormInput
                           id={"addressCity"}
                           value={addressCity}
-                          onChange={v => { setAnyChanges(true); setAddressCity(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressCity(v); }}
                           placeholder={t("City")}
                           startAdornmentIcon={<IconAddressCity />}
                           error={error.addressCity}
                         />
                       </Grid>
-                    </Tooltip>
+                    {/* </Tooltip> */}
         
-                    <Tooltip
+                    {/* <Tooltip
                       title={t("Address province")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12} sm={7}>
                         <FormInput
                           id={"addressProvince"}
                           value={addressProvince}
-                          onChange={v => { setAnyChanges(true); setAddressProvince(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressProvince(v); }}
                           placeholder={t("Province")}
                           startAdornmentIcon={<IconAddressProvince />}
                           error={error.addressProvince}
                         />
                       </Grid>
-                    </Tooltip>
+                    {/* </Tooltip> */}
         
-                    <Tooltip
+                    {/* <Tooltip
                       title={t("Address ZIP code")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12} sm={5}>
                         <FormInput
                           id={"addressZip"}
                           value={addressZip}
-                          onChange={v => { setAnyChanges(true); setAddressZip(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressZip(v); }}
                           placeholder={t("Zip")}
                           startAdornmentIcon={<IconAddressZip />}
                           error={error.addressZip}
                         />
                       </Grid>
-                    </Tooltip>
+                    {/* </Tooltip> */}
 
-                    <Tooltip
+                    {/* <Tooltip
                       title={t("Address country")}
                       placement={"left"}
-                    >
+                    > */}
                       <Grid item xs={12}>
                         <FormInput
                           id={"addressCountry"}
                           value={addressCountry}
-                          onChange={v => { setAnyChanges(true); setAddressCountry(v); }}
+                          onChange={v => { setAnyProfileChanges(true); setAddressCountry(v); }}
                           placeholder={t("Country")}
                           startAdornmentIcon={<IconAddressCountry />}
                           error={error.addressCountry}
                         />
                       </Grid>
-                    </Tooltip>
-            
+                    {/* </Tooltip> */}
                   </Grid>
 
                 </fieldset>
-
               </fieldset>
-
-              <Box m={1} />
-
             </fieldset>
           </form>
         </ProfileTabPanel>
+        }
 
+        {(tabValue === PROFILE_PLAN) &&
         <ProfileTabPanel value={tabValue} index={PROFILE_PLAN}>
           <form className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
-
-              <Pricing onPlanSelected={formProfileUpdate} />
-
-              {/*
-                <Box m={3} />
-
-                <Tooltip
-                  title={t("Usage plan")}
-                  placement={"left"}
-                >
-                  <Grid item xs={12}>
-                    <FormControl variant="outlined" className={classes.formControlSelectPlan}>
-                      <InputLabel id="plan-label">{t("Plan")}</InputLabel>
-                      <Select
-                        labelId="plan-label"
-                        id="plan"
-                        value={plan}
-                        onChange={e => {
-                        /**
-                         * We don't want a not-admin user to change plan here... She should just see the possible plans list...
-                         * /
-                          if (userCanUpdatePlan()) {
-                            setAnyChanges(true); setPlan(e.target.value);
-                          }
-                        }}
-                        label={t("Plan")}
-                      >
-                        {config.api.planNames.map((plan, index) => (
-                          <MenuItem key={index} value={plan}>{capitalize(t(plan))}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                </Tooltip>
-              */}
+              <Pricing
+                currentPlanName={plan}
+                onPlanSelected={formPlanSelect}
+                canForcePlan={userCanForcePlan()}
+                onPlanForced={formPlanForce}
+                paymentMode={paymentMode}
+              />
             </fieldset>
           </form>
         </ProfileTabPanel>
+        }
 
+        {(tabValue === PROFILE_ROLES) &&
         <ProfileTabPanel value={tabValue} index={PROFILE_ROLES}>
           <form className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
 
               <Box m={3} />
 
-                <Tooltip
-                  /* eslint-disable no-useless-concat */
+                {/* <Tooltip
                   title={
                     userCanUpdateRoles() ?
-                      t("Role(s)") + " " + "(" + t("select one or more role") + ")"
+                      t("Role(s)") + " (" + t("select one or more role") + ")"
                     :
                       t("Your role(s)")
                   }
                   placement={"left"}
-                >
+                > */}
                   <Grid item xs={12}>
                     <FormControl variant="outlined" className={classes.formControlSelectRole}>
                       <InputLabel id="roles-label">{t("Role(s)")}</InputLabel>
@@ -659,37 +670,51 @@ console.log("USER.ROLES DEFAULTS TO:", user.roles, typeof user.roles);
                         id="roles"
                         multiple
                         value={roles}
-                        onChange={e => { setAnyChanges(true); setRoles(e.target.value); }}
+                        onChange={e => { setAnyRolesChanges(true); setRoles(e.target.value); }}
                         label={t("Role(s)")}
                         disabled={!userCanUpdateRoles()}
                       >
-                        {config.api.rolesNames.map((plan, index) => (
-                          <MenuItem key={index} value={plan}>{t(plan)}</MenuItem>
+                        {/* TODO: get roles names from server */ /*config.api.rolesNames.map((plan, index) => (*/}
+                        {rolesNames.map((role, index) => (
+                          <MenuItem key={index} value={role}>{t(role)}</MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                   </Grid>
-                </Tooltip>
+                {/* </Tooltip> */}
             </fieldset>
           </form>
         </ProfileTabPanel>
-
-        {(tabValue !== PROFILE_PLAN) && (
-          <Grid container justifyContent="center">
-            <FormButton
-              fullWidth={false}
-              className={"buttonSecondary"}
-              autoFocus={true}
-              onClick={formProfileUpdate}
-            >
-              {t("Update")}
-            </FormButton>
-          </Grid>
-        )}
-
-        <Box m={1} />
-
+        }
       </Container>
+
+      {(tabValue === PROFILE_PERSONAL) && (
+        <Grid container justifyContent="center">
+          <FormButton
+            fullWidth={false}
+            className={"buttonSecondary"}
+            autoFocus={true}
+            onClick={formProfileUpdate}
+          >
+            {t("Update")}
+          </FormButton>
+        </Grid>
+      )}
+
+      {(tabValue === PROFILE_ROLES) && userCanUpdateRoles() && (
+        <Grid container justifyContent="center">
+          <FormButton
+            fullWidth={false}
+            className={"buttonSecondary"}
+            autoFocus={true}
+            onClick={formRolesUpdate}
+            //disabled={!userCanUpdateRoles()}
+          >
+            {t("Update")}
+          </FormButton>
+        </Grid>
+      )}
+      <Box m={1} />
 
     </div>
   );

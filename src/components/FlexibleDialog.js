@@ -24,8 +24,9 @@ const FlexibleDialog = ({ title, contentText, actions, ...props }) => (
             action.callback();
             if (action.closeModal) props.onClose();
           }}
-          variant={action.variant ? action.variant : "outlined"}
+          variant={action.variant === "primary" ? "contained" : action.variant === "secondary" ? "outlined" : "contained"}
           autoFocus={props}
+          style={{textTransform: "none"}} // do not uppercase button text
         >
           {action.text}
         </Button>
@@ -42,7 +43,9 @@ FlexibleDialog.propTypes = {
       text: PropTypes.string,
       closeModal: PropTypes.bool,
       callback: PropTypes.func,
-      variant: PropTypes.string,
+      variant: PropTypes.oneOf([
+        "primary", "secondary",
+      ]),
       autoFocus: PropTypes.bool,
     })
   ),
@@ -56,7 +59,7 @@ FlexibleDialog.defaultProps = {
       text: "Ok",
       closeModal: true,
       callback: () => {},
-      variant: "outlined",
+      variant: "primary",
       autoFocus: false,
     }
   ],

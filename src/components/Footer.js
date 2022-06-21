@@ -24,7 +24,7 @@ function Footer(props) {
 	const classes = useStyles();
   const { t } = useTranslation();
 
-  const on = t("on"), off = t("off");
+  // const on = t("on"), off = t("off");
   const [language, setLanguage] = useState(getCurrentLanguage(i18n));
   const [languageIcon, setLanguageIcon] = useState(config.languages.supported[getCurrentLanguage(i18n)].icon);
 
@@ -49,7 +49,7 @@ function Footer(props) {
           <span>&emsp;</span>
           <span onClick={() => changeLanguage()}>{languageIcon}</span>
           <span>&emsp;</span>
-          <IconCustom name={`Network.${props.isOnline ? "on" : "off"}`} fill="red" size={12} alt={t("Network connection indicator")} title={t("Network connection is {{how}}", { how: props.isOnline ? on : off })} />
+          <IconCustom name={`Network.${props.isOnline ? "on" : "off"}`} fill="red" size={12} alt={t("Network connection indicator")} title={t("Network connection is {{how}}", { how: props.isOnline ? t("on") : t("off") })} />
         </Typography>
       </Grid>
     </Container>

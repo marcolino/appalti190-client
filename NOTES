@@ -100,3 +100,6 @@ Sounds
 
 CRUD table editing
  - React CRUD Table: https://www.npmjs.com/package/react-crud-table
+
+Currencies:
+ - Upgrade currencies.js when some currency is born or it is dead...

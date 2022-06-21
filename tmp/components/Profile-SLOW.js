@@ -82,7 +82,7 @@ function Profile(props) {
   // set up event listener to set correct grid rowSpacing based on inner width
   useEffect(() => {
     const setResponsiveness = () => {
-      window.innerWidth < config.extraSmallWatershed
+      window.innerWidth < config.ui.extraSmallWatershed
         ? setFormState((prevState) => ({ ...prevState, xs: true, rowSpacing: 0 }))
         : setFormState((prevState) => ({ ...prevState, xs: false, rowSpacing: 2 }));
     };

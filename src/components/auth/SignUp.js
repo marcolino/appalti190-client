@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useModal } from "mui-modal-provider";
 import { makeStyles } from "@mui/styles";
 import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
@@ -16,9 +17,10 @@ import AuthService from "../../services/AuthService";
 import { toast } from "../Toast";
 import { FormInput, FormButton, FormText, FormLink } from "../FormElements";
 import { validateEmail, validatePassword } from "../../libs/Validation";
-import Dialog from "../Dialog";
-
+import FlexibleDialog from "../FlexibleDialog";
 import config from "../../config";
+
+
 
 const styles = theme => ({
   avatar: {
@@ -64,18 +66,11 @@ function SignUp(props) {
   const [code, setCode] = useState("");
   const [error, setError] = useState({});
   const [formState, setFormState] = useState({ xs: true, horizontalSpacing: 0 });
-  const [dialogTitle, setDialogTitle] = useState(null);
-  const [dialogContent, setDialogContent] = useState(null);
-  const [dialogButtons, setDialogButtons] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const { t } = useTranslation();
+  const { showModal } = useModal();
+  const openDialog = (props) => showModal(FlexibleDialog, props);
 
-  const openDialog = (title, content, buttons) => {
-    setDialogTitle(title);
-    setDialogContent(content);
-    setDialogButtons(buttons);
-    setDialogOpen(true);    
-  }
+
 
   useEffect(() => { // check user has unverified email; if so, show waiting for code mode
     const query = new URLSearchParams(props.location.search);
@@ -83,13 +78,14 @@ function SignUp(props) {
     if (unverifiedEmail) {
       setWaitingForCode(true);
       setCodeDeliveryMedium("email");
+      setEmail(unverifiedEmail);
     }
   }, [props]);
   
   // set up event listener to set correct grid rowSpacing based on inner width
   useEffect(() => {
     const setResponsiveness = () => {
-      window.innerWidth < config.extraSmallWatershed
+      window.innerWidth < config.ui.extraSmallWatershed
         ? setFormState((prevState) => ({ ...prevState, xs: true, rowSpacing: 0 }))
         : setFormState((prevState) => ({ ...prevState, xs: false, rowSpacing: 2 }));
     };
@@ -171,23 +167,24 @@ function SignUp(props) {
           switch (result.response.data.code) {
             case "EmailExistsException":
               setError({ email: errorMessage(result) }); // since we use email as username, we blame email field as guilty
-              openDialog(
-                t("Email exists already"),
-                t("This email is already present") + `.\n` +
-                t("Do you want to sign in with that email?"),
-                [
+              openDialog({
+                title: t("Email exists already"),
+                contentText:
+                  t("This email is already present") + `.\n` +
+                  t("Do you want to sign in with that email?"),
+                actions: [
                   {
                     text: t("Ok"),
-                    close: true,
+                    autoFocus: true,
+                    closeModal: true,
                     callback: () => history.push("/signin"),
                   },
                   {
                     text: t("No, I will retry with a different email"),
-                    close: true,
+                    closeModal: true,
                   }
                 ],
-              );
-      
+              });      
               break;
             default:
               setError({}); // we don't know whom to blame
@@ -220,17 +217,18 @@ function SignUp(props) {
           return setError({ code: result.message });
         }
         console.info(`signup complete for ${email}`);
-        openDialog(
-          t("Registered successfully"),
-          t("You can now sign in with email and password") + ".",
-          [
+        openDialog({
+          title: t("Registered successfully"),
+          contentText: t("You can now sign in with email and password") + ".",
+          actions: [
             {
               text: t("Ok"),
-              close: true,
+              autoFocus: true,
+              closeModal: true,
               callback: formSignUpCompleted,
-            }
+            },
           ],
-        );
+        });
       },
     );
   };
@@ -392,14 +390,6 @@ function SignUp(props) {
           )}
         </fieldset>
       </form>
-
-      <Dialog
-        dialogOpen={dialogOpen}
-        dialogSetOpen={setDialogOpen}
-        dialogTitle={dialogTitle}
-        dialogContent={dialogContent}
-        dialogButtons={dialogButtons}
-      />
 
     </Container>
   );

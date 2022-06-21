@@ -92,6 +92,13 @@ const sanitizeJob = (job) => {
   return j;
 }
 
+// get ANAC periodic verification failed outcome details
+const getPlans = () => {
+  return api.get(
+    "/job/getPlans",
+  );
+}
+
 const JobService = {
   get,
   set,
@@ -101,6 +108,7 @@ const JobService = {
   outcomeCheck,
   outcomeFailureDetails,
   sanitizeJob,
+  getPlans,
 };
 
 export default JobService;

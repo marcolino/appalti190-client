@@ -5,10 +5,11 @@ import { i18n } from "../i18n";
 import config from "../config";
 
 const instance = axios.create({
-  baseURL: config.api.endpoint[(window.location.hostname === "localhost") ? "development" : "production"],
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: config.api.endpoint,
+  headers: config.api.headers,
+  // {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 instance.interceptors.request.use(

@@ -105,7 +105,7 @@ const TabBodyScrollable = React.memo(props => {
    */
   const toolbarHeight = 90; // toolbar height
   const tabbarHeight = 100; // tabbbar height
-  const footerHeight = 60; // footer height
+  const footerHeight = 60; // footer height (TODO: put this in config.ui. ... ?)
   const size = useWindowSize();
 
   return (

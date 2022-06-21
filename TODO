@@ -67,7 +67,7 @@
 - tests: rendere più semplice la rigenerazione degli snapshots - OK
 - dall'axios request interceptor, passare la lingua preferita dell'utente per i messaggi d'errore dal server - OK
 - provare a usare entrambi useLocation e useHistory da "react-router" oppure da "react-router-dom" - OK
-- rename service -> job - OK
+- rinominare service -> job - OK
 - fare un componente per i Dialog - OK
 - in caso di errore "User already exists" durante la registrazione, chiedere di redirigere in /signin - OK
 
@@ -87,7 +87,8 @@
 - ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
 - integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre)
 - verificare OnlineStatusProvider quando si parte offline
-- check scripts/translate-auto.js
+- controllare scripts/translate-auto.js
+- Mui Tooltip è troooppo lento... Trovare alternativa per visualizzare la label del campo di input quando il placeholder non è più visibile...
 
 
 x Antonio:

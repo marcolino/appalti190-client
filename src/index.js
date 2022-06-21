@@ -51,7 +51,6 @@ channelI18nMessages.addEventListener("message", event => {
 // Set up a broadcast channel to localize messages from background push messages service worker
 const channelBackgroundPushMessages = new BroadcastChannel("sw-background-push-messages");
 channelBackgroundPushMessages.addEventListener("message", event => {
-  //console.log('received event.data:', event.data);
   toast[event.data.level](i18n.t(event.data.message));
 });
 

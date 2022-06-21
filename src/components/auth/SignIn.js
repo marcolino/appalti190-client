@@ -112,7 +112,6 @@ function SignIn() {
         if (result instanceof Error) {
           if (result?.response?.data?.code === "UnverifiedUser") {
             // redirect to signup, with a flag indicating "UnverifiedUser", to show signupConfirm screen with this email ...
-            // TODO...
             toast.error(t("This account is not yet verified. Please verify it before you use it."));
             history.push(`/signup?unverifiedEmail=${email}`);
             return;

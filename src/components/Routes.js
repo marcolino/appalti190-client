@@ -16,7 +16,7 @@ const TermsOfUse = [];
       TermsOfUse["it"] = lazy(() => import("./legal/it/TermsOfUse"));
 const Legal = lazy(() => import("./legal/legal"));
 const AdminPanel = lazy(() => import("./AdminPanel"));
-
+const PaymentRedirect = lazy(() => import("./PaymentRedirect"));
 
 
 function Routes() {
@@ -40,13 +40,15 @@ function Routes() {
         <Route path="/" exact component={Home} /> {/* sitemapFrequency={"weekly"} sitemapPriority={0.7} */}
         <Route path="/signup" component={SignUp} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/signin" component={SignIn} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
-        <Route path="/profile" component={Profile} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
+        <Route path="/profile" render={(props) => <Profile {...props} /> } /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/signout" component={SignOut} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/forgot-password" component={ForgotPassword} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/notifications" component={Notifications} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.2} */}
-        <Route path="/privacy-policy" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"privacyPolicy"} /> } />
-        <Route path="/terms-of-use" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"termsOfUse"} /> } />
+        <Route path="/privacy-policy" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"privacyPolicy"} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
+        <Route path="/terms-of-use" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"termsOfUse"} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="/admin-panel" component={AdminPanel} /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
+        <Route path="/payment-success" render={(props) => <PaymentRedirect {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
+        <Route path="/payment-cancel" render={(props) => <PaymentRedirect {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="" component={NotFound} />
       </Switch>
       </div>

@@ -85,7 +85,7 @@ var opt = {
   method,
   headers: new Headers(config.api.headers),
   ...(params && method !== "GET" && { body: JSON.stringify(params) }),
-  redirect: config.api.redirect,
+  redirect: config.api.redirect, // ("follow")
 }
 console.log("fetcher opt:", opt);
     fetch(url, {

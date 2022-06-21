@@ -1,10 +1,11 @@
-import React from "react";
+import React/*, { useState }*/ from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
+//import Tooltip, { TooltipProps } from '@mui/material/Tooltip';
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -16,7 +17,7 @@ import { capitalize, isEmptyObject } from "../libs/Misc";
 const FormInput = React.memo((props) => {
   const styles = theme => ({
     startAdornment: {
-      backgroundColor: "#eaedf0",
+      backgroundColor: "#efefff",
       height: "2.5rem",
       maxHeight: "3rem",
       marginLeft: -15,
@@ -26,7 +27,7 @@ const FormInput = React.memo((props) => {
       borderRight: "1px solid #c5c5c5",
     },
     endAdornment: {
-      backgroundColor: "#eaedf0",
+      backgroundColor: "#efefff",
       height: "2.5rem",
       maxHeight: "3rem",
       marginLeft: 5,
@@ -35,6 +36,9 @@ const FormInput = React.memo((props) => {
       paddingRight: 10,
       borderLeft: "1px solid #c5c5c5",
     },
+    textField: {
+      backgroundColor: "#efefff",
+    }
   });
   const useStyles = makeStyles((theme) => (styles(theme)));
   const classes = useStyles();
@@ -345,4 +349,70 @@ FormDividerWithText.defaultProps = {
   paddingHorizontal: 1,
 };
 
-export {FormInput, FormButton, FormCheckbox, FormText, FormLink, FormDividerWithText};
+/*
+const FormTooltip = ({ children, ...rest }: TooltipProps) => {
+  const [renderTooltip, setRenderTooltip] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => !renderTooltip && setRenderTooltip(true)}
+      className="display-contents"
+    >
+      {!renderTooltip && children}
+      {renderTooltip && (
+        <Tooltip {...rest}>
+          <span>
+            {children}
+          </span>
+        </Tooltip>
+      )}
+    </div>
+  );
+}
+
+const _FormTooltip = React.memo((props) => {
+  const styles = theme => ({
+    normal: {
+      cursor: "pointer",
+      textDecoration: props.decoration ? props.decoration : "none",
+    },
+    disabled: {
+      color: "grey",
+      cursor: "default",
+      "&:hover": {
+        textDecoration: "none",
+        color: "grey",
+      },
+    },
+  });
+  const useStyles = makeStyles((theme) => (styles(theme)));
+  const classes = useStyles();
+
+  const className = props.disabled ? classes.disabled : classes.normal;
+
+  return (
+    <Tooltip
+      placement={props.placement}
+      enterDelay={props.enterDelay}
+      leaveDelay={props.leaveDelay}
+      {...props}
+    >
+      {props.children}
+    </Tooltip>
+  );
+});
+
+FormTooltip.propTypes = {
+  placement: PropTypes.string,
+  enterDelay: PropTypes.number,
+  leaveDelay: PropTypes.number,
+};
+
+FormTooltip.defaultProps = {
+  placement: "left",
+  enterDelay: 500,
+  leaveDelay: 200,
+};
+*/
+
+export {FormInput, FormButton, FormCheckbox, FormText, FormLink, FormDividerWithText/*, FormTooltip*/};

@@ -4,14 +4,15 @@ import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import { useModal } from "mui-modal-provider";
 import AuthService from "../services/AuthService";
 import JobService from "../services/JobService";
 import TokenService from "../services/TokenService";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 import { errorMessage } from "../libs/Misc";
 import { toast } from "./Toast";
-import Dialog from "./Dialog";
 import DragNDrop from "./DragNDrop";
+import FlexibleDialog from "./FlexibleDialog";
 
 
 
@@ -21,11 +22,8 @@ function Tab04Upload(props) {
   const history = useHistory();
   const [ prevIsEnabled ] = useState(true);
   const [ nextIsEnabled, setNextIsEnabled ] = useState(!!props?.job?.file);
-  const [ dialogTitle, setDialogTitle ] = useState(null);
-  const [ dialogContent, setDialogContent ] = useState(null);
-  const [ dialogButtons, setDialogButtons ] = useState([]);
-  const [ dialogOpen, setDialogOpen ] = useState(false);
-//  const [ file, setFile ] = useState(null);
+  const { showModal } = useModal();
+  const openDialog = (props) => showModal(FlexibleDialog, props);
 
   const [ accept ] = useState([
     ".csv",
@@ -33,45 +31,43 @@ function Tab04Upload(props) {
     "application/vnd.ms-excel",
   ]);
 
-  const openDialog = (title, content, buttons) => {
-    setDialogTitle(title);
-    setDialogContent(content);
-    setDialogButtons(buttons);
-    setDialogOpen(true);    
-  }
-
   useEffect(() => {
     // check if user is authenticated
     const user = AuthService.getCurrentUser();
     if (!user) { // user is not authenticated
-      openDialog(
-        t("Please log in or register"),
-        t("You need to be authenticated to proceed"),
-        [
+      openDialog({
+        title: t("Please log in or register"),
+        contentText: t("You need to be authenticated to proceed"),
+        actions: [
           {
             text: t("Login"),
-            close: true,
+            closeModal: true,
+            autoFocus: true,
             callback: () => {
-              TokenService.set("redirect", props.job.tabId);
+              TokenService.set("redirect", props.tabId);
               history.push("/signin");
             },
           },
           {
             text: t("Register"),
-            close: true,
-            callback: () => history.push("/signup"),
+            closeModal: true,
+            callback: () => {
+              TokenService.set("redirect", props.tabId);
+              history.push("/signup");
+            },
           },
           {
             text: t("Cancel"),
-            close: true,
+            closeModal: true,
             callback: () => props.goto("prev"),
           }
         ],
-      );
+      });
       return false;
     }
     return true;
-  }, [props, history, t]);
+  /* eslint-disable react-hooks/exhaustive-deps */
+  }, [props]);
 
   const fileSet = useCallback(async(file) => {
     props.setJob({...props.job, file});
@@ -85,13 +81,14 @@ function Tab04Upload(props) {
     job.tabId = props.job.tabId;
     //job.file = null;
     props.setJob(job);
+    setNextIsEnabled(false);
   }, [props]);
 
   const fileValidate = useCallback((file) => { // validate file type or name
     // ods: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     // xls: application/vnd.ms-excel
     if (!( // TODO: check if these tests are sufficiently general...
-      file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") ||
+      file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") || //* TODO: ignore case... */
       file?.type?.split("/")[1]?.match("ms-excel")
     )) {
       return t(`Please upload a spreadsheet`) + `.` +
@@ -200,14 +197,6 @@ function Tab04Upload(props) {
           </TabNextButton>
         </Grid>
       </Grid>
-
-      <Dialog
-        dialogOpen={dialogOpen}
-        dialogSetOpen={setDialogOpen}
-        dialogTitle={dialogTitle}
-        dialogContent={dialogContent}
-        dialogButtons={dialogButtons}
-      />
 
     </TabContainer>
   );

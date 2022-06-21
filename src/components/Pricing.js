@@ -1,6 +1,7 @@
-import React/*, { useState }*/ from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import { useModal } from "mui-modal-provider";
 import makeStyles from "@mui/styles/makeStyles";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -12,187 +13,203 @@ import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Switch from "@mui/material/Switch";
-//import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { useModal } from "mui-modal-provider";
+//import PlanCardTestBackgroundImage from "../assets/images/PlanCardTestBackgroundImage.png";
 import FlexibleDialog from "./FlexibleDialog";
+import JobService from "../services/JobService";
+import { capitalize, currencyISO4217ToSymbol } from "../libs/Misc";
+
+
 
 const useStyles = makeStyles((theme) => ({
   section: {
-    backgroundImage: "url('nereus-assets/img/bg/pattern1.png')", // TODO...
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
   },
   cardHeader: {
     paddingTop: theme.spacing(3),
+  },
+  cardHeaderActive: {
+    fontWeight: "bold",
+  },
+  cardHeaderTest: {
+    paddingBottom: 0,
+  },
+  cardTest: { // a style similar to Stripe's test tag
+    color: "#bb571f",
+    backgroundColor: "#ffde92",
+    borderRadius: 5,
+    fontSize: 14,
+    fontWeight: "bold",
+    padding: 2,
+    paddingLeft: 7,
+    paddingRight: 7,
+  },
+  // cardRibbonTest: {
+  //   backgroundImage: `url(${PlanCardTestBackgroundImage})`,
+  //   backgroundRepeat: "no-repeat",
+  //   backgroundSize: "cover",
+  // },
+  card: {
+    transition: "box-shadow .3s",
+    borderRadius: 10,
+    border: "1px solid #ccc",
+    "&:hover": {
+      boxShadow: "10px 10px 30px rgba(32, 32, 132, .5)",
+    },
+  },
+  cardActive: {
+    backgroundColor: "#ffffe0",
+  },
+  cardHr: {
+    border: "1px solid #eee",
   },
 }));
 
 
 
 const Pricing = props => {
+console.log("Pricing - props:", props);
   const classes = useStyles();
   const { t } = useTranslation();
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
+  const [perMonth, setPerMonth] = React.useState(false);
+  const [plans, setPlans] = useState([]);
 
-  const content = { // TODO: from config...
-    "badge": "LOREM IPSUM",
-    "header-p1": "Donec lacinia",
-    "header-p2": "turpis non sapien lobortis pretium",
-    "description": "Integer feugiat massa sapien, vitae tristique metus suscipit nec.", 
-    "option1": "Monthly",
-    "option2": "Annual",
-    "01_title": "Lorem ipsum",
-    "01_price": "$9",
-    "01_suffix": " / mo",
-    "01_benefit1": "3 Emails",
-    "01_benefit2": "1 Database",
-    "01_benefit3": "Unlimited Domains",
-    "01_benefit4": "10 GB Storage",
-    "01_primary-action": "Select plan",
-    "01_secondary-action": "Learn more",
-    "02_title": "Dolor sit amet",
-    "02_price": "$49",
-    "02_suffix": " / mo",
-    "02_benefit1": "6 Emails",
-    "02_benefit2": "2 Database",
-    "02_benefit3": "Unlimited Domains",
-    "02_benefit4": "25 GB Storage",
-    "02_primary-action": "Select plan",
-    "02_secondary-action": "Learn more",
-    "03_title": "Consectuter",
-    "03_price": "$499",
-    "03_suffix": " / mo",
-    "03_benefit1": "9 Emails",
-    "03_benefit2": "3 Database",
-    "03_benefit3": "Unlimited Domains",
-    "03_benefit4": "50 GB Storage",
-    "03_primary-action": "Select plan",
-    "03_secondary-action": "Learn more",
-    ...props.content
+  const handleChangePerMonth = (event) => {
+    setPerMonth(event.target.checked);
   };
 
-  const [state, setState] = React.useState({
-    checkbox: true,
-  });
+  // get user plans on load
+  useEffect(() => {
+    JobService.getPlans().then(
+      result => {
+        if (!!!!(result instanceof Error)) { // TODO: handle error...
+          console.error("getPlans error:", result);
+          return
+        }
+        console.log(`getPlans got successfully:`, result.data);
+        setPlans(result.data);
+      }
+    );
+  }, [setPlans]);
 
-  const handleChange = (event) => {
-    setState({ ...state, checkbox: event.target.checked });
+  const isActivePlan = (plan) => {
+    return props.currentPlanName === plan.name;
   };
 
   return (
     <section className={classes.section}>
-      <Container maxWidth="lg">
+      <Container>
         <Box py={0} textAlign="center">
           <Box mb={0}>
             <Container maxWidth="sm">
-              <Typography variant="overline" color="textSecondary">{content["badge"]}</Typography>
               <Typography variant="h3" component="h2" gutterBottom={true}>
-                <Typography variant="h3" component="span" color="primary">{content["header-p1"]} </Typography>
-                <Typography variant="h3" component="span">{content["header-p2"]}</Typography>
+                <Typography variant="h6" component="span" color="primary">{t("Choose the plan which best suits your needs")}</Typography>
               </Typography>
-              <Typography variant="subtitle1" color="textSecondary" paragraph={true}>{content["description"]}</Typography>
-
-              <div>
-                <Typography variant="subtitle1" component="span">{content["option1"]}</Typography>
-                &nbsp; <Switch name="checkbox" color="primary" checked={state.checkbox} onChange={handleChange} /> &nbsp;
-                <Typography variant="subtitle1" component="span">{content["option2"]}</Typography>
-              </div>
+              {(
+                (typeof plans[0]?.pricePerMonth !== "undefined") &&
+                (typeof plans[0]?.pricePerYear !== "undefined")
+              ) && (
+                <div>
+                  <Typography variant="subtitle1" component="span">{t("per year")}</Typography>
+                    <span>
+                      &nbsp;
+                      <Switch name="checkbox" color="primary" checked={perMonth} onChange={handleChangePerMonth} />
+                      &nbsp;
+                    </span>
+                  <Typography variant="subtitle1" component="span">{t("per month")}</Typography>
+                </div>
+              )}
             </Container>
           </Box>
-
-          <Grid container spacing={3} style={{borderWidth: 1, borderColor: "red"}}>
-
-            <Grid item xs={12} md={4}>
-              <Card variant="outlined">
-                <CardHeader title={content["01_title"]} className={classes.cardHeader}></CardHeader>
-                <CardContent>
-                  <Box px={1}>
-                    <Typography variant="h3" component="h2" gutterBottom={true} style={{fontWeight: "bold"}}>
-                      {content["01_price"]}
-                      {/* <Typography variant="h6" color="textSecondary" component="span">{content["01_suffix"]}</Typography> */}
-                    </Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["01_benefit1"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["01_benefit2"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["01_benefit3"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p" paragraph={true}>{content["01_benefit4"]}</Typography>
-                  </Box>
-                  <Button variant="outlined" color="primary" className={classes.primaryAction}
-                    onClick={(e) => {
-                      openDialog({
-                        title: t("Sure to buy this plan?"),
-                        contentText: t("(it's very expensive!)"),
-                        actions: [
-                          {
-                            callback: () => {
-                              console.log("Clicked first action button");
-                              props.onPlanSelected(e);
+          <Grid container spacing={3}>
+            {plans.map((plan, index) => (
+              <Grid key={index} item xs={12} md={parseInt(plans.length ? 12 / plans.length : 12)}>
+                <Card
+                  variant="outlined"
+                  className={[classes.card, isActivePlan(plan) ? classes.cardActive : null, /*props.paymentMode !== "live" ? classes.cardRibbonTest : null*/].join(" ")}
+                >
+                  <CardHeader
+                    title={capitalize(t(plan.name))}
+                    className={[classes.cardHeader, isActivePlan(plan) ? classes.cardHeaderActive : null].join(" ")}
+                    titleTypographyProps={isActivePlan(plan) ? { fontWeight: "bold" } : {}}
+                  >
+                  </CardHeader>
+                  {props.paymentMode !== "live" ? <span className={classes.cardTest}> TEST </span> : <></>}
+                  <hr className={classes.cardHr} />
+                  <CardContent>
+                    <Box px={1}>
+                      <Typography variant="h4" component="h2" gutterBottom={true} style={{fontWeight: "bold"}}>
+                        {currencyISO4217ToSymbol(plan.priceCurrency)}
+                        {perMonth ? plan.pricePerMonth : plan.pricePerYear}
+                        {<Typography variant="h6" color="textSecondary" component="span"> / {perMonth ? t("month") : t("year")}</Typography>}
+                      </Typography>
+                      <Typography color="textSecondary" variant="subtitle1" component="p">{
+                        (plan.cigNumberAllowed ===  Number.MAX_SAFE_INTEGER) ?
+                          t("Unlimited CIG's")
+                        :
+                          t("Up to {{cigs}} CIG's", {cigs: plan.cigNumberAllowed})
+                      }</Typography>
+                      <Typography color="textSecondary" variant="subtitle1" component="div">{
+                        plan.supportTypes.map((supportType, index) => (
+                          <div key={index}>{t("Support") + " " + t("by") + " " + t(supportType)}</div>
+                        ))
+                      }</Typography>
+                      <br />
+                    </Box>
+                    <Button variant="contained" color="secondary"
+                      onClick={(e) => {
+                        openDialog({
+                          title: t("Sure to buy this plan?"),
+                          contentText: t("(it's very expensive!)"),
+                          actions: [
+                            {
+                              callback: () => {
+                                console.log("Clicked first action button");
+                                props.onPlanSelected(e, plan.name);
+                              },
+                              text: t("Ok"),
+                              closeModal: true,
+                              // autoFocus: true,
                             },
-                            text: t("Ok"),
-                            closeModal: true,
-                            variant: "contained",
-                            // autoFocus: true,
-                          },
-                          {
-                            callback: () => {console.log("Clicked second action button")},
-                            text: t("Cancel"),
-                            closeModal: false,
-                          }
-                        ],
-                      });
-                    }}
-                  >{content["01_primary-action"]}</Button>
-                  <Box mt={2}>
-                    <Link href="#" color="primary">{content["03_secondary-action"]}</Link>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Card variant="outlined">
-                <CardHeader title={content["02_title"]} className={classes.cardHeader}></CardHeader>
-                <CardContent>
-                  <Box px={1}>
-                    <Typography variant="h4" component="h2" gutterBottom={true}>
-                      {content["02_price"]}
-                      <Typography variant="h6" color="textSecondary" component="span">{content["02_suffix"]}</Typography>
-                    </Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["02_benefit1"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["02_benefit2"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["02_benefit3"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p" paragraph={true}>{content["02_benefit4"]}</Typography>
-                  </Box>
-                  <Button variant="contained" color="primary">{content["02_primary-action"]}</Button>
-                  <Box mt={2}>
-                    <Link href="#" color="primary">{content["03_secondary-action"]}</Link>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Card variant="outlined">
-                <CardHeader title={content["03_title"]} className={classes.cardHeader}></CardHeader>
-                <CardContent>
-                  <Box px={1}>
-                    <Typography variant="h4" component="h2" gutterBottom={true}>
-                      {content["03_price"]}
-                      <Typography variant="h6" color="textSecondary" component="span">{content["03_suffix"]}</Typography>
-                    </Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["03_benefit1"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["03_benefit2"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p">{content["03_benefit3"]}</Typography>
-                    <Typography color="textSecondary" variant="subtitle1" component="p" paragraph={true}>{content["03_benefit4"]}</Typography>
-                  </Box>
-                  <Button variant="outlined" color="primary">{content["03_primary-action"]}</Button>
-                  <Box mt={2}>
-                    <Link href="#" color="primary">{content["03_secondary-action"]}</Link>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
+                            {
+                              callback: () => {console.log("Clicked second action button")},
+                              text: t("Cancel"),
+                              closeModal: true,
+                            }
+                          ],
+                        });
+                      }}
+                      disabled={isActivePlan(plan)}
+                    >{
+                      isActivePlan(plan) ?
+                        t("Active plan")
+                      :
+                        t("Select plan")
+                    }
+                    </Button>
+                    {props.canForcePlan && (
+                      <>
+                        <Box mt={1} />
+                        <Button variant="contained" color="tertiary"
+                          onClick={(e) => {
+                            props.onPlanForced(e, plan.name);
+                          }}
+                          disabled={isActivePlan(plan)}
+                        >{
+                          t("Force plan")
+                        }
+                        </Button>
+                      </>
+                    )}
+                    <Box mt={2}>
+                      <Link href="#" color="primary">{/* TODO: create a link (or popup) to give more details about selecting this plan... */}
+                        <small>{t("Learn more")}</small>
+                      </Link>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
         </Box>
       </Container>
@@ -201,11 +218,17 @@ const Pricing = props => {
 }
 
 Pricing.propTypes = {
+  currentPlanName: PropTypes.string,
   onPlanSelected: PropTypes.func,
+  canForcePlan: PropTypes.bool,
+  onPlanForced: PropTypes.func,
 };
 
 Pricing.defaultProps = {
+  currentPlanName: "",
   onPlanSelected: (e) => console.log("Selected plan:", e),
+  canForcePlan: false,
+  onPlanForced: (e) => console.log("Forced plan:", e),
 };
 
 export default React.memo(Pricing);

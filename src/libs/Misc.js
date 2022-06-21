@@ -1,14 +1,11 @@
 import React from "react";
+import currencies from "../currencies";
 
 /**
  * Try to extrapolate the error description from a generic error object
  */
 export const errorMessage = error => {
-// console.log("errorMessage error.request.data.message:", error?.request?.data?.message);
-// console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
-// console.log("errorMessage error.response.data.message:", error?.response?.data?.message);
-//console.log("errorMessage error.message:", error?.message);
-//console.log("errorMessage error.toString:", error?.toString());
+  console.log("errorMessage error.request.data:", error?.request?.data, "- error.response.data:", error?.response?.data);
   return (
     (
       error.request &&
@@ -17,9 +14,22 @@ export const errorMessage = error => {
       error.request.data.message
     ) ||
     (
+      error.request &&
+      error.request.status >= 400 &&
+      error.request.data &&
+      error.request.data.raw &&
+      error.request.data.raw.message
+    ) ||
+    (
       error.response &&
       error.response.data &&
       error.response.data.message
+    ) ||
+    (
+      error.response &&
+      error.response.data &&
+      error.response.data.raw &&
+      error.response.data.raw.message
     ) ||
     error.message ||
     error.toString()
@@ -28,6 +38,15 @@ export const errorMessage = error => {
 
 export const capitalize = string => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
+};
+
+export const currencyISO4217ToSymbol = currency => {
+  //console.log("currencyISO4217ToSymbol - currency:", currency);
+  //console.log("currencyISO4217ToSymbol - currencies:", currencies);
+  if (!(currency in currencies)) {
+    return "¤"; // unspecified currency symbol
+  }
+  return currencies[currency];
 };
 
 export const isEmptyObject = (obj) => {
@@ -288,11 +307,42 @@ export const encodeEmail = (email) => {
     }
   }
   return React.createElement("span", { dangerouslySetInnerHTML: { __html: encodedEmail } });
-}
+};
+
+/**
+ * Flattens an object: obj.prop.subprop => obj[`${prop}.${subprop}`]
+ * 
+ * @param {*} obj        the object to be flattened (mandatory)
+ * @param {*} property   restrict the flattening to this object property (optional)
+ * @returns              the flattened object  
+ */
+export const flattenObject = (obj, property) => {
+  const flattenedObj = {};
+  Object.keys(obj).map(k1 => {
+    if (typeof obj[k1] === "object" && obj[k1] !== null) {
+      const tmpObj = flattenObject(obj[k1]);
+      Object.keys(tmpObj).map(k2 => {
+        if (property && property === k1) {
+          flattenedObj[`${k1}${k2}`] = tmpObj[k2];
+        } else {
+          flattenedObj[k1] = obj[k1];
+        }
+        return k2;
+      });
+    } else {
+      flattenedObj[k1] = obj[k1];
+    }
+    return k1;
+  });
+  return flattenedObj;
+};
+
+
 
 /**
  * Unused
  */
+
 // export function currentFunctionName() {
 //   const
 //     stack = new Error().stack,
@@ -301,3 +351,9 @@ export const encodeEmail = (email) => {
 //   return caller;
 // };
 
+// export flattenObjectProperty = (obj, property) => {
+//   const flattenedObj = {...obj};
+//   delete flattenedObj[property];
+//   Object.keys(obj[property]).map(key => flattenedObj[property + "_" + key] = obj[property][key]);
+//   return flattenedObj;
+// };

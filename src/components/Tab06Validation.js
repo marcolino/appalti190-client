@@ -63,7 +63,7 @@ function Tab06Validation(props) {
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
-          {t("Attendi la validazione da parte dell'ANAC")}
+          {t("Wait for ANAC validation")}
         </TabTitle>
         <TabParagraph>
           {statusLocal && "success" in statusLocal && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
