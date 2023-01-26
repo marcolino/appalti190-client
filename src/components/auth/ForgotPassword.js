@@ -110,8 +110,8 @@ function ForgotPassword() {
             openDialog({
               title: t("Verification code sent"),
               contentText:
-                t(`Verification code sent via {{medium}} to {{email}}.`, {medium, email}) + `\n` +
-                t(`Please copy and paste it here.`),
+                ///////t("Verification code sent via {{medium}} to {{email}}", {medium, email}) + ".\n" +
+                t("Please copy and paste it here") + ".",
                 actions: [
                   {
                     text: t("Ok"),
@@ -152,8 +152,8 @@ console.log("EC", result.response.data.code, Object.keys(result), Object.values(
         setPasswordConfirmed("");
         setCode("");
         openDialog({
-          title: t(`Password reset success`),
-          contentText: t(`You can now sign in with your new password`),
+          title: t("Password reset success"),
+          contentText: t("You can now sign in with your new password"),
           actions: [
             {
               text: t("Ok"),

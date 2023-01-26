@@ -49,8 +49,7 @@ export function register(config) {
           console.log(
             t("This web app is being locally served cache-first by a service " +
             "worker. To learn more, visit https://cra.link/PWA")
-            );
-          //});
+          );
         });
       } else {
         // Is not localhost. Just register service worker
@@ -101,7 +100,7 @@ function registerValidSW(swUrl, config) {
     })
     .catch((error) => {
       broadcastChannel.postMessage({level: "error", message:
-        t("Error during service worker registration: {{error}}", error)
+        ''//t"Error during service worker registration: {{error}}", {error})
       });
     })
   ;
@@ -145,9 +144,7 @@ export function unregister() {
         registration.unregister();
       })
       .catch((error) => {
-        // broadcastChannel.postMessage({level: "error", message:
-        //   t(error.message);
-        // });
+        // broadcastChannel.postMessage({level: "error", message: _t(error.message); });
         console.error(error.message); // do not bore users with unregister errors
       });
   }

@@ -26,11 +26,12 @@ export const validatePassword = (password) => {
 }
 
 export const explainPasswordRequirements = () => {
-  return t(`\
-The password must contain at least 1 lowercase character,
-it must contain at least 1 uppercase character,
-it must contain at least 1 numeric character,
-it must contain at least one special character,
-it must be at least eight characters long
-.`);
+  /* eslint-disable no-multi-str */
+  return t("\
+The password must contain at least 1 lowercase character, \
+it must contain at least 1 uppercase character, \
+it must contain at least 1 numeric character, \
+it must contain at least one special character, \
+it must be at least eight characters long.\
+");
 }

@@ -32,8 +32,8 @@ console.log("useeffect 1");
             title: t("Please upgrade your plan"),
             contentText: 
               t("You need to upgrade your plan to proceed.") + "\n" +
-              t(`Your current plan is "${user?.plan?.name}".`) + "\n" +
-              t(`To elaborate ${props.job?.transform?.cigCount} CIGs you need at least plan "${props.job?.transform?.planRequired?.name}"`),
+              t("Your current plan is \"{{planName}}\".", { planName: user?.plan?.name}) + "\n" +
+              t("To elaborate {{cigCount}} CIGs you need at least plan \"{{planName}}\"", { cigCount: props.job?.transform?.cigCount, planName: props.job?.transform?.planRequired?.name }),
             actions: [
               {
                 text: t("Upgrade plan"),
@@ -45,7 +45,7 @@ console.log("useeffect 1");
                 },
               },
               {
-                text: t(`Proceed with the first ${user?.plan?.cigNumberAllowed} CIGs`),
+                text: t("Proceed with the first {{cigNumberAllowed}} CIGs", { cigNumberAllowed: user?.plan?.cigNumberAllowed }),
                 closeModal: true,
                 callback: () => {
                   setNextIsEnabled(true);
@@ -141,12 +141,12 @@ console.log(props.job);
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
         <Grid item xs={6}>
           <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-            {`${t("Continue")}`}
+            {t("Continue")}
           </TabNextButton>
         </Grid>
       </Grid>

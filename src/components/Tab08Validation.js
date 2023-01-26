@@ -9,7 +9,7 @@ import JobService from "../services/JobService";
 
 
 
-function Tab06Validation(props) {
+function Tab08Validation(props) {
   const { t } = useTranslation();
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
@@ -68,7 +68,7 @@ function Tab06Validation(props) {
         <TabParagraph>
           {statusLocal && "success" in statusLocal && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
             <pre>
-              <img src="images/success.ico" width="64" alt="success"></img> {props.job?.outcome?.dataUltimoTentativoAccessoUrl}
+              <span style={{color: "green", fontSize: "1.7em"}}>✓</span>{/*<img src="images/success.ico" width="32" style=alt="success"></img>*/} {props.job?.outcome?.dataUltimoTentativoAccessoUrl}
             </pre>
           )}
           <pre>
@@ -81,12 +81,12 @@ function Tab06Validation(props) {
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
         <Grid item xs={6}>
           <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-            {`${t("Continue")}`}
+            {t("Continue")}
           </TabNextButton>
         </Grid>
       </Grid>
@@ -94,10 +94,10 @@ function Tab06Validation(props) {
     </TabContainer>
   );
 }
-Tab06Validation.propTypes = {
+Tab08Validation.propTypes = {
   goto: PropTypes.func.isRequired,
 };
-Tab06Validation.defaultProps = {
+Tab08Validation.defaultProps = {
 };
 
-export default React.memo(Tab06Validation);
+export default React.memo(Tab08Validation);

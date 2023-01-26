@@ -19,7 +19,7 @@ function Home() {
   return (
     <div className={classes.home}>
       {/* {(typeof auth.user !== "undefined") && // if auth.user is undefined, we don't know yet about user authentication...
-        `${t("Home")} ${t("for")} ${auth.user ? t("authenticated user") : t("guest user")} ${auth.user ? auth.user.email : ""}`
+        ${t("Home")} ${t("for")} ${auth.user ? t("authenticated user") : t("guest user")} ${auth.user ? auth.user.email : ""}
       } */}
       <TabsPanel />
     </div>

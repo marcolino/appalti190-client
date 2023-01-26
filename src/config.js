@@ -61,7 +61,6 @@ module.exports = {
   oauthRedirectSignOutLocal: "http://localhost:5000/",
   oauthRedirectSignOutPublic: "https://appalti190.arsistemi.it/",
   data: {
-    templateDownloadName: "Appalti190.ots",
-    templateDownloadLink: "/data/Appalti190.ots",
+    templateDownloadUrl: "/data/Appalti190.ots",
   },
 };

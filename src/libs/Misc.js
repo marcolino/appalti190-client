@@ -36,6 +36,10 @@ export const errorMessage = error => {
   );
 }
 
+export const basename = path => {
+  return path.split("/").reverse()[0];
+}
+
 export const capitalize = string => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1) : "";
 };
@@ -49,7 +53,26 @@ export const currencyISO4217ToSymbol = currency => {
   return currencies[currency];
 };
 
-export const isEmptyObject = (obj) => {
+export const downloadLocalUrl = url => {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = basename(url);
+  link.click();
+}
+
+export const downloadRemoteUrl = url => {
+  fetch(url)
+  .then(response => response.blob())
+  .then(blob => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = basename(url);
+    link.click();
+  })
+  .catch(console.error);
+};
+
+export const isEmptyObject = obj => {
   return (
     obj ? // null and undefined check
       Object.keys(obj).length === 0 // empty object check

@@ -82,6 +82,11 @@ const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
   );
 }
 
+// check url existence
+const urlExistenceCheck = (url) => {
+  return api.post("/job/urlExistenceCheck/url", url);
+}
+
 // just to ignore big xml when debug printing...
 const sanitizeJob = (job) => {
   if (!job?.transform?.xml) {
@@ -107,6 +112,7 @@ const JobService = {
   validateXml,
   outcomeCheck,
   outcomeFailureDetails,
+  urlExistenceCheck,
   sanitizeJob,
   getPlans,
 };

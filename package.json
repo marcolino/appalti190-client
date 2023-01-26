@@ -1,6 +1,6 @@
 {
   "name": "appalti190-client",
-  "version": "2.0.9",
+  "version": "2.1.8",
   "private": true,
   "scripts": {
     "start-dev": "export PORT=3000 & react-scripts start",
@@ -11,6 +11,7 @@
     "rawbuild": "react-scripts build && yarn sw-add-blacklist && yarn postbuild",
     "sw-add-blacklist": "node scripts/add-blacklist-urls-to-service-worker",
     "postbuild": "rm -rf ../appalti190-server/client/build; cp -a build/ ../appalti190-server/client/",
+    "pub": "yarn bump && git add . && git commit -m \"generic commit\" && git push && yarn build && cd ../appalti190-server/ && yarn pub",
     "i18n": "i18next 'src/**/*.js' --config 'i18next-parser.config.js' --silent",
     "i18n-auto": "node scripts/translate-auto.js",
     "test": "react-scripts test",
@@ -56,6 +57,7 @@
     "@mui/styles": "^5.6.2",
     "@mui/x-data-grid": "^5.10.0",
     "axios": "^0.25.0",
+    "bump": "^0.2.5",
     "email-validator": "^2.0.4",
     "firebase": "8.2.1",
     "i18next": "^21.6.13",

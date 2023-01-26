@@ -21,7 +21,7 @@ const FlexibleDialog = ({ title, contentText, actions, ...props }) => (
         <Button
           key={index}
           onClick={() => {
-            action.callback();
+            if (action.callback) action.callback();
             if (action.closeModal) props.onClose();
           }}
           variant={action.variant === "primary" ? "contained" : action.variant === "secondary" ? "outlined" : "contained"}

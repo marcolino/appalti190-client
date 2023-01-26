@@ -599,7 +599,7 @@ console.log("*** USER:", user);
                           id={"addressZip"}
                           value={addressZip}
                           onChange={v => { setAnyProfileChanges(true); setAddressZip(v); }}
-                          placeholder={t("Zip")}
+                          placeholder={t("ZIP")}
                           startAdornmentIcon={<IconAddressZip />}
                           error={error.addressZip}
                         />
@@ -675,8 +675,9 @@ console.log("*** USER:", user);
                         disabled={!userCanUpdateRoles()}
                       >
                         {/* TODO: get roles names from server */ /*config.api.rolesNames.map((plan, index) => (*/}
+                        {/* TODO: get roles names from server TRANSLATED */}
                         {rolesNames.map((role, index) => (
-                          <MenuItem key={index} value={role}>{t(role)}</MenuItem>
+                          <MenuItem key={index} value={role}>{role}</MenuItem>
                         ))}
                       </Select>
                     </FormControl>

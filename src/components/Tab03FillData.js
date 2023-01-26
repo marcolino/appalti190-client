@@ -37,6 +37,7 @@ function Tab03FillData(props) {
         </TabParagraph>
         <TabParagraph>
           Sono presenti 2 fogli: "METADATI" ed "ELENCO GARE".
+          <br />
           Ti consigliamo di iniziare dal primo foglio, "METADATI", ed inserire i 4 dati generali richiesti:
           <ul className={classes.ul}>
             <li><i>codiceFiscaleStrutturaProponente</i> il codice fiscale della tua struttura</li>
@@ -61,12 +62,12 @@ function Tab03FillData(props) {
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
         <Grid item xs={6}>
           <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-            {`${t("Continue")}`}
+            {t("Continue")}
           </TabNextButton>
         </Grid>
       </Grid>

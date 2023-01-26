@@ -12,12 +12,14 @@ import Box from "@mui/material/Box";
 import TokenService from "../services/TokenService";
 import JobService from "../services/JobService";
 import Tab01Start from "./Tab01Start";
-import Tab02Download from "./Tab02Download";
+import Tab02DownloadTemplate from "./Tab02DownloadTemplate";
 import Tab03FillData from "./Tab03FillData";
 import Tab04Upload from "./Tab04Upload";
 import Tab05Check from "./Tab05Check";
-import Tab06Validation from "./Tab06Validation";
-import Tab07Finished from "./Tab07Finished";
+import Tab06DownloadDataset from "./Tab06DownloadDataset";
+import Tab07Publish from "./Tab07Publish";
+import Tab08Validation from "./Tab08Validation";
+import Tab09Finished from "./Tab09Finished";
 import config from "../config";
 
 
@@ -79,8 +81,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.light,
   },
   tabIndicator: {
-    backgroundColor: theme.palette.secondary.dark,
-    height: 1,
+    backgroundColor: "MediumSeaGreen", //theme.palette.secondary.dark,
+    height: 3,
   }
 
 }));
@@ -124,13 +126,17 @@ const TabsPanel = () => {
       switch (where.toLowerCase()) {
         case "start":
           break;
-        case "download":
+        case "download template":
           break;
         case "fill your data":
           break;
         case "upload":
           break;
         case "check":
+          break;
+        case "download dataset":
+          break;
+        case "publish":
           break;
         case "wait for validation":
           break;
@@ -179,12 +185,14 @@ const TabsPanel = () => {
             className={classes.tab}
           >
             <StyledTab label={`${t("Start")} 🪄`} {...a11yProps(0)} />
-            <StyledTab label={`${t("Download")} ⬇`} {...a11yProps(1)} />
+            <StyledTab label={`${t("Download template")} ▼`} {...a11yProps(1)} />
             <StyledTab label={`${t("Fill your data")} 🖋`} {...a11yProps(2)} />
-            <StyledTab label={`${t("Upload")} ⬆`} {...a11yProps(3)} />
-            <StyledTab label={`${t("Check")} ✔`} {...a11yProps(4)} />
-            <StyledTab label={`${t("Wait for validation")} 🎯`} {...a11yProps(5)} />
-            <StyledTab label={`${t("Finish!")} 🏁`} {...a11yProps(6)} />
+            <StyledTab label={`${t("Upload")} ▲`} {...a11yProps(3)} />
+            <StyledTab label={`${t("Check")} ✅`} {...a11yProps(4)} />
+            <StyledTab label={`${t("Download dataset")} ⤵`} {...a11yProps(5)} />
+            <StyledTab label={`${t("Publish")} 🌍`} {...a11yProps(6)} />
+            <StyledTab label={`${t("Wait for validation")} 🎯`} {...a11yProps(7)} />
+            <StyledTab label={`${t("Finish!")} 🏁`} {...a11yProps(8)} />
           </Tabs>
         </Paper>
       </AppBar>
@@ -197,7 +205,7 @@ const TabsPanel = () => {
         )}
         {(job?.tabId === 1) && (
           <TabPanel index={1} value={job.tabId}>
-            <Tab02Download goto={goto} job={job} setJob={job => setJob(job)} />
+            <Tab02DownloadTemplate goto={goto} job={job} setJob={job => setJob(job)} />
           </TabPanel>
         )}
         {(job?.tabId === 2) && (
@@ -217,46 +225,25 @@ const TabsPanel = () => {
         )}
         {(job?.tabId === 5) && (
           <TabPanel index={5} value={job.tabId}>
-            <Tab06Validation goto={goto} job={job} setJob={job => setJob(job)} />
+            <Tab06DownloadDataset goto={goto} job={job} setJob={job => setJob(job)} />
           </TabPanel>
         )}
         {(job?.tabId === 6) && (
           <TabPanel index={6} value={job.tabId}>
-            <Tab07Finished goto={goto} job={job} setJob={job => setJob(job)} />
+            <Tab07Publish goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 7) && (
+          <TabPanel index={7} value={job.tabId}>
+            <Tab08Validation goto={goto} job={job} setJob={job => setJob(job)} />
+          </TabPanel>
+        )}
+        {(job?.tabId === 8) && (
+          <TabPanel index={8} value={job.tabId}>
+            <Tab09Finished goto={goto} job={job} setJob={job => setJob(job)} />
           </TabPanel>
         )}
       </>
-      {/* <>
-        <Tab01Start active={job?.tabId === 0} tabId={job?.tabId} goto={(where) => goto(where)} />
-        <Tab02Download active={job?.tabId === 1} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-        <Tab03FillData active={job?.tabId === 2} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-        <Tab04Upload active={job?.tabId === 3} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-        <Tab05Check active={job?.tabId === 4} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-        <Tab06Validation active={job?.tabId === 5} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-        <Tab07Finished active={job?.tabId === 6} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </> */}
-
-      {/* <TabPanel value={job?.tabId || 0} index={0}>
-        <Tab01Start active={job?.tabId === 0} tabId={job?.tabId} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={1}>
-        <Tab02Download active={job?.tabId === 1} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={2}>
-        <Tab03FillData active={job?.tabId === 2} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={3}>
-        <Tab04Upload active={job?.tabId === 3} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={4}>
-        <Tab05Check active={job?.tabId === 4} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={5}>
-        <Tab06Validation active={job?.tabId === 5} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel>
-      <TabPanel value={job?.tabId || 0} index={6}>
-        <Tab07Finished active={job?.tabId === 6} tabId={job?.tabId || 0} goto={(where) => goto(where)} />
-      </TabPanel> */}
     </div>
   );
 }

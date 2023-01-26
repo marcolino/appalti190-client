@@ -25,7 +25,7 @@ function Tab01Start(props) {
           . Speriamo che sia chiara e semplice da usare.
           </TabParagraph>
         <TabParagraph>
-          Questa app ti guiderà passo passo nei pochi steps che occorrono per completare
+          Questa app ti guiderà passo passo nei pochi passi che occorrono per completare
           l'adempimento con successo.
         </TabParagraph>
         <TabParagraph>
@@ -46,7 +46,7 @@ function Tab01Start(props) {
         </TabParagraph>
         <TabParagraph>
           A questo punto il nostro sistema effettuerà il controllo formale dei dati inseriti.
-          Nel caso che venga segnalato qualche anomalia dovrai correggere sul file Excel le anomalie
+          Nel caso che venga segnalata qualche anomalia dovrai correggere sul file Excel le anomalie
           segnalate, e poi ri-caricarlo.
         </TabParagraph>
         <TabParagraph>
@@ -68,7 +68,7 @@ function Tab01Start(props) {
 
       <div>
         <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-          {`${t("Start")}`}
+          {t("Start")}
         </TabNextButton>
       </div>
     </TabContainer>

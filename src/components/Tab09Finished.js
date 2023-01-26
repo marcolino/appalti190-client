@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton } from "./TabsComponents";
 
-function Tab07Finished(props) {
+function Tab09Finished(props) {
   const { t } = useTranslation();
   const [ prevIsEnabled ] = useState(true);
 
@@ -28,7 +28,7 @@ function Tab07Finished(props) {
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
       </Grid>
@@ -36,10 +36,10 @@ function Tab07Finished(props) {
     </TabContainer>
   );
 }
-Tab07Finished.propTypes = {
+Tab09Finished.propTypes = {
   goto: PropTypes.func.isRequired,
 };
-Tab07Finished.defaultProps = {
+Tab09Finished.defaultProps = {
 };
 
-export default React.memo(Tab07Finished);
+export default React.memo(Tab09Finished);

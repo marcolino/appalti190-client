@@ -278,11 +278,11 @@ function AdminPanel(props) {
       editable: true,
       // valueGetter: (params: GridValueGetterParams) => {
       //   console.log("plan valueGetter", params);
-      //   return `${t(params.row.plan.name) || t("free")}`;
+      //   return _t(params.row.plan.name) || t("free");
       // },
       // valueSetter: (params: GridValueSetterParams) => {
       //   console.log("plan valueSetter", params);
-      //   return { ...params.row, plan: { ...params.row.plan, name: `${t(params.value) || t("free")}` }};
+      //   return { ...params.row, plan: { ...params.row.plan, name: _t(params.value) || t("free") }};
       // },
       type: "singleSelect",
       valueOptions: [t("free"), t("standard"), t("unlimited")], // TODO: read from server

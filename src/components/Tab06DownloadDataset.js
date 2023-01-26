@@ -8,16 +8,17 @@ import Button from "@mui/material/Button";
 import AuthService from "../services/AuthService";
 import TokenService from "../services/TokenService";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
+import { downloadRemoteUrl } from "../libs/Misc";
 import FlexibleDialog from "./FlexibleDialog";
-import config from "../config";
+//import config from "../config";
 
 
 
-function Tab02Download(props) {
+function Tab07DownloadDataset(props) {
   const { t } = useTranslation();
   const history = useHistory();
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.download : false);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.downloadDataset : false);
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
@@ -64,14 +65,15 @@ function Tab02Download(props) {
     return true;
   }
 
-  const onDownload = () => {
+  const onDownloadDataset = () => {
     if (userIsAuthenticated()) {
-      const link = document.createElement("a");
-      link.download = config.data.templateDownloadName;
-      link.href = config.data.templateDownloadLink;
-      link.click();
+      //let url = config.service.endpoint + "marco/dataset-2022.xml";
+      let url = props.job.transform.outputUrl;
+console.log("job:", props.job);
+console.log("url:", url);
+      downloadRemoteUrl(url);
       setNextIsEnabled(true);
-      props.setJob({...props.job, download: true});
+      props.setJob({...props.job, downloadDataset: true});
     }
   };
 
@@ -79,33 +81,29 @@ function Tab02Download(props) {
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
-          {t("Download")}
+          {t("Download produced dataset")}
         </TabTitle>
         <TabParagraph>
-          Scarica il modello Excel in cui potrai inserire i dati degli appalti, uno per riga.
+          <p>
+            {t("Download dataset")}.
+          </p>
         </TabParagraph>
         <TabParagraph>
-          <Button onClick={onDownload} variant="contained" color="tertiary">
-            {t("Download")} ⬇
+          <Button onClick={onDownloadDataset} variant="contained" color="tertiary">
+            {t("Download")} ⤵
           </Button>
         </TabParagraph>
-        {/* <br />
-        <TabParagraph small>
-          <input type="checkbox"></input>
-          Clicca qui se preferisci la versione ODS (Open Document Format),
-          nel caso che tu utilizzi LibreOffice anziché Microsoft Office.
-        </TabParagraph> */}
       </TabBodyScrollable>
 
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
         <Grid item xs={6}>
           <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-            {`${t("Continue")}`}
+            {t("Continue")}
           </TabNextButton>
         </Grid>
       </Grid>
@@ -113,10 +111,10 @@ function Tab02Download(props) {
     </TabContainer>
   );
 }
-Tab02Download.propTypes = {
+Tab07DownloadDataset.propTypes = {
   goto: PropTypes.func.isRequired,
 };
-Tab02Download.defaultProps = {
+Tab07DownloadDataset.defaultProps = {
 };
 
-export default React.memo(Tab02Download);
+export default React.memo(Tab07DownloadDataset);

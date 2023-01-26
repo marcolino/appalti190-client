@@ -91,8 +91,8 @@ function Tab04Upload(props) {
       file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") || //* TODO: ignore case... */
       file?.type?.split("/")[1]?.match("ms-excel")
     )) {
-      return t(`Please upload a spreadsheet`) + `.` +
-        (file?.type ? ` ` + t(`Selected file looks like {{fileType}}`, {fileType: file.type}) : ``)
+      return t("Please upload a spreadsheet") + `.` +
+        (file?.type ? ` ` + t("Selected file looks like {{fileType}}", { fileType: file.type }) : "")
       ;
     }
     return null; // validated
@@ -188,12 +188,12 @@ function Tab04Upload(props) {
       <Grid container>
         <Grid item xs={6}>
           <TabPrevButton onPrev={onPrev} prevIsEnabled={prevIsEnabled}>
-            {`${t("Back")}`}
+            {t("Back")}
           </TabPrevButton>
         </Grid>
         <Grid item xs={6}>
           <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-            {`${t("Continue")}`}
+            {t("Continue")}
           </TabNextButton>
         </Grid>
       </Grid>
