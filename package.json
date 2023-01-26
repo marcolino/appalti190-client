@@ -1,6 +1,6 @@
 {
   "name": "appalti190-client",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "private": true,
   "scripts": {
     "start-dev": "export PORT=3000 & react-scripts start",
@@ -11,7 +11,8 @@
     "rawbuild": "react-scripts build && yarn sw-add-blacklist && yarn postbuild",
     "sw-add-blacklist": "node scripts/add-blacklist-urls-to-service-worker",
     "postbuild": "rm -rf ../appalti190-server/client/build; cp -a build/ ../appalti190-server/client/",
-    "pub": "yarn bump && git add . && git commit -m \"generic commit\" && git push && yarn build && cd ../appalti190-server/ && yarn pub",
+    "set-last-commit-date": "( /usr/bin/echo -n '\"'; git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M:%S' | tr -d '\\n'; /usr/bin/echo -n '\"' ) > src/last.commit.date.json",
+    "pub": "yarn bump && yarn set-last-commit-date && git add . && git commit -m \"generic commit\" && git push && yarn build && cd ../appalti190-server/ && yarn pub",
     "i18n": "i18next 'src/**/*.js' --config 'i18next-parser.config.js' --silent",
     "i18n-auto": "node scripts/translate-auto.js",
     "test": "react-scripts test",

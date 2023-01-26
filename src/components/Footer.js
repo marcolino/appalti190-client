@@ -12,6 +12,9 @@ import { isAuthLocation } from "../libs/Misc";
 import { getCurrentLanguage } from "../libs/I18n";
 import config from "../config";
 import packageJson from "../package.alias.json";
+import lastCommitDateJson from "../last.commit.date.json";
+
+console.log("lastCommitDateJson:", lastCommitDateJson);
 
 const useStyles = makeStyles(theme => ({
 	footer: {
@@ -41,7 +44,8 @@ function Footer(props) {
       <Grid container justifyContent="center">
         <Typography component="h6" variant="body2" color={"textSecondary"}>
           {packageJson.name} {" "}
-          {"v"}{packageJson.version} {" ~ "}
+          {"v"}{packageJson.version} {" "}
+          {"("}{lastCommitDateJson}{")"} {" ~ "}
           {"©"} {" "} {new Date().getFullYear()}, {" "}
           <Link color="inherit" href={config.companyHomeSiteUrl}>
             {config.companyName}
