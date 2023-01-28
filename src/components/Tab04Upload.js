@@ -31,10 +31,8 @@ function Tab04Upload(props) {
     "application/vnd.ms-excel",
   ]);
 
-  useEffect(() => {
-    // check if user is authenticated
-    const user = AuthService.getCurrentUser();
-    if (!user) { // user is not authenticated
+  const userIsAuthenticated = () => {
+    if (!AuthService.getCurrentUser()) { // user is not authenticated
       openDialog({
         title: t("Please log in or register"),
         contentText: t("You need to be authenticated to proceed"),
@@ -66,8 +64,14 @@ function Tab04Upload(props) {
       return false;
     }
     return true;
+  };
+
   /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props]);
+  const userIsAuthenticatedCallback = useCallback(() => { return userIsAuthenticated() }, []);
+  
+  useEffect(() => {
+    userIsAuthenticatedCallback(); // check if user is authenticated
+  }, [userIsAuthenticatedCallback]);
 
   const fileSet = useCallback(async(file) => {
     props.setJob({...props.job, file});
@@ -104,7 +108,7 @@ function Tab04Upload(props) {
         console.log('Upload success, file path', result.data.file);
         fileSet(result.data.file);
         //props.setJob({...props.job, file: result.data.file});
-        // TODO: possibly save current job as historycal record
+        // TODO: possibly save current job as historical record
       },
       error => {
         console.error('Upload error:', error);

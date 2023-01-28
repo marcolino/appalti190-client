@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useModal } from "mui-modal-provider";
+import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { toast } from "./Toast";
 import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
@@ -11,23 +17,36 @@ import TokenService from "../services/TokenService";
 import JobService from "../services/JobService";
 import FlexibleDialog from "./FlexibleDialog";
 
+const useStyles = makeStyles(theme => ({
+  '& .MuiTypography-root': {
+    fontSize: "0.5em",
+  },
+  accordionRoot: {
+    _height: "4em",
+    _padding: 0,
+    _margin: 0,
+    fontSize: "0.9em",
+  }
+}));
 
 
 function Tab05Check(props) {
   const { t } = useTranslation();
+  const classes = useStyles();
   const history = useHistory();
   const user = TokenService.getUser();
   const [ statusLocal, setStatusLocal ] = useState({});
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(!!props?.job?.transform?.planUpgradeDeclined);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(false/*!!props?.job?.transform?.planUpgradeDeclined*/);
   const [ prevIsEnabled] = useState(true);
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
   useEffect(() => {
-console.log("useeffect 1");
+console.log("useeffect 1", props.job);
     if (props.job?.transform) {
       if (props.job?.transform?.code === "TRUNCATED_DUE_TO_PLAN_LIMIT") {
         if (!props.job?.transform?.planUpgradeDeclined) { // TODO: when will we reset this flag?
+console.log("useeffect 1 ENTERED");
           openDialog({
             title: t("Please upgrade your plan"),
             contentText: 
@@ -63,8 +82,9 @@ console.log("useeffect 1");
   }, [props.job?.transform]);
 
   useEffect(() => {
-console.log("useeffect 2");
+console.log("useeffect 2", props.job);
     if (props.job.file && !props.job.transform) {
+console.log("useeffect 2 ENTERED");
       (async () => {
         setStatusLocal({loading: true});
         await JobService.transformXls2Xml(props.job.file.path).then(
@@ -74,6 +94,7 @@ console.log("useeffect 2");
               toast.error(errorMessage(result));
               return setStatusLocal({ error: errorMessage(result)});
             }
+console.log("useeffect 2 - setting job.transform to:", result.data.result);
             props.setJob({...props.job, transform: result.data.result});
             setStatusLocal({success: result.data});
             //setNextIsEnabled(true);
@@ -85,8 +106,9 @@ console.log("useeffect 2");
   }, []); //props, props.job]);
 
   useEffect(() => {
-console.log("useeffect 3");
+console.log("useeffect 3", props.job);
     if (props.job.file && props.job.transform && !props.job.validateXml) {
+console.log("useeffect 3 ENTERED");
       (async () => {
         setStatusLocal({loading: true});
         await JobService.validateXml(props.job.transform).then(
@@ -108,7 +130,7 @@ console.log("useeffect 3");
       })();
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [/*props, job.transform, setJob*/]);
+  }, [props.job.transform, /*props, setJob*/]);
 
   const onPrev = () => {
     props.goto("prev");
@@ -119,7 +141,46 @@ console.log("useeffect 3");
   };
 
   //if (!props.active) return null;
-  
+/*
+job.transform.warnings
+job.transform.errors
+*/
+
+  // outcome results preparation
+  let info = [];
+  if (props.job?.file) info[t("Original file name")] = props.job.file.originalname;
+  if (props.job?.transform?.metadati?.titolo) info[t("Title")] = props.job.transform.metadati.titolo;
+  if (props.job?.transform?.metadati?.abstract) info[t("Abstract")] = props.job.transform.metadati.abstract;
+  if (props.job?.transform?.metadati?.dataPubblicazioneDataset) info[t("Dataset publish date")] = props.job.transform.metadati.dataPubblicazioneDataset;
+  if (props.job?.transform?.metadati?.dataUltimoAggiornamentoDataset) info[t("Dateset last update date")] = props.job.transform.metadati.dataUltimoAggiornamentoDataset;
+  if (props.job?.transform?.metadati?.entePubblicatore) info[t("Publishing body")] = props.job.transform.metadati.entePubblicatore;
+  if (props.job?.transform?.metadati?.annoRiferimento) info[t("Reference year")] = props.job.transform.metadati.annoRiferimento;
+  if (props.job?.transform?.metadati?.urlFile) info[t("Url file")] = props.job.transform.metadati.urlFile;
+  if (props.job?.transform?.metadati?.licenza) info[t("License")] = props.job.transform.metadati.licenza;
+  if (props.job?.cigCount) info[t("Number of CIGs")] = props.job.cigCount;
+  if (props.job?.importoAggiudicazioneTotale) info[t("Total award amount")] = props.job.importoAggiudicazioneTotale;
+  if (props.job?.importoSommeLiquidateTotale) info[t("Total liquidated amount")] = props.job.importoSommeLiquidateTotale;
+//console.log("info:", info);
+
+  // xml validation results preparation
+  let XmlErrorMessage = props.job?.validateXml?.error?.message;
+  let XmlErrorReason = props.job?.validateXml?.error?.reason;
+  let XmlErrorSynopsys = null;
+  let XmlErrorReasons = [];
+  if (props.job?.validateXml?.error.reason) {
+    XmlErrorReasons = XmlErrorReason.split("\n");
+console.log("XmlErrorReasons:", XmlErrorReasons);
+    let pattern = /^\t\[([^\]]+)\]\s*([^:]*):\s*(.*)$/;
+    XmlErrorSynopsys = XmlErrorReasons.shift();
+    XmlErrorReasons = XmlErrorReasons.map((reason, index) => {
+      let type = `validation ${reason.replace(pattern, "$1")}`;
+      let header = `${reason.replace(pattern, "$2")}`;
+      let content = `${reason.replace(pattern, "$3")}`;
+      return { type, header, content };
+    });
+console.log("XmlErrorReasons:", XmlErrorReasons);
+  }
+
 console.log(props.job);
   return (
     <TabContainer>
@@ -127,16 +188,53 @@ console.log(props.job);
         <TabTitle>
           {t("Check")}
         </TabTitle>
+
         <TabParagraph>
-          <pre>
-             JOB: {JSON.stringify(props.job, null, 2)}
-          </pre>
           {statusLocal && "loading" in statusLocal && `Elaborazione in corso...`}
           {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
           {statusLocal && "success" in statusLocal && `Elaborazione completata`}
         </TabParagraph>
-        {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
+
+        { (Object.keys(info).length > 0) && (
+          <div> {/* TODO: use some better way to display a table of info keys/values ... */}
+            {Object.keys(info).map((key, index) => (
+              <div key={index}>{key}: {info[key]}</div>
+            ))}
+          </div>
+        )}
+        { (XmlErrorReasons.length > 0) && (
+          <div style={{color: "darkred"}}>
+            <TabParagraph>
+              <h3>{XmlErrorMessage}: {XmlErrorSynopsys}</h3>
+            </TabParagraph>
+            <TabParagraph>
+              {XmlErrorReasons.map((reason, index) => (
+                <Accordion key={index} disableGutters={true} classes={{ root: classes.accordionRoot }} style={{color:"darkred"}} sx={{'& .MuiTypography-root' :{ fontSize: ".7em" }}}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls={`panel-error-${index}-content`}
+                    id={`panel-error-${index}-header`}
+                  >
+                    <Typography>{reason.type}: {reason.header}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography>
+                      {reason.content}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </TabParagraph>
+          </div>
+        )}
+
       </TabBodyScrollable>
+
+{/*
+<pre> props.job: {JSON.stringify(props.job, null, 2)} </pre>
+*/}
+      {
+      }
 
       <Grid container>
         <Grid item xs={6}>

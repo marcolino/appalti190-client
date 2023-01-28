@@ -164,8 +164,9 @@ function SignUp(props) {
     }).then(
       result => {
         if (result instanceof Error) {
+console.info("SIGNUP result.response:", result.response)
           switch (result.response.data.code) {
-            case "EmailExistsException":
+            case "EmailExistsAlready":
               setError({ email: errorMessage(result) }); // since we use email as username, we blame email field as guilty
               openDialog({
                 title: t("Email exists already"),

@@ -33,6 +33,7 @@ function Tab03FillData(props) {
           {t("Fill your data")}
         </TabTitle>
         <TabParagraph>
+          {/* TODO: translate all this text... */}
           Adesso puoi aprire il modello scaricato con il tuo programma di gestione fogli di lavoro.
         </TabParagraph>
         <TabParagraph>

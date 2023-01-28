@@ -1,6 +1,6 @@
 {
   "name": "appalti190-client",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "private": true,
   "scripts": {
     "start-dev": "export PORT=3000 & react-scripts start",
@@ -10,11 +10,12 @@
     "build": "react-scripts build",
     "rawbuild": "react-scripts build && yarn sw-add-blacklist && yarn postbuild",
     "sw-add-blacklist": "node scripts/add-blacklist-urls-to-service-worker",
-    "postbuild": "rm -rf ../appalti190-server/client/build; cp -a build/ ../appalti190-server/client/",
-    "set-last-commit-date": "( /usr/bin/echo -n '\"'; git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M:%S' | tr -d '\\n'; /usr/bin/echo -n '\"' ) > src/last.commit.date.json",
+    "postbuild": "rm -rf ../appalti190-server/client/build; test -d build && cp -a build/ ../appalti190-server/client/; true",
+    "set-last-commit-date": "( /usr/bin/echo -n '\"'; git log -1 --format=%cd --date=format:'%Y-%m-%d' | tr -d '\\n'; /usr/bin/echo -n '\"' ) > src/last.commit.date.json",
     "pub": "yarn bump && yarn set-last-commit-date && git add . && git commit -m \"generic commit\" && git push && yarn build && cd ../appalti190-server/ && yarn pub",
     "i18n": "i18next 'src/**/*.js' --config 'i18next-parser.config.js' --silent",
     "i18n-auto": "node scripts/translate-auto.js",
+    "i18n-check": "i18next 'src/**/*.js' --config 'i18next-parser.config.js' --silent --output /tmp/i18n-check-$$.json && cmp --silent /tmp/i18n-check-$$.json src/locales/en/translation.json; test $? = '1' && echo 'Some new texts to be translated!' || echo 'Translations are ok'; rm /tmp/i18n-check-$$.json",
     "test": "react-scripts test",
     "test-update-snapshot": "react-scripts test --updateSnapshot --watchAll=false",
     "test-once": "react-scripts test --watchAll=false",

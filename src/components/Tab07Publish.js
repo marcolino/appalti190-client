@@ -16,9 +16,9 @@ function Tab07Publish(props) {
   const { t } = useTranslation();
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.downloadDataset : false);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job.downloadDataset ? props.job.downloadDataset : false);
   const [ forceVerifyPublished, setForceVerifyPublished ] = useState(false);
-  const publishUrlFile = /*"https://www.google.com";*/ props.job.transform.metadati.urlFile;
+  const publishUrlFile = props.job?.transform?.metadati?.urlFile;
 
   const onPrev = () => {
     props.goto("prev");
@@ -91,6 +91,11 @@ function Tab07Publish(props) {
             </span>
           )}
         </TabParagraph>
+
+        <pre>
+          job: {JSON.stringify(props.job, null, 2)}
+        </pre>
+
       </TabBodyScrollable>
 
       <Grid container>

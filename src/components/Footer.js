@@ -14,8 +14,6 @@ import config from "../config";
 import packageJson from "../package.alias.json";
 import lastCommitDateJson from "../last.commit.date.json";
 
-console.log("lastCommitDateJson:", lastCommitDateJson);
-
 const useStyles = makeStyles(theme => ({
 	footer: {
     fontStyle: "italic",
@@ -42,10 +40,10 @@ function Footer(props) {
   return isAuthLocation(location) ? null : ( // hide footer while in auth screens
     <Container className={classes.footer}>
       <Grid container justifyContent="center">
-        <Typography component="h6" variant="body2" color={"textSecondary"}>
+        <Typography component="h6" variant="body2" color={"textSecondary"} mx={5}>
           {packageJson.name} {" "}
           {"v"}{packageJson.version} {" "}
-          {"("}{lastCommitDateJson}{")"} {" ~ "}
+          {"on"} {" "} {lastCommitDateJson} {" ~ "}
           {"©"} {" "} {new Date().getFullYear()}, {" "}
           <Link color="inherit" href={config.companyHomeSiteUrl}>
             {config.companyName}

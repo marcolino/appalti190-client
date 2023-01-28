@@ -44,7 +44,7 @@ module.exports = {
     fallback: "it",
   },
   ui: {
-    userCanForceTabChange: true,
+    userCanForceTabChange: false,
     // sounds: {
     //   buttonClick,
     // },
