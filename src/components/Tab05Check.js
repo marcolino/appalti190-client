@@ -222,8 +222,12 @@ return (
 
         <TabParagraph>
           {statusLocal && "loading" in statusLocal && `🟡 ${t("Processing...")}`}
+          {/*
           {statusLocal && "error" in statusLocal && `🔴 ${t("Errors in validation")}: ${statusLocal.error}`}
           {statusLocal && "success" in statusLocal && `🟢 ${t("Validation completed successfully")}`}
+          */}
+          {errors.length <= 0 && `🟢 ${t("Validation completed successfully")}`}
+          {errors.length > 0 && `🔴 ${t("Errors in validation")}`}
         </TabParagraph>
 
         { (Object.keys(info).length > 0) && (
@@ -237,7 +241,7 @@ return (
           <div style={{color: "darkred"}}>
             <TabParagraph>
               {/*<h3>{errorsTitle}</h3>*/}
-              <h3 dangerouslySetInnerHTML={{__html: errorsTitle}}></h3>
+              <h5 dangerouslySetInnerHTML={{__html: errorsTitle}}></h5>
             </TabParagraph>
             <TabParagraph>
               {errors.map((reason, index) => (

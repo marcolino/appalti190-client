@@ -81,6 +81,7 @@ Google Search Console
 I18n
  - Language flags: https://apps.timwhitlock.info/emoji/tables/iso3166
  - yarn global add i18next-parser
+ - pattern to find untranslated entries in localization files: "([^"]*)": "\1"
 
 Drag and Drop
  - react-dropzone: https://react-dropzone.js.org/

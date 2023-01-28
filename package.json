@@ -1,6 +1,6 @@
 {
   "name": "appalti190-client",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "private": true,
   "scripts": {
     "start-dev": "export PORT=3000 & react-scripts start",
