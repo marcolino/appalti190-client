@@ -162,27 +162,58 @@ job.transform.errors
   if (props.job?.importoSommeLiquidateTotale) info[t("Total liquidated amount")] = props.job.importoSommeLiquidateTotale;
 //console.log("info:", info);
 
-  // xml validation results preparation
-  let XmlErrorMessage = props.job?.validateXml?.error?.message;
-  let XmlErrorReason = props.job?.validateXml?.error?.reason;
-  let XmlErrorSynopsys = null;
-  let XmlErrorReasons = [];
-  if (props.job?.validateXml?.error.reason) {
-    XmlErrorReasons = XmlErrorReason.split("\n");
-console.log("XmlErrorReasons:", XmlErrorReasons);
+  // handle warnings/errors from transformation and xml validation
+
+  // transformation warnings preparation
+  let transformationWarningsTitle = "";
+  let transformationWarnings = [];
+  if (props.job?.transform?.warnings.length) {
+    transformationWarningsTitle = `${props.job?.transform?.warnings.length} ${t("transformation warnings")}`;
+    transformationWarnings = props.job?.transform?.warnings.map((warning, index) => {
+      let type = t("transformation warning");
+      let header = `${index + 1}`;
+      let content = warning;
+      return { type, header, content };
+    });
+  }
+
+  // transformation errors preparation
+  let transformationErrorsTitle = "";
+  let transformationErrors = [];
+  if (props.job?.transform?.errors.length) {
+    transformationErrorsTitle = `${props.job?.transform?.errors.length} ${t("transformation errors")}`;
+    transformationErrors = props.job?.transform?.errors.map((error, index) => {
+      let type = t("transformation error");
+      let header = `${index + 1}`;
+      let content = error;
+      return { type, header, content };
+    });
+  }
+
+  // xml validation errors preparation
+  let xmlErrorsTitle = props.job?.validateXml?.error?.message;
+  let xmlErrorsReason = props.job?.validateXml?.error?.reason;
+  let xmlErrors = [];
+  if (xmlErrorsReason) {
+    xmlErrors = xmlErrorsReason.split("\n");
     let pattern = /^\t\[([^\]]+)\]\s*([^:]*):\s*(.*)$/;
-    XmlErrorSynopsys = XmlErrorReasons.shift();
-    XmlErrorReasons = XmlErrorReasons.map((reason, index) => {
-      let type = `validation ${reason.replace(pattern, "$1")}`;
+    /* eslint-disable no-unused-vars */
+    let xmlErrorsSynopsys = xmlErrors.shift();
+    xmlErrorsTitle = `${xmlErrors.length} ${t("xml validation errors")}`; //: ${xmlErrorsTitle} (${xmlErrorsSynopsys})`;
+    xmlErrors = xmlErrors.map((reason, index) => {
+      let type = `xml validation ${reason.replace(pattern, "$1")}`;
       let header = `${reason.replace(pattern, "$2")}`;
       let content = `${reason.replace(pattern, "$3")}`;
       return { type, header, content };
     });
-console.log("XmlErrorReasons:", XmlErrorReasons);
   }
 
+  const errorsTitle = "<p>".concat(transformationWarningsTitle, "</p><p>", transformationErrorsTitle, "</p><p>", xmlErrorsTitle, "</p>");
+  const errors = transformationWarnings.concat(transformationErrors, xmlErrors);
+console.log("ERRORS:", errors);
 console.log(props.job);
-  return (
+
+return (
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
@@ -190,9 +221,9 @@ console.log(props.job);
         </TabTitle>
 
         <TabParagraph>
-          {statusLocal && "loading" in statusLocal && `Elaborazione in corso...`}
-          {statusLocal && "error" in statusLocal && `Errore: ${statusLocal.error}`}
-          {statusLocal && "success" in statusLocal && `Elaborazione completata`}
+          {statusLocal && "loading" in statusLocal && `🟡 ${t("Processing...")}`}
+          {statusLocal && "error" in statusLocal && `🔴 ${t("Errors in validation")}: ${statusLocal.error}`}
+          {statusLocal && "success" in statusLocal && `🟢 ${t("Validation completed successfully")}`}
         </TabParagraph>
 
         { (Object.keys(info).length > 0) && (
@@ -202,13 +233,14 @@ console.log(props.job);
             ))}
           </div>
         )}
-        { (XmlErrorReasons.length > 0) && (
+        { (errors.length > 0) && (
           <div style={{color: "darkred"}}>
             <TabParagraph>
-              <h3>{XmlErrorMessage}: {XmlErrorSynopsys}</h3>
+              {/*<h3>{errorsTitle}</h3>*/}
+              <h3 dangerouslySetInnerHTML={{__html: errorsTitle}}></h3>
             </TabParagraph>
             <TabParagraph>
-              {XmlErrorReasons.map((reason, index) => (
+              {errors.map((reason, index) => (
                 <Accordion key={index} disableGutters={true} classes={{ root: classes.accordionRoot }} style={{color:"darkred"}} sx={{'& .MuiTypography-root' :{ fontSize: ".7em" }}}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
