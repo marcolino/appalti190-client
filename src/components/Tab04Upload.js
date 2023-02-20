@@ -184,7 +184,7 @@ function Tab04Upload(props) {
                 <TabResetButton
                   onClick={fileReset}
                   title={t("Remove uploaded file, and restart the whole process")}>
-                  🗑 {t("Remove")}
+                  {t("Remove")} 🗑
                 </TabResetButton>
               </>
             )}

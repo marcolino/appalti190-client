@@ -14,7 +14,7 @@ function Tab08Validation(props) {
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
   const [ prevIsEnabled ] = useState(true);
-  const [ forceCheckValidated, setForceCheckValidated ] = useState(true);
+  const [ forceCheckValidated, setForceCheckValidated ] = useState(!props.job?.outcome?.esitoUltimoTentativoAccessoUrl);
 
   async function onCheckValidated() {
     setForceCheckValidated(true);
@@ -22,36 +22,35 @@ function Tab08Validation(props) {
 
   useEffect(() => {
     if (props.job?.transform) {
-      if (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") {
-        setNextIsEnabled(true);
+      if (props.job?.outcome?.esitoUltimoTentativoAccessoUrl) {
+        setNextIsEnabled(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo");
         setStatusLocal({});
-      } else {
-        if (forceCheckValidated) {
-          (async () => {
-            setStatusLocal({loading: true});
-            await JobService.outcomeCheck(
-              props.job?.transform?.metadati?.annoRiferimento,
-              props.job?.transform?.header?.codiceFiscaleStrutturaProponente
-            ).then(
-              result => {
-                setForceCheckValidated(false);
-                if (result instanceof Error) {
-                  toast.error(errorMessage(result));
-                  return setStatusLocal({ error: errorMessage(result)});
-                }
-console.log("OUTCOMECHECK result:", result.data.result);
-                props.setJob({...props.job, outcome: result.data.result});
-                setStatusLocal({});
-                setNextIsEnabled(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo");
-              },
-              error => {
-                toast.error(errorMessage(error));
-                props.setJob({...props.job, outcome: error.response.data.message});
-                return setStatusLocal({ error: errorMessage(error)});
+      }
+      if (forceCheckValidated) {
+        (async () => {
+          setStatusLocal({loading: true});
+          await JobService.outcomeCheck(
+            props.job?.transform?.metadati?.annoRiferimento,
+            props.job?.transform?.header?.codiceFiscaleStrutturaProponente
+          ).then(
+            result => {
+              setForceCheckValidated(false);
+              if (result instanceof Error) {
+                toast.error(errorMessage(result));
+                return setStatusLocal({ error: errorMessage(result)});
               }
-            );
-          })();
-        }
+console.log("OUTCOMECHECK result:", result.data.result);
+              props.setJob({...props.job, outcome: result.data.result});
+              setStatusLocal({});
+              setNextIsEnabled(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo");
+            },
+            error => {
+              toast.error(errorMessage(error));
+              props.setJob({...props.job, outcome: error.response.data.message});
+              return setStatusLocal({ error: errorMessage(error)});
+            }
+          );
+        })();
       }
     }
   /* eslint-disable react-hooks/exhaustive-deps */
@@ -143,7 +142,7 @@ console.log("props.job?.outcome:", props.job?.outcome);
         <TabParagraph>
           {props.job.datasetIsPublished && !(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
             <Button onClick={onCheckValidated} variant="contained" color="tertiary">
-              ✔️ {t("Check validation now")} 
+              {t("Check validation now")} 🎯
             </Button>
           )}
         </TabParagraph>

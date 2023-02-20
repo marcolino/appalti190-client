@@ -18,7 +18,9 @@ function Tab02DownloadTemplate(props) {
   const { t } = useTranslation();
   const history = useHistory();
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.template?.downloaded ? props.job?.template?.downloaded : false);
+  //const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.template?.downloaded ? props.job?.template?.downloaded : false);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => !!(props.job?.downloadTemplate));
+
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
@@ -69,7 +71,7 @@ function Tab02DownloadTemplate(props) {
     if (userIsAuthenticated()) {
       downloadLocalUrl(config.data.templateDownloadUrl);
       setNextIsEnabled(true);
-      props.setJob({...props.job, template: {...props.job?.template, downloaded: true}});
+      props.setJob({...props.job, downloadTemplate: true, template: {...props.job?.template, downloaded: true}});
     }
   };
 

@@ -22,13 +22,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Tab07DownloadDataset(props) {
+function Tab06DownloadDataset(props) {
   const { t } = useTranslation();
   const classes = useStyles();
   const history = useHistory();
   const user = TokenService.getUser();
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => (props.job?.downloadDataset && !props.job?.transform?.truncatedDueToPlanLimit));
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => !!(props.job?.downloadDataset && !props.job?.transform?.truncatedDueToPlanLimit));
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
@@ -132,10 +132,11 @@ console.log("url:", url);
     </TabContainer>
   );
 }
-Tab07DownloadDataset.propTypes = {
+
+Tab06DownloadDataset.propTypes = {
   goto: PropTypes.func.isRequired,
 };
-Tab07DownloadDataset.defaultProps = {
+Tab06DownloadDataset.defaultProps = {
 };
 
-export default React.memo(Tab07DownloadDataset);
+export default React.memo(Tab06DownloadDataset);

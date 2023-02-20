@@ -33,6 +33,7 @@ function Tab07Publish(props) {
 
   useEffect(() => {
     if (props.job && props.job.transform) {
+      if (!props.job?.datasetIsPublished || forceVerifyPublished) {
       (async () => {
         setStatusLocal({loading: true});
         setForceVerifyPublished(false);
@@ -55,6 +56,7 @@ console.log("+++ result?.data:", result?.data)
         );
       })();
     }
+  }
   /* eslint-disable react-hooks/exhaustive-deps */
   }, [props.job.transform, props.job.outcome, forceVerifyPublished]);
 
@@ -68,7 +70,7 @@ console.log("+++ result?.data:", result?.data)
           <>
             <TabParagraph>
               {(statusLocal.loading) && (
-                `🟡`
+                `${t("Checking")}...`
               )}
               {!(statusLocal.loading) && (!props.job.datasetIsPublished ) && (
                 `🔴 ${t(`Dataset is not published yet at address {{publishUrlFile}}`, {publishUrlFile})}`
@@ -81,17 +83,13 @@ console.log("+++ result?.data:", result?.data)
               )}
             </TabParagraph>
             <TabParagraph>
-              {!(statusLocal.loading) && !(props.job.datasetIsPublished) && (
-                <span>
-                  <p>
-                    {t("Please provide to publish downloaded dataset")}.
-                  </p>
-                  <p>
-                    <Button onClick={onVerifyPublished} variant="contained" color="tertiary">
-                      {t("Verify publication now")} 🌍
-                    </Button>
-                  </p>
-                </span>
+              {!(statusLocal.loading) && (
+                <>
+                  <br />
+                  <Button onClick={onVerifyPublished} variant="contained" color="tertiary">
+                    {t("Verify publication now")} 🌍
+                  </Button>
+                </>
               )}
             </TabParagraph>
 
