@@ -14,7 +14,6 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-//import ListAltIcon from "@mui/icons-material/ListAlt";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SecurityIcon from '@mui/icons-material/Security';
@@ -24,7 +23,6 @@ import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
 import AuthService from "../services/AuthService";
-//import { AuthContext } from "../providers/AuthProvider";
 import { isAdmin } from "../libs/Validation";
 import EventBus from "../libs/EventBus";
 import config from "../config";
@@ -42,11 +40,11 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(1),
   },
   logo: {
-    marginTop: theme.spacing(0.5),
+    marginTop: theme.spacing(1.5),
     marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(5),
   },
   menuLink: {
-    marginRight: theme.spacing(2),
     textDecoration: "none",
     "&:hover": {
       textDecoration: "none",
@@ -146,7 +144,6 @@ function Header() {
   };
   
   const onRolesChange = () => {
-console.log("HEADER ROLES CHANGE");
     //setShowModeratorBoard(false);
     //setShowAdminBoard(false);
     setCurrentUser(AuthService.getCurrentUser());
@@ -185,16 +182,6 @@ console.log("HEADER ROLES CHANGE");
       href: "/",
       showInDesktopMode: false,
     },
-    // {
-    //   label: t("Searches"),
-    //   icon: <SearchIcon />,
-    //   href: "/searches",
-    // },
-    // {
-    //   label: t("Listings"),
-    //   icon: <ListAltIcon />,
-    //   href: "/listings",
-    // },
     {
       label: t("Support"),
       icon: <ContactSupportIcon />,
@@ -202,7 +189,6 @@ console.log("HEADER ROLES CHANGE");
     },
   ];
 
-  // const userItems = auth.user ?
   const userItems = currentUser ?
     [
       {
@@ -228,7 +214,7 @@ console.log("HEADER ROLES CHANGE");
       },
     ]
   ;
-  // if (auth.user && isAdmin(auth.user)) {
+
   (currentUser && isAdmin(currentUser)) &&
     userItems.unshift(
       {
@@ -236,8 +222,8 @@ console.log("HEADER ROLES CHANGE");
         icon: <SecurityIcon />,
         href: "/admin-panel",
       }
-    );
-  //};
+    )
+  ;
  
   const getMobileMainMenuItems = () => {
     return mainItems.map(({ label, icon, href }) => (
@@ -307,7 +293,7 @@ console.log("HEADER ROLES CHANGE");
         <Toolbar variant="dense">
 
           {/* drawer button */}
-          {state.view === "mobile" &&
+          {(state.view === "mobile" || state.view === "desktop") && // menu for both mobile and desktop
             <IconButton
               {...{ // mobile only
                 edge: "start",
@@ -322,7 +308,7 @@ console.log("HEADER ROLES CHANGE");
           }
 
           {/* drawer menu */}
-          {state.view === "mobile" &&
+          {(state.view === "mobile" || state.view === "desktop") && // menu items for both mobile and desktop
             <Drawer // mobile only
               anchor="left"
               open={state.drawerOpen}
@@ -348,9 +334,8 @@ console.log("HEADER ROLES CHANGE");
               {getDesktopMainHeaderItems()}
             </div>
           }
-
-          {/* user menu */}
-          <>
+          
+          <> {/* user menu */}
           {currentUser ? 
             <IconButton
               aria-label="account of current user"
@@ -360,10 +345,9 @@ console.log("HEADER ROLES CHANGE");
               color="inherit"
               size="large">
               {currentUser.profileImage ?
-                <ImageCustom src={/*auth.user.*/currentUser.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
+                <ImageCustom src={currentUser.profileImage} alt="user's icon" width={30} style={{borderRadius: "50%"}} />
               :
                 <IconGravatar
-                  // email={auth.user.email}
                   email={currentUser.email}
                   size={30}
                 />

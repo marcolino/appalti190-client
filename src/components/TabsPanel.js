@@ -15,7 +15,7 @@ import Tab01Start from "./Tab01Start";
 import Tab02DownloadTemplate from "./Tab02DownloadTemplate";
 import Tab03FillData from "./Tab03FillData";
 import Tab04Upload from "./Tab04Upload";
-import Tab05Check from "./Tab05Check";
+import Tab05Produce from "./Tab05Produce";
 import Tab06DownloadDataset from "./Tab06DownloadDataset";
 import Tab07Publish from "./Tab07Publish";
 import Tab08Validation from "./Tab08Validation";
@@ -132,7 +132,7 @@ const TabsPanel = () => {
           break;
         case "upload":
           break;
-        case "check":
+        case "produce":
           break;
         case "download dataset":
           break;
@@ -188,7 +188,7 @@ const TabsPanel = () => {
             <StyledTab label={`${t("Download template")} ▼`} {...a11yProps(1)} />
             <StyledTab label={`${t("Fill your data")} 🖋`} {...a11yProps(2)} />
             <StyledTab label={`${t("Upload")} ▲`} {...a11yProps(3)} />
-            <StyledTab label={`${t("Check")} ✅`} {...a11yProps(4)} />
+            <StyledTab label={`${t("Produce")} 🛠️`} {...a11yProps(4)} />
             <StyledTab label={`${t("Download dataset")} ⤵`} {...a11yProps(5)} />
             <StyledTab label={`${t("Publish")} 🌍`} {...a11yProps(6)} />
             <StyledTab label={`${t("Wait for validation")} 🎯`} {...a11yProps(7)} />
@@ -220,7 +220,7 @@ const TabsPanel = () => {
         )}
         {(job?.tabId === 4) && (
           <TabPanel index={4} value={job.tabId}>
-            <Tab05Check goto={goto} job={job} setJob={job => setJob(job)} />
+            <Tab05Produce goto={goto} job={job} setJob={job => setJob(job)} />
           </TabPanel>
         )}
         {(job?.tabId === 5) && (

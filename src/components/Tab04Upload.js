@@ -3,12 +3,11 @@ import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
 import { useModal } from "mui-modal-provider";
 import AuthService from "../services/AuthService";
 import JobService from "../services/JobService";
 import TokenService from "../services/TokenService";
-import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
+import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabResetButton, TabPrevButton, TabNextButton } from "./TabsComponents";
 import { errorMessage } from "../libs/Misc";
 import { toast } from "./Toast";
 import DragNDrop from "./DragNDrop";
@@ -167,27 +166,36 @@ function Tab04Upload(props) {
           {t("Upload")}
         </TabTitle>
         <TabParagraph>
-          Carica il foglio Excel compilato:
+          {t("Load filled spreadsheet")}
         </TabParagraph>
 
         <div className="container">
           <DragNDrop
-            onDrop={onDrop}
+            drop={onDrop}
             accept={accept}
+            disabled={!!props?.job?.file?.originalname}
           />
           <br />
           <TabParagraph>
-            {props?.job?.file?.originalname && t("Selected file") + `: ${props?.job?.file?.originalname}`}
-            <br />
-            {props?.job?.file?.originalname && <Button
-              variant="contained"
-              size="small"
-              onClick={fileReset}
-              title={t("Remove file")}> 🗑 </Button>}
-          </TabParagraph>
+            {props?.job?.file?.originalname && (
+              <>
+                {t("Selected file")}: <b>{props?.job?.file?.originalname}</b>
+                &emsp;
+                <TabResetButton
+                  onClick={fileReset}
+                  title={t("Remove uploaded file, and restart the whole process")}>
+                  🗑 {t("Remove")}
+                </TabResetButton>
+              </>
+            )}
+            </TabParagraph>
         </div>
 
       </TabBodyScrollable>
+
+      {/* <pre>
+        JOB: {JSON.stringify(props.job, null, 2)}
+      </pre> */}
 
       <Grid container>
         <Grid item xs={6}>

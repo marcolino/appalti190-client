@@ -53,32 +53,3 @@ const channelBackgroundPushMessages = new BroadcastChannel("sw-background-push-m
 channelBackgroundPushMessages.addEventListener("message", event => {
   toast[event.data.level](i18n.t(event.data.message));
 });
-
-
-
-// // change console.log, to truncate BIG fields
-// (() => {
-//   const consoleOriginal = console.log;
-//   const big = 256;
-//   console.log = function() {
-//     const argumentsCloned = JSON.parse(JSON.stringify(arguments));
-//     const argumentsTruncated = objectTruncateBigValues(argumentsCloned, big);
-//     consoleOriginal.apply(this, argumentsTruncated);
-//   }
-//   function objectTruncateBigValues(obj, big) {
-//     if (typeof obj === "object") {
-//       for (const key in obj) {
-//         if (typeof obj[key] === "object") {
-//           objectTruncateBigValues(obj[key], big);
-//         } else {
-//           //if (typeof obj[key] === "string") { // truncate all string properties
-//           if (key === "xml") { // truncate only "xml" properties
-//             const val = obj[key].substring(0, big) + " …";
-//             obj[key] = val;
-//           }
-//         }
-//       }
-//     }
-//     return obj;
-//   }
-// })();

@@ -18,57 +18,50 @@ function Tab01Start(props) {
           {t("Welcome!")}
         </TabTitle>
         <TabParagraph>
-          Questa è la nostra proposta per adempiere i requisiti della {" "}
+          {t("This is our proposal to fulfill the requirements of the")} {" "}
           <a href="https://www.anticorruzione.it/-/adempimenti-legge-190/2012-art.-1-comma-32-7" target="legge190">
-            Legge 190
+            {t("Legge 190")}
           </a>
-          . Speriamo che sia chiara e semplice da usare.
+          {"."} {t("We hope it is clear and simple to use")}.
           </TabParagraph>
         <TabParagraph>
-          Questa app ti guiderà passo passo nei pochi passi che occorrono per completare
-          l'adempimento con successo.
+          {t("This app will walk you through the few steps you need to complete the fulfillment successfully")}.
         </TabParagraph>
         <TabParagraph>
-          Per iniziare dovrai scaricare un modello Excel
+          {t("To get started you'll need to download an Excel template")}
           <TabTooltip
-            title={"Può essere in formato MicroSoft-Excel, oppure in formato ODS, come preferisci."}
+            title={t("It can be in MicroSoft-Excel format, or in ODS format") + "."}
           >
           </TabTooltip>
-          , che contiene delle regole per guidarti nella compilazione, e minimizzare i possibili errori formali.
+          {","} {t("which contains rules to guide you in the compilation, and minimize possible formal errors")}.
         </TabParagraph>
         <TabParagraph>
-          Poi dovrai inserire, uno per riga, tutti i beni o servizi che la tua struttura ha appaltato
-          nell'anno in corso.
+          {t("Then you will have to enter, one per line, all the goods or services that your structure has contracted out in the current year")}.
         </TabParagraph>
         <TabParagraph>
-          Alla fine dell'anno, in genere entro la fine di Gennaio dell'anno successivo, sarà sufficiente
-          caricare qui il foglio Excel compilato.
+          {t("At the end of the year, generally by the end of January of the following year, it will be sufficient to upload the filled Excel sheet here")}.
         </TabParagraph>
         <TabParagraph>
-          A questo punto il nostro sistema effettuerà il controllo formale dei dati inseriti.
-          Nel caso che venga segnalata qualche anomalia dovrai correggere sul file Excel le anomalie
-          segnalate, e poi ri-caricarlo.
+          {t("At this point our system will carry out the formal check of the entered data")}.
+          {t("In the event that some anomaly is reported, you will have to correct the reported anomalies in the Excel file, and then re-upload it")}.
         </TabParagraph>
         <TabParagraph>
-          Dopodichè potrai scaricare il documento XML prodotto, che andrà pubblicato sul
-          sito cui fa riferimento la tua struttura.
+          {t("You will then be able to download the XML document produced, which will be published on the site your structure refers to")}.
         </TabParagraph>
         <TabParagraph>
-          A questo punto avrai praticamente completato l'adempimento.
-          Se vorrai potrai controllare - sempre su questo sito - l'esito della verifica da parte
-          dell'ANAC.
+          {t("At this point you will have practically completed the fulfillment")}.
+          {t("If you want, you can check - again on this site - the outcome of the verification by the ANAC")}.
         </TabParagraph>
         <TabParagraph>
-          Tieni presente che siamo sempre disponibili a risponderti per qualsiasi dubbio o
-          incertezza. Le modalità di assistenza sono diverse, dal supporto telefonico a
-          quello per email, e dipendono anche dal piano scelto.
-          I riferimenti sono presenti nel menu, alla voce "Supporto".
+          {t("Please note that we are always available to answer you for any doubts or uncertainties")}.
+          {t("The assistance methods are different, from telephone support to email support, and also depend on the plan chosen")}.
+          {t("References can be found in the menu under \"Support\"")}.
         </TabParagraph>
       </TabBodyScrollable>
 
       <div>
         <TabNextButton onNext={onNext} nextIsEnabled={nextIsEnabled}>
-          {t("Start")}
+          {t("Continue")}
         </TabNextButton>
       </div>
     </TabContainer>

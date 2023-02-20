@@ -360,7 +360,11 @@ export const flattenObject = (obj, property) => {
   return flattenedObj;
 };
 
-
+export const dateToLocaleDate = (date) => {
+  // let d = new Date(date);
+  // return d.toLocaleString("it");
+  return new Date(date).toLocaleString("it");
+}
 
 /**
  * Unused

@@ -1,6 +1,6 @@
 //import { createTheme/*, adaptV4Theme*/ } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
-import { lightGreen, /*lightBlue,*/ grey, amber } from '@mui/material/colors';
+import { lightGreen, /*lightBlue,*/ grey, amber, red, orange } from '@mui/material/colors';
 //import { red } from "@mui/material/colors";
 
 export default createTheme({
@@ -64,6 +64,16 @@ export default createTheme({
       light: amber[50],
       main: amber[100],
       dark: amber[200],
+    },
+    attention: {
+      light: orange[600],
+      main: orange[700],
+      dark: orange[800],
+    },
+    danger: {
+      light: red[600],
+      main: red[750],
+      dark: red[900],
     },
     title: {
       color: grey[600],

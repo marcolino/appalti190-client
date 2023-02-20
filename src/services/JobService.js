@@ -83,19 +83,26 @@ const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
 }
 
 // check url existence
-const urlExistenceCheck = (url) => {
-  return api.post("/job/urlExistenceCheck/url", url);
+const urlExistenceAndMatch = (url, fileToMatch) => {
+console.log("*** jobService - url,fileToMatch:", url, fileToMatch);
+  return api.post(
+    "/job/urlExistenceAndMatch/url/fileToMatch",
+    {
+      url,
+      fileToMatch,
+    }
+  );
 }
 
-// just to ignore big xml when debug printing...
-const sanitizeJob = (job) => {
-  if (!job?.transform?.xml) {
-    return job;
-  }
-  let j = job;
-  j.transform.xml = "…";
-  return j;
-}
+// // just to ignore big xml when debug printing...
+// const sanitizeJob = (job) => {
+//   if (!job?.transform?.xml) {
+//     return job;
+//   }
+//   let j = job;
+//   j.transform.xml = "…";
+//   return j;
+// }
 
 // get ANAC periodic verification failed outcome details
 const getPlans = () => {
@@ -112,8 +119,8 @@ const JobService = {
   validateXml,
   outcomeCheck,
   outcomeFailureDetails,
-  urlExistenceCheck,
-  sanitizeJob,
+  urlExistenceAndMatch,
+  //sanitizeJob,
   getPlans,
 };
 

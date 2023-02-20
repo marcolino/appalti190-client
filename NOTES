@@ -104,3 +104,6 @@ CRUD table editing
 
 Currencies:
  - Upgrade currencies.js when some currency is born or it is dead...
+
+Stamps generator:
+ - https://mystampready.com/en/constructor/

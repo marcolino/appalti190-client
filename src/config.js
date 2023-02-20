@@ -3,7 +3,7 @@ const serverBaseUrl = `${process.env.NODE_ENV === "production" ?
   "http://localhost:5000"
 }`;
 
-module.exports = {
+const config = {
   companyName: "AR Sistemi",
   companyHomeSiteName: "arsistemi.it",
   companyHomeSiteUrl: "https://www.arsistemi.it",
@@ -43,8 +43,11 @@ module.exports = {
     },
     fallback: "it",
   },
+  currency: {
+    default: "€",
+  },
   ui: {
-    userCanForceTabChange: true,
+    userCanForceTabChange: false,
     // sounds: {
     //   buttonClick,
     // },
@@ -60,7 +63,23 @@ module.exports = {
   oauthRedirectSignInPublic: "https://appalti190.arsistemi.it/",
   oauthRedirectSignOutLocal: "http://localhost:5000/",
   oauthRedirectSignOutPublic: "https://appalti190.arsistemi.it/",
+  support: {
+    email: "nccnygv645@nefvfgrzv.vg", // emailScramble.encode(appalti190 @ arsistemi dot it),
+    phone: "+39 347 7307209",
+    freePlan: {
+      emailMaximumAnswerHoursDelay: 48,
+    },
+    classicPlan: {
+      emailMaximumAnswerHoursDelay: 4,
+    },
+    unlimitedPlan: {
+      emailMaximumAnswerHoursDelay: 1,
+    },
+  },
   data: {
     templateDownloadUrl: "/data/Appalti190.ots",
   },
 };
+
+module.exports = config;
+//export default config;

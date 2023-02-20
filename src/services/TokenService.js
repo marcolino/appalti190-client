@@ -50,6 +50,28 @@ const removeJob = () => {
   }
 };
 
+const getData = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  //console.log("TokenService getData:", user.data);
+  return user?.data ? user.data : {};
+};
+
+const setData = (data) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    user.data = data;
+    localStorage.setItem("user", JSON.stringify(user));
+  }
+};
+
+const removeData = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    delete user.data;
+    localStorage.setItem("data");
+  }
+};
+
 // const getRedirect = () => {
 //   return JSON.parse(localStorage.getItem("redirect"));
 // };
@@ -84,6 +106,9 @@ const TokenService = {
   getJob,
   setJob,
   removeJob,
+  getData,
+  setData,
+  removeData,
   getLocalRefreshToken,
   getLocalAccessToken,
   updateLocalAccessToken,

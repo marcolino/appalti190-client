@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrentLanguage } from "../libs/I18n";
 
 const Home = lazy(() => import("./Home"));
+const Support = lazy(() => import("./Support"));
 const SignUp = lazy(() => import("./auth/SignUp")); 
 const SignIn = lazy(() => import("./auth/SignIn"));
 const SignOut = lazy(() => import("./auth/SignOut"));
@@ -38,6 +39,7 @@ function Routes() {
       <div style={styles.content}>
         <Switch location={location}>
         <Route path="/" exact component={Home} /> {/* sitemapFrequency={"weekly"} sitemapPriority={0.7} */}
+        <Route path="/support" exact component={Support} /> {/* sitemapFrequency={"weekly"} sitemapPriority={0.7} */}
         <Route path="/signup" component={SignUp} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/signin" component={SignIn} /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}
         <Route path="/profile" render={(props) => <Profile {...props} /> } /> {/* sitemapFrequency={"monthly"} sitemapPriority={0.3} */}

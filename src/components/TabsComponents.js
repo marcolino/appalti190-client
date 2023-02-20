@@ -60,29 +60,14 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 10,
     minHeight: "3em",
   },
-
-  // scrollableContainer: {
-  //   width: "100%",
-  //   height: "100%",
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   flexWrap: "nowrap",
-  // },
-  // scrollableHeader: {
-  //   flexShrink: 0,
-  // },
-  // scrollableBody: {
-  //   flexGrow: 1,
-  //   overflow: "auto",
-  //   minHeight: "3em",
-  // },
-  // scrollableFooter: {
-  //   flexShrink: 0,
-  // },
+  attention: {
+    backgroundColor: theme.palette.attention.main,
+    color: "white",
+    fontWeight: "bold",
+  }
 }));
 
 const TabContainer = React.memo(props => {
-  //const classes = useStyles();
   return (
     <div>
       {props.children}
@@ -110,7 +95,7 @@ const TabBodyScrollable = React.memo(props => {
 
   return (
     <div className={classes.scrollableContainer}>
-      <div className={classes.scrollable} style={{height: Math.max(120, size.height - toolbarHeight - tabbarHeight - /*titleHeight - */footerHeight)}}>
+      <div className={classes.scrollable} style={{margin: "auto", width: "90%", height: Math.max(120, size.height - toolbarHeight - tabbarHeight - /*titleHeight - */footerHeight)}}>
         {props.children}
       </div>
     </div>
@@ -151,6 +136,35 @@ TabParagraph.defaultProps = {
   class: null,
 };
 
+const TabResetButton = React.memo(props => {
+  const classes = useStyles();
+  return (
+    <Box
+      component="span"
+      m={1} // margin
+      className={`${classes.reset}`}
+    >
+      <Button
+        variant="contained"
+        title={props.title}
+        color="attention"
+        className={classes.attention}
+        onClick={props.onClick}
+        disabled={props.isDisabled}
+      >
+        {props.children}
+      </Button>
+    </Box>
+  );
+});
+TabResetButton.propTypes = {
+  title: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+};
+TabResetButton.defaultProps = {
+  isDisabled: false,
+};
+
 const TabPrevButton = React.memo(props => {
   const classes = useStyles();
   return (
@@ -188,12 +202,6 @@ const TabNextButton = React.memo(props => {
       <Button
         variant="contained"
         color="secondary"
-        // fullWidth={props.fullWidth}
-        // variant={props.variant}
-        // color={props.color}
-        // size={props.size}
-        // className={`${classes.button} ${props.social ? classes.buttonFederated : ""} ${props.social ? classes["buttonFederated" + capitalize(props.social)] : ""} ${classes[props.className]}`}
-        // startIcon={props.startIcon}
         onClick={props.onNext}
         disabled={!props.nextIsEnabled}
       >
@@ -228,4 +236,4 @@ TabTooltip.defaultProps = {
   anchor: "*",
 };
 
-export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton, TabTooltip};
+export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabResetButton, TabPrevButton, TabNextButton, TabTooltip};

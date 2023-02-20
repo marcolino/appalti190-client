@@ -65,6 +65,7 @@ instance.interceptors.response.use(
         originalConfig._retry = true;
 
         // try to refresh token
+console.log("XXX originalConfig.url:", originalConfig.url);
         try {
           const rs = await instance.post("/auth/refreshtoken", {
             refreshToken: TokenService.getLocalRefreshToken(),

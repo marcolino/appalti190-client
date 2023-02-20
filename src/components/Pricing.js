@@ -13,9 +13,13 @@ import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Switch from "@mui/material/Switch";
-//import PlanCardTestBackgroundImage from "../assets/images/PlanCardTestBackgroundImage.png";
 import FlexibleDialog from "./FlexibleDialog";
+import i18n from "i18next";
+import SelectedPlanImage_en from "../assets/images/SelectedPlan-en.png";
+import SelectedPlanImage_it from "../assets/images/SelectedPlan-it.png";
+import SelectedPlanImage_fr from "../assets/images/SelectedPlan-fr.png";
 import JobService from "../services/JobService";
+import { getCurrentLanguage } from "../libs/I18n";
 import { capitalize, currencyISO4217ToSymbol } from "../libs/Misc";
 
 
@@ -27,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(3),
   },
   cardHeaderActive: {
-    fontWeight: "bold",
+    //fontWeight: "bold",
   },
   cardHeaderTest: {
     paddingBottom: 0,
@@ -42,11 +46,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 7,
     paddingRight: 7,
   },
-  // cardRibbonTest: {
-  //   backgroundImage: `url(${PlanCardTestBackgroundImage})`,
-  //   backgroundRepeat: "no-repeat",
-  //   backgroundSize: "cover",
-  // },
   card: {
     transition: "box-shadow .3s",
     borderRadius: 10,
@@ -56,7 +55,16 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   cardActive: {
-    backgroundColor: "#ffffe0",
+    backgroundColor: "#e0e8ff",
+  },
+  cardActiveImage: {
+    position: "absolute",
+    marginLeft: 50,
+    marginTop: -20,
+    maxWidth: 80,
+    transform: "rotate(15deg)",
+    opacity: 0.6,
+    zIndex: 999,
   },
   cardHr: {
     border: "1px solid #eee",
@@ -95,13 +103,22 @@ console.log("Pricing - props:", props);
   const isActivePlan = (plan) => {
     return props.currentPlanName === plan.name;
   };
+  
+  const [language] = useState(getCurrentLanguage(i18n));
+  let selectedPlanImage = null;
+  switch (language) {
+    case "en": selectedPlanImage = SelectedPlanImage_en; break;
+    case "it": selectedPlanImage = SelectedPlanImage_it; break;
+    case "fr": selectedPlanImage = SelectedPlanImage_fr; break;
+    default: selectedPlanImage = SelectedPlanImage_en; break;
+  }
 
   return (
     <section className={classes.section}>
       <Container>
         <Box py={0} textAlign="center">
           <Box mb={0}>
-            <Container maxWidth="sm">
+            <Container maxWidth="lg">
               <Typography variant="h3" component="h2" gutterBottom={true}>
                 <Typography variant="h6" component="span" color="primary">{t("Choose the plan which best suits your needs")}</Typography>
               </Typography>
@@ -124,6 +141,9 @@ console.log("Pricing - props:", props);
           <Grid container spacing={3}>
             {plans.map((plan, index) => (
               <Grid key={index} item xs={12} md={parseInt(plans.length ? 12 / plans.length : 12)}>
+                {isActivePlan(plan) && (
+                  <img className={classes.cardActiveImage} src={selectedPlanImage} alt={t("Selected plan stamp")} />
+                )}
                 <Card
                   variant="outlined"
                   className={[classes.card, isActivePlan(plan) ? classes.cardActive : null, /*props.paymentMode !== "live" ? classes.cardRibbonTest : null*/].join(" ")}
@@ -131,7 +151,7 @@ console.log("Pricing - props:", props);
                   <CardHeader
                     title={capitalize(t(plan.name))}
                     className={[classes.cardHeader, isActivePlan(plan) ? classes.cardHeaderActive : null].join(" ")}
-                    titleTypographyProps={isActivePlan(plan) ? { fontWeight: "bold" } : {}}
+                    titleTypographyProps={isActivePlan(plan) ? { /*fontWeight: "bold"*/ } : {}}
                   >
                   </CardHeader>
                   {props.paymentMode !== "live" ? <span className={classes.cardTest}> TEST </span> : <></>}
@@ -144,7 +164,7 @@ console.log("Pricing - props:", props);
                         {<Typography variant="h6" color="textSecondary" component="span"> / {perMonth ? t("month") : t("year")}</Typography>}
                       </Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="p">{
-                        (plan.cigNumberAllowed ===  Number.MAX_SAFE_INTEGER) ?
+                        (plan.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
                           t("Unlimited CIG's")
                         :
                           t("Up to {{cigs}} CIG's", {cigs: plan.cigNumberAllowed})
@@ -160,7 +180,7 @@ console.log("Pricing - props:", props);
                       onClick={(e) => {
                         openDialog({
                           title: t("Sure to buy this plan?"),
-                          contentText: t("(it's very expensive!)"),
+                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: plan.cigNumberAllowed}),
                           actions: [
                             {
                               callback: () => {

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { useDropzone } from "react-dropzone";
 
@@ -9,18 +10,18 @@ const baseStyle = {
   alignItems: "center",
   padding: "20px",
   borderWidth: 2,
-  borderRadius: 2,
-  borderColor: "blue",
+  borderRadius: 10,
+  borderColor: "#64a36f",
   borderStyle: "dashed",
-  backgroundColor: "#fafafa",
+  backgroundColor: "#cef0b9",
   color: "#353535",
   outline: "none",
   transition: "border .24s ease-in-out",
 };
 
 const focusedStyle = {
-  backgroundColor: "lightyellow",
-  borderColor: "purple",
+  backgroundColor: "#d3f6d1",
+  borderColor: "#a7d7c5",
 };
 
 const acceptStyle = {
@@ -33,47 +34,76 @@ const rejectStyle = {
   borderColor: "darkred",
 };
 
-const DragNDrop = ({ onDrop, accept }) => {
+const disabledStyle = {
+  backgroundColor: "lightgray",
+  borderColor: "darkgray",
+  fontStyle: "italic",
+};
+
+const DragNDrop = ({ drop, accept, disabled }) => {
   const { t } = useTranslation();
   const {
     getRootProps,
-    getInputProps,
     isFocused,
     isDragAccept,
     isDragReject,
     isDragActive
   } = useDropzone({
-    onDrop,
-    accept
+    onDrop: drop,
+    accept: accept,
   });
 
   const style = useMemo(() => ({
     ...baseStyle,
-    ...(isFocused ? focusedStyle : {}),
-    ...(isDragAccept ? acceptStyle : {}),
-    ...(isDragReject ? rejectStyle : {})
+    ...(disabled ? disabledStyle : isFocused ? focusedStyle : {}),
+    ...(disabled ? disabledStyle : isDragAccept ? acceptStyle : {}),
+    ...(disabled ? disabledStyle : isDragReject ? rejectStyle : {})
   }), [
     isFocused,
     isDragAccept,
     isDragReject,
+    disabled,
   ]);
 
+  const {onClick, onBlur, onDragEnter, onDragLeave, onDragOver, onDrop, onFocus, onKeyDown, ...getRootPropsDisabled} = getRootProps({style});
+  let getRootPropsActual = {};
+  if (disabled) {
+    getRootPropsActual = getRootPropsDisabled;
+  } else {
+    getRootPropsActual = getRootProps({style});
+  } 
+
   return (
-    <div className="dropzone-div" {...getRootProps({style})}>
-      <input className="dropzone-input" {...getInputProps()} />
+    <div className="dropzone-div" {...getRootPropsActual}>
       <div className="text-center">
-        {isDragActive ? (
-          <p className="dropzone-content">
-            {t("Release to drop the files here")}
-          </p>
-        ) : (
-          <p className="dropzone-content">
-            {t("Drag 'n drop some files here, or click to select files")}
-          </p>
-        )}
+        {
+          disabled ? (
+            <p>
+              {t("Remove file to load a new one")}
+            </p>
+          ) :
+          isDragActive ? (
+            <p className="dropzone-content">
+              {t("Release to drop the files here")}
+            </p>
+          ) : (
+            <p className="dropzone-content">
+              {t("Drag 'n drop some files here, or click to select files")}
+            </p>
+          )
+        }
       </div>
     </div>
   );
+};
+
+DragNDrop.propTypes = {
+  drop: PropTypes.func.isRequired,
+  accept: PropTypes.array.isRequired,
+  disabled: PropTypes.bool,
+};
+DragNDrop.defaultProps = {
+  disabled: false,
 };
 
 export default DragNDrop;

@@ -3,22 +3,32 @@ import { useHistory } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 import { useModal } from "mui-modal-provider";
+import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import AuthService from "../services/AuthService";
 import TokenService from "../services/TokenService";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 import { downloadRemoteUrl } from "../libs/Misc";
 import FlexibleDialog from "./FlexibleDialog";
-//import config from "../config";
 
 
+
+const useStyles = makeStyles(theme => ({
+  danger: {
+    color: theme.palette.error.dark,
+    fontWeight: "bold",
+  }
+}));
 
 function Tab07DownloadDataset(props) {
   const { t } = useTranslation();
+  const classes = useStyles();
   const history = useHistory();
+  const user = TokenService.getUser();
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.download ? props.job?.downloadDataset : false);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => (props.job?.downloadDataset && !props.job?.transform?.truncatedDueToPlanLimit));
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
@@ -72,7 +82,7 @@ function Tab07DownloadDataset(props) {
 console.log("job:", props.job);
 console.log("url:", url);
       downloadRemoteUrl(url);
-      setNextIsEnabled(true);
+      setNextIsEnabled(!props.job?.transform?.truncatedDueToPlanLimit);
       props.setJob({...props.job, downloadDataset: true});
     }
   };
@@ -83,16 +93,27 @@ console.log("url:", url);
         <TabTitle>
           {t("Download produced dataset")}
         </TabTitle>
-        <TabParagraph>
-          <p>
-            {t("Download dataset")}.
-          </p>
-        </TabParagraph>
-        <TabParagraph>
-          <Button onClick={onDownloadDataset} variant="contained" color="tertiary">
-            {t("Download")} ⤵
-          </Button>
-        </TabParagraph>
+
+        {props.job?.transform?.truncatedDueToPlanLimit && (
+          <TabParagraph>
+            <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigNumberAllowed})}.</Typography>
+            <br />
+          </TabParagraph>
+        )}
+
+        {props.job?.transform?.outputFile && (
+          <>
+            <TabParagraph>
+                {t("Download dataset")}.
+            </TabParagraph>
+            <TabParagraph>
+              <Button onClick={onDownloadDataset} variant="contained" color="tertiary">
+                {t("Download")} ⤵
+              </Button>
+            </TabParagraph>
+          </>
+        )}
+
       </TabBodyScrollable>
 
       <Grid container>

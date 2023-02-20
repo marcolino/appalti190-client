@@ -8,17 +8,16 @@ import { errorMessage } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
 import JobService from "../services/JobService";
 
-//import config from "../config";
-
 
 
 function Tab07Publish(props) {
   const { t } = useTranslation();
   const [ statusLocal, setStatusLocal ] = useState({});
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job.downloadDataset ? props.job.downloadDataset : false);
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => props.job?.downloadDataset !== undefined ? props.job.downloadDataset : false);
   const [ forceVerifyPublished, setForceVerifyPublished ] = useState(false);
   const publishUrlFile = props.job?.transform?.metadati?.urlFile;
+  const fileToMatch = props.job?.transform?.outputFile;
 
   const onPrev = () => {
     props.goto("prev");
@@ -37,15 +36,16 @@ function Tab07Publish(props) {
       (async () => {
         setStatusLocal({loading: true});
         setForceVerifyPublished(false);
-        await JobService.urlExistenceCheck({url: publishUrlFile}).then(
+        await JobService.urlExistenceAndMatch(publishUrlFile, fileToMatch).then(
           result => {
             if (result instanceof Error) {
               toast.error(errorMessage(result));
               return setStatusLocal({loading: false, error: errorMessage(result)});
             }
-            props.setJob({...props.job, datasetIsPublished: result.data});
+            props.setJob({...props.job, datasetIsPublished: result.data.published, datasetIsPublishedAsIs: result.data.publishedAsIs});
             setStatusLocal({loading: false, success: true});
-            setNextIsEnabled(result.data);
+console.log("+++ result?.data:", result?.data)
+            setNextIsEnabled(result?.data?.published && result?.data?.publishedAsIs);
           },
           error => {
             toast.error(errorMessage(error));
@@ -58,44 +58,49 @@ function Tab07Publish(props) {
   /* eslint-disable react-hooks/exhaustive-deps */
   }, [props.job.transform, props.job.outcome, forceVerifyPublished]);
 
-  let datasetStatusContents =
-    statusLocal.loading === undefined || statusLocal.loading ?
-      `🟡` :
-    (props.job.datasetIsPublished) ?
-      `🟢 ${t(`Dataset is correctly published at address {{publishUrlFile}}`, {publishUrlFile})}`
-    :
-      `🔴 ${t(`Dataset is not published yet at address {{publishUrlFile}}`, {publishUrlFile})}`
-  ;
-
   return (
     <TabContainer>
       <TabBodyScrollable>
         <TabTitle>
           {t("Publish downloaded dataset")}
         </TabTitle>
-        <br />
-        <TabParagraph>
-          {datasetStatusContents}
-        </TabParagraph>
-        <TabParagraph>
-          {!(props.job.datasetIsPublished) && (
-            <span>
-              <p>
-                {t("Please provide to publish downloaded dataset")}.
-              </p>
-              <p>
-                <Button onClick={onVerifyPublished} variant="contained" color="tertiary">
-                  {t("Verify publication now")} 🌍
-                </Button>
-              </p>
-            </span>
-          )}
-        </TabParagraph>
+        {props.job?.transform?.outputFile && (
+          <>
+            <TabParagraph>
+              {(statusLocal.loading) && (
+                `🟡`
+              )}
+              {!(statusLocal.loading) && (!props.job.datasetIsPublished ) && (
+                `🔴 ${t(`Dataset is not published yet at address {{publishUrlFile}}`, {publishUrlFile})}`
+              )}
+              {!(statusLocal.loading) && props.job.datasetIsPublished && !props.job.datasetIsPublishedAsIs && (
+                `🔴 ${t(`Dataset is published at address {{publishUrlFile}}, but differs from produced dataset`, {publishUrlFile})}`
+              )}
+              {!(statusLocal.loading) && props.job.datasetIsPublished && props.job.datasetIsPublishedAsIs && (
+                `🟢 ${t(`Dataset is correctly published at address {{publishUrlFile}}`, {publishUrlFile})}`
+              )}
+            </TabParagraph>
+            <TabParagraph>
+              {!(statusLocal.loading) && !(props.job.datasetIsPublished) && (
+                <span>
+                  <p>
+                    {t("Please provide to publish downloaded dataset")}.
+                  </p>
+                  <p>
+                    <Button onClick={onVerifyPublished} variant="contained" color="tertiary">
+                      {t("Verify publication now")} 🌍
+                    </Button>
+                  </p>
+                </span>
+              )}
+            </TabParagraph>
 
-        <pre>
-          job: {JSON.stringify(props.job, null, 2)}
-        </pre>
+            {/*<pre>
+              JOB: {JSON.stringify(props.job, null, 2)}
+              </pre>*/}
 
+          </>
+        )}
       </TabBodyScrollable>
 
       <Grid container>
