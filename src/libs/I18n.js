@@ -17,7 +17,7 @@ export const getCurrentLanguage = (i18n) => {
     if (commonLanguages) { // found a supported language in browser primary languages
       return commonLanguages[0];
     } else {
-      return config.languages.fallback; // return configured fallback language
+      return config.languages.default; // return configured default language
     }
   }
 }

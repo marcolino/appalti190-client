@@ -271,7 +271,6 @@ console.log(`roles got successfully:`, result);
   }, [user?.id]);
   
   useEffect(() => {
-console.log("useeffect setAddress");
     setAddress({
       street: addressStreet,
       streetNo: addressStreetNo,
@@ -285,15 +284,15 @@ console.log("useeffect setAddress");
   const createCheckoutSession = (product) => {
     PaymentService.createCheckoutSession({product}).then(
       result => {
-        if (result instanceof Error) { // TODO: handle error...
-          console.error("createCheckoutSession error:", result);
-          return toast.error(errorMessage(result));
-        }
-        console.log(`createCheckoutSession got successfully:`, result);
+        //console.log(`createCheckoutSession got successfully:`, result);
         if (!result?.session?.url) {
           return toast.error(t("Sorry, could not get the payment page"));
         }
         window.location = result.session.url; // redirect to payment session success_url
+      },
+      error => {
+        console.error("createCheckoutSession error:", error);
+        toast.error(errorMessage(error));
       },
     );
   };
@@ -674,8 +673,6 @@ console.log("*** USER:", user);
                         label={t("Role(s)")}
                         disabled={!userCanUpdateRoles()}
                       >
-                        {/* TODO: get roles names from server */ /*config.api.rolesNames.map((plan, index) => (*/}
-                        {/* TODO: get roles names from server TRANSLATED */}
                         {rolesNames.map((role, index) => (
                           <MenuItem key={index} value={role}>{role}</MenuItem>
                         ))}

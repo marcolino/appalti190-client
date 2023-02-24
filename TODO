@@ -70,6 +70,9 @@
 - rinominare service -> job - OK
 - fare un componente per i Dialog - OK
 - in caso di errore "User already exists" durante la registrazione, chiedere di redirigere in /signin - OK
+- integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre) - OK
+- gestione differenziata job e data, per velocizzare colloquio con il server - OK
+- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish - OK
 
 - risolvere i TODO's nel codice
 - gestire la navigazione da tastiera
@@ -80,20 +83,15 @@
 - completare il README.md (copiare lo stile di uno bello)
 - gestire il logging
 - rimuovere tutti i `console.*` non necessari
-- gestire le email privacy@sistemisolari.com, info@sistemisolari.com
+- gestire le email privacy@sistemisolari.com, info@sistemisolari.com (o arsistemi.it ?)
 - gestire l'auditing: tracciare la registrazione (e altro) dell'utente con react-tracking e google tag manager (forse)
 - gestire URL di callback per la rimozione dell'autorizzazione (Facebook e Google)
 - gestire URL di callback per la richiesta di eliminazione dei dati (Facebook e Google)
 - ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
-- integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre)
 - verificare OnlineStatusProvider quando si parte offline
 - controllare scripts/translate-auto.js
 - Mui Tooltip è troooppo lento... Trovare alternativa per visualizzare la label del campo di input quando il placeholder non è più visibile...
-- gestione differenziata job e data, per velocizzare colloquio con il server
 - se truncatedDueToPlanLimit, non consentire di procedere con tab07publish
 - Tab03FillData: tradurre
 - Update user.job on every state change (on client or server?)
-
-x Antonio:
-- serve sia un template ODS che XLS? Su Excel funzionano entrambi?
-- occorre spiegare prerequisito: programma di gestione fogli di lavoro (MS-Excel o LibreOffice)
+- Check all "if (result instanceof Error)" and try to remove them, using error = {}

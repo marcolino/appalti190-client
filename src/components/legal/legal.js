@@ -9,7 +9,7 @@ import config from "../../config";
 
 function Legal(props) {
  	const contents = (
-    props.doc === "privacyPolicy" ? (
+    props.doc === "privacyPolicy" ? ( // TODO: make this code dynamic
       (props.language === "en") ?
         privacyPolicy_en() :
       (props.language === "it") ?
@@ -46,7 +46,7 @@ Legal.propTypes = {
 };
 
 Legal.defaultProps = {
-  language: config.languages.fallback,
+  language: config.languages.default, // TODO: use current language
   doc: "",
 };
 

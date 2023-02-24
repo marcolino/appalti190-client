@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import useWindowSize from "../hooks/useWindowSize";
+import config from "../config";
 
 // const height = window.innerHeight;
 // const width = window.innerWidth;
@@ -88,14 +89,11 @@ const TabBodyScrollable = React.memo(props => {
    * and avoid a scrollable container for any
    * window height and consistent after a resize
    */
-  const toolbarHeight = 90; // toolbar height
-  const tabbarHeight = 100; // tabbbar height
-  const footerHeight = 90; // footer height (TODO: put this in config.ui. ... ?)
   const size = useWindowSize();
 
   return (
     <div className={classes.scrollableContainer}>
-      <div className={classes.scrollable} style={{margin: "auto", width: "90%", height: Math.max(120, size.height - toolbarHeight - tabbarHeight - /*titleHeight - */footerHeight)}}>
+      <div className={classes.scrollable} style={{margin: "auto", width: "90%", height: Math.max(120, size.height - config.ui.toolbarHeight - config.ui.tabbarHeight - config.ui.footerHeight)}}>
         {props.children}
       </div>
     </div>
@@ -122,7 +120,7 @@ TabTitle.defaultProps = {
 const TabParagraph = React.memo(props => {
   const classes = useStyles();
   return (
-    <Box mb={1}>
+    <Box component="div" mb={1}>
       <Typography component="div" className={`${classes.paragraph} ${classes.justified} ${props.small ? classes.paragraphSmall : null} ${props.class}`}>
         {props.children}
       </Typography>
@@ -133,6 +131,34 @@ TabParagraph.propTypes = {
   class: PropTypes.string,
 };
 TabParagraph.defaultProps = {
+  class: null,
+};
+
+const TabBox = React.memo(props => {
+  //const classes = useStyles();
+  return (
+    <Box
+      sx={{
+        mx: { xs: "5%", md: "20%" },
+        mb: "1em",
+        p: 1,
+        border: "1px solid",
+        borderColor: (theme) =>
+          theme.palette.mode === "dark" ? "grey.800" : "grey.300",
+        borderRadius: 2,
+        fontSize: "1em",
+        fontWeight: "bold",
+        textAlign: "center",
+      }}
+    >
+      {props.children}
+    </Box>
+  );
+});
+TabBox.propTypes = {
+  class: PropTypes.string,
+};
+TabBox.defaultProps = {
   class: null,
 };
 
@@ -236,4 +262,4 @@ TabTooltip.defaultProps = {
   anchor: "*",
 };
 
-export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabResetButton, TabPrevButton, TabNextButton, TabTooltip};
+export {TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabBox, TabResetButton, TabPrevButton, TabNextButton, TabTooltip};

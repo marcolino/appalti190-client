@@ -268,7 +268,7 @@ function AdminPanel(props) {
       // valueGetter: (params: GridValueGetterParams) =>
       //   `${params.row.roles.map(role => role.name).join(", ") || ""}`,
       type: "singleSelect",
-      valueOptions: ["user", "admin"], // TODO: read from server
+      valueOptions: ["user", "admin"], // NEWFEATURE: read from server
     },
     {
       field: "plan",
@@ -285,7 +285,7 @@ function AdminPanel(props) {
       //   return { ...params.row, plan: { ...params.row.plan, name: _t(params.value) || t("free") }};
       // },
       type: "singleSelect",
-      valueOptions: [t("free"), t("standard"), t("unlimited")], // TODO: read from server
+      valueOptions: [t("free"), t("standard"), t("unlimited")], // NEWFEATURE: read from server
     },
     {
       field: "addressStreet",

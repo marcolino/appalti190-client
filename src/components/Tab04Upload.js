@@ -79,6 +79,7 @@ function Tab04Upload(props) {
   const fileReset = useCallback(async() => {
     /**
      * When file is reset, we clear the full job! (we only keep tabId)
+     * NEWFEATURE: possibly save current job as historical record
      */
     let job = {};
     job.tabId = props.job.tabId;
@@ -91,8 +92,8 @@ function Tab04Upload(props) {
     // ods: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     // xls: application/vnd.ms-excel
     if (!( // TODO: check if these tests are sufficiently general...
-      file?.type?.split("/")[1]?.match("officedocument.spreadsheetml.sheet") || //* TODO: ignore case... */
-      file?.type?.split("/")[1]?.match("ms-excel")
+      file?.type?.split("/")[1]?.match(/officedocument\.spreadsheetml\.sheet/i) ||
+      file?.type?.split("/")[1]?.match(/ms-excel/i)
     )) {
       return t("Please upload a spreadsheet") + `.` +
         (file?.type ? ` ` + t("Selected file looks like {{fileType}}", { fileType: file.type }) : "")
@@ -106,15 +107,12 @@ function Tab04Upload(props) {
       result => {
         console.log('Upload success, file path', result.data.file);
         fileSet(result.data.file);
-        //props.setJob({...props.job, file: result.data.file});
-        // TODO: possibly save current job as historical record
       },
       error => {
         console.error('Upload error:', error);
         fileReset();
         props.setJob({...props.job, file: {error: errorMessage(error)}}) // set upload error in job.file.error
         toast.error(errorMessage(error));
-        return;
       }
     );
   }, [props, fileSet, fileReset]);

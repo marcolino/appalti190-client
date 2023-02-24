@@ -28,7 +28,7 @@ function Tab06DownloadDataset(props) {
   const history = useHistory();
   const user = TokenService.getUser();
   const [ prevIsEnabled, ] = useState(true);
-  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => !!(props.job?.downloadDataset && !props.job?.transform?.truncatedDueToPlanLimit));
+  const [ nextIsEnabled, setNextIsEnabled ] = useState(() => !!(props.job?.datasetDownloaded && !props.job?.transform?.truncatedDueToPlanLimit));
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
 
@@ -75,7 +75,7 @@ function Tab06DownloadDataset(props) {
     return true;
   }
 
-  const onDownloadDataset = () => {
+  const ondatasetDownloaded = () => {
     if (userIsAuthenticated()) {
       //let url = config.service.endpoint + "marco/dataset-2022.xml";
       let url = props.job.transform.outputUrl;
@@ -83,7 +83,7 @@ console.log("job:", props.job);
 console.log("url:", url);
       downloadRemoteUrl(url);
       setNextIsEnabled(!props.job?.transform?.truncatedDueToPlanLimit);
-      props.setJob({...props.job, downloadDataset: true});
+      props.setJob({...props.job, datasetDownloaded: true});
     }
   };
 
@@ -107,7 +107,7 @@ console.log("url:", url);
                 {t("Download dataset")}.
             </TabParagraph>
             <TabParagraph>
-              <Button onClick={onDownloadDataset} variant="contained" color="tertiary">
+              <Button onClick={ondatasetDownloaded} variant="contained" color="tertiary">
                 {t("Download")} ⤵
               </Button>
             </TabParagraph>

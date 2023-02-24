@@ -5,7 +5,7 @@ import currencies from "../currencies";
  * Try to extrapolate the error description from a generic error object
  */
 export const errorMessage = error => {
-  console.log("errorMessage error.request.data:", error?.request?.data, "- error.response.data:", error?.response?.data);
+  //console.log("errorMessage error.request.data:", error?.request?.data, "- error.response.data:", error?.response?.data);
   return (
     (
       error.request &&

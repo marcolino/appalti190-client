@@ -13,19 +13,16 @@ import CardContent from '@mui/material/CardContent';
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
+import { toast } from "./Toast";
+import FlexibleDialog from "./FlexibleDialog";
+import { useAxiosLoader } from "../hooks/useAxiosLoader";
 import TokenService from "../services/TokenService";
 import JobService from "../services/JobService";
-import FlexibleDialog from "./FlexibleDialog";
+import { errorMessage } from "../libs/Misc";
 import config from "../config";
 
 const useStyles = makeStyles(theme => ({
-  '& .MuiTypography-root': {
-    _fontSize: "0.5em",
-  },
   accordionRoot: {
-    _height: "4em",
-    _padding: 0,
-    _margin: 0,
     fontSize: "0.9em",
   },
   danger: {
@@ -33,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: "bold",
   }
 }));
-//const useStyles = makeStyles((theme) => (styles(theme)));
+
 
 
 function Tab05Produce(props) {
@@ -41,9 +38,8 @@ function Tab05Produce(props) {
   const classes = useStyles();
   const history = useHistory();
   const user = TokenService.getUser();
-  const [ statusLocal, setStatusLocal ] = useState({});
+  const [ loading ] = useAxiosLoader();
   const [ info, setInfo ] = useState([]);
-  const [ results, setResults ] = useState({});
   const [ nextIsEnabled, setNextIsEnabled ] = useState(props.job?.transform?.code === "OK");
   const [ prevIsEnabled] = useState(true);
   const { showModal } = useModal();
@@ -52,7 +48,7 @@ function Tab05Produce(props) {
   useEffect(() => {
     if (props.job?.transform) {
       if (props.job?.transform?.truncatedDueToPlanLimit) {
-        if (!props.job?.transform?.planUpgradeDeclined) { // TODO: when will we reset this flag?
+        if (!props.job?.transform?.planUpgradeDeclined) {
           openDialog({
             title: t("Please upgrade your plan"),
             contentText: 
@@ -85,63 +81,44 @@ function Tab05Produce(props) {
   }, [props.job?.transform]);
 
   useEffect(() => {
-    if (props.job.file && !props.job.transform) {
+    if (props.job?.file && !props.job?.transform) {
       (async () => {
-        setStatusLocal({...statusLocal, loading: "transform"});
-        setStatusLocal(state => ({...state, loading: "transform" }));
         await JobService.transformXls2Xml(props.job.file.path).then(
           response => {
-console.log("JobService.transformXls2Xml response:", response);
-            setStatusLocal(state => ({...state, loading: null }));
-            if (response.data.result.code !== "OK") {
-              props.setJob({...props.job, transform: response.data.result});
-              return setStatusLocal(state => ({...state, error: response.data.result.message }));
-            }
-            props.setJob({...props.job, transform: response.data.result});
-            setStatusLocal(state => ({...state, success: "transform" }));
-            massageTransformationResults(response.data.result);
-            setNextIsEnabled(errorsFromResults().length === 0);
+            props.setJob({...props.job, transform: response.data?.result});
           },
           error => {
-console.log("JobService.transformXls2Xml error:", error);
-            props.setJob({...props.job, transform: error});
-            return setResults(state => ({...state, error}));
+            toast.error(errorMessage(error));
+            //props.goto("prev");
           },
         );
       })();
     }
-    /* eslint-disable react-hooks/exhaustive-deps */
   }, []);
 
   useEffect(() => {
-    if (props.job?.file && props.job?.transform && (props.job?.transform?.code === "OK") && !props.job?.validateXml) {
+    if (props.job?.file && (props.job?.transform?.code === "OK") && !props.job?.validateXml) {
       (async () => {
-        setStatusLocal(state => ({...state, loading: "validateXml"}));
         await JobService.validateXml(props.job.transform).then(
           response => {
-            setStatusLocal(state => ({...state, loading: null }));
-            if (response.data.result.code !== "OK") {
-              props.setJob({...props.job, validateXml: response.data.result});
-              return setStatusLocal(state => ({...state, error: response.data.result.message }));
-            }
-            props.setJob({...props.job, validateXml: response?.data.result});
-            setStatusLocal(state => ({...state, success: "validateXml"}));
-            massageValidateXmlResults(response?.data.result);
+            props.setJob({...props.job, validateXml: response?.data?.result});
+            setNextIsEnabled(props.job?.transform?.code === "OK" && response?.data?.result?.code === "OK" && allErrors().length === 0);
           },
           error => {
-            props.setJob({...props.job, validateXml: error});
-            return setResults(state => ({...state, error}));
+            toast.error(errorMessage(error));
+            setNextIsEnabled(false);
+            //props.goto("prev");
           },
         );
       })();
     }
     /* eslint-disable react-hooks/exhaustive-deps */
-  }, [props.job.transform]);
+  }, [props.job?.transform?.code]);
 
 
   useEffect(() => {
     if (props.job.validateXml) {
-      massageInfo();
+      reclaimInfo();
     }
   }, [props.job]);
 
@@ -153,56 +130,7 @@ console.log("JobService.transformXls2Xml error:", error);
     props.goto("next");
   };
 
-  const massageTransformationResults = (transform) => {
-    // massage warnings/errors from transformation
-    const s = results ?? {};
-    s.results = s.results ? s.results : [];
-
-    // transformation warnings preparation
-    if (transform?.warnings?.length) {
-      let results = transform?.warnings.map((warning, index) => {
-        let type = "TRANSFORM_WARNING";
-        let header = `${t("transformation warning")} ${index + 1}`;
-        let content = warning;
-        return { type, header, content };
-      });
-      s.results = s.results.concat(results);
-    }
-
-    // transformation errors preparation
-    if (transform?.errors?.length) {
-      let results = transform?.errors.map((error, index) => {
-        let type = "TRANSFORM_ERRPR";
-        let header = `${t("transformation error")} ${index + 1}`;
-        let content = error;
-        return { type, header, content };
-      });
-      s.results = s.results.concat(results);
-    }
-    setResults(state => ({...state, results: s.results}));
-  }
-
-  const massageValidateXmlResults = (validateXml) => {
-    // massage warnings/errors from xml validation
-    const s = results ?? {};
-    s.results = s.results ? s.results : [];
-
-    if (validateXml?.message) {
-      let results = validateXml.message.split("\n");
-      let pattern = /^\t\[([^\]]+)\]\s*([^:]*):\s*(.*)$/;
-      results.shift(); // first line is a title
-      results = results.map(result => {
-        let type = "VALIDATE_XML_ERROR";
-        let header = `xml validation ${result.replace(pattern, "$1")}: ${result.replace(pattern, "$2")}`;
-        let content = result.replace(pattern, "$3");
-        return { type, header, content };
-      });
-      s.results = s.results.concat(results);
-    }
-    setResults(state => ({...state, results: s.results}));
-  }
-
-  const massageInfo = () => { // info preparation
+  const reclaimInfo = () => { // info preparation
     let info = [];
     if (props.job?.file) info[t("Original file name")] = props.job.file.originalname;
     if (props.job?.transform?.metadati?.titolo) info[t("Title")] = props.job.transform.metadati.titolo;
@@ -219,12 +147,16 @@ console.log("JobService.transformXls2Xml error:", error);
       setInfo(info);
   }
 
-  const warningsFromResults = () => {
-    return results.results?.filter((row) => row.type === "TRANSFORM_WARNING" || row.type === "VALIDATE_XML_WARNING") ?? [];
+  const allWarnings = () => {
+    const transformWarnings = props.job?.transform?.warnings ?? [];
+    const validateXmlWarnings = props.job?.validateXml?.warnings ?? [];
+    return transformWarnings.concat(validateXmlWarnings);
   }
 
-  const errorsFromResults = () => {
-    return results.results?.filter((row) => row.type === "TRANSFORM_ERROR" || row.type === "VALIDATE_XML_ERROR") ?? [];
+  const allErrors = () => {
+    const transformErrors = props.job?.transform?.errors ?? [];
+    const validateXmlErrors = props.job?.validateXml?.errors ?? [];
+    return transformErrors.concat(validateXmlErrors);
   }
 
   return (
@@ -234,12 +166,10 @@ console.log("JobService.transformXls2Xml error:", error);
           {t("Produce XML dataset")}
         </TabTitle>
         <TabParagraph>
-          {statusLocal && "loading" in statusLocal && statusLocal.loading === "transform" && `🟡 ${t("Transforming XLS to XML...")}`}
-          {statusLocal && "loading" in statusLocal && statusLocal.loading === "validateXml" && `🟡 ${t("Validating...")}`}
-          {statusLocal && "error" in statusLocal && `🔴 ${t("Errors in validation")}: ${statusLocal.error}`}
-          {/* {statusLocal && "success" in statusLocal && statusLocal.success === "validateXml" && `🟢 ${t("Validation completed")}`} */}
+          {loading && `🟡 ${t("Transforming XLS to XML and validating...")}`}
+          {/* {statusLocal.loading === "transform" && `🟡 ${t("Transforming XLS to XML...")}`}
+          {statusLocal.loading === "validateXml" && `🟡 ${t("Validating...")}`} */}
         </TabParagraph>
-
         {props.job?.transform?.truncatedDueToPlanLimit && (
           <TabParagraph>
             <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigNumberAllowed})}.</Typography>
@@ -247,7 +177,7 @@ console.log("JobService.transformXls2Xml error:", error);
           </TabParagraph>
         )}
 
-        {props.job?.transform?.outputFile && (
+        {props.job?.transform?.outputFile && (Object.keys(info) > 0) && (
           <Grid
             container
             sx={{ overflowY: "auto", maxHeight: "300" }}
@@ -268,14 +198,25 @@ console.log("JobService.transformXls2Xml error:", error);
           </Grid>
         )}
 
-        {(props.job?.transform?.outputFile &&
-          errorsFromResults().length === 0 &&
-          warningsFromResults().length === 0) && (
-          <Typography>🟢 {t("Validation completed successfully")}</Typography>
+        {(!loading &&
+          props.job?.transform && (props.job?.transform?.code !== "OK" && props.job?.transform?.message) &&
+          <Typography>🔴 {props.job?.transform?.message}</Typography>
+        )}
+        {(!loading &&
+          props.job?.validateXml && (props.job?.validateXml?.code !== "OK" && props.job?.validateXml?.message) &&
+          <Typography>🔴 {props.job?.validateXml?.message}</Typography>
+        )}
+        {(!loading &&
+          props.job?.transform?.code === "OK" &&
+          props.job?.transform?.outputFile &&
+          props.job?.validateXml?.code === "OK" &&
+          allErrors().length === 0 &&
+          allWarnings().length === 0) && (
+          <Typography>🟢 {t("Production and validation completed successfully")}</Typography>
         )}
 
-        {(errorsFromResults().length > 0) && (
-          <div style={{color: "darkred"}}>
+        {(allErrors().length > 0) && (
+          <span style={{color: "darkred"}}>
             <TabParagraph>
               <Accordion disableGutters={true} classes={{ root: classes.accordionRoot }} style={{color:"darkred"}}>
                 <AccordionSummary
@@ -283,24 +224,24 @@ console.log("JobService.transformXls2Xml error:", error);
                   aria-controls={`panel-error-content`}
                   id={`panel-error-header`}
                 >
-                  <Typography>🔴 {`${errorsFromResults().length} ${t("errors")}`}</Typography>
+                  <Typography>🔴 {`${allErrors().length} ${t("errors")}`}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography>
-                  {errorsFromResults().map((error, index) => (
+                  {allErrors().map((error, index) => (
                     <div key={index} style={{borderTop: "1px solid #ddd", paddingTop: 5}}>
-                      {1 + index}) {error.type}: {error.content}
+                      {1 + index}) {error}
                     </div>
                   ))}
                   </Typography>
                 </AccordionDetails>
               </Accordion>
             </TabParagraph>
-          </div>
+          </span>
         )}
 
-        {(warningsFromResults().length > 0) && (
-          <div style={{color: "darkorange"}}>
+        {(allWarnings().length > 0) && (
+          <span style={{color: "darkorange"}}>
             <TabParagraph>
               <Accordion disableGutters={true} classes={{ root: classes.accordionRoot }} style={{color: "orange"}}>
                 <AccordionSummary
@@ -308,27 +249,23 @@ console.log("JobService.transformXls2Xml error:", error);
                   aria-controls={`panel-warning-content`}
                   id={`panel-warning-header`}
                 >
-                  <Typography>🟠 {`${warningsFromResults().length} ${t("warnings")}`}</Typography>
+                  <Typography>🟠 {`${allWarnings().length} ${t("warnings")}`}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography>
-                  {warningsFromResults().map((error, index) => (
+                  {allWarnings().map((warning, index) => (
                     <div key={index} style={{borderTop: "1px solid #ddd", paddingTop: 5}}>
-                      {1 + index}) {error.type}: {error.content}
+                      {1 + index}) {warning}
                     </div>
                   ))}
                   </Typography>
                 </AccordionDetails>
               </Accordion>
             </TabParagraph>
-          </div>
+          </span>
         )}
 
       </TabBodyScrollable>
-
-      {/* <pre>
-        JOB: {JSON.stringify(props.job, null, 2)}
-      </pre> */}
 
       <Grid container className={classes.root}>
         <Grid item xs={6}>
@@ -342,6 +279,10 @@ console.log("JobService.transformXls2Xml error:", error);
           </TabNextButton>
         </Grid>
       </Grid>
+
+      {/* <pre>
+        JOB: {JSON.stringify(props.job, null, 2)}
+      </pre> */}
 
     </TabContainer>
   );

@@ -19,6 +19,7 @@ const config = {
   appTitle: "Appalti190",
   appSiteUrl: "appalti190.arsistemi.it",
   appTermsValidityStartDate: "01-01-2022",
+  referenceLawName: "LEGGE 6 novembre 2012, n. 190",
   display: "standalone", // for manifest
   service: {
     endpoint: `${serverBaseUrl}/`
@@ -41,7 +42,7 @@ const config = {
       "fr": { icon: "🇫🇷" },
       "it": { icon: "🇮🇹" },
     },
-    fallback: "it",
+    default: "it",
   },
   currency: {
     default: "€",
@@ -51,9 +52,12 @@ const config = {
     // sounds: {
     //   buttonClick,
     // },
-    footerHeight: "1.5rem",
     extraSmallWatershed: 600,
     mobileDesktopWatershed: 900,
+    toolbarHeight: 90,
+    tabbarHeight: 100,
+    footerHeight: 90,
+    //footerHeight: "1.5rem",
   },
   federatedSigninProviders: [ // we currently handle "Facebook", "Google"
     //"Facebook",

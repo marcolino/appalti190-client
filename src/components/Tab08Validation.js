@@ -5,13 +5,14 @@ import { Grid, Button } from "@mui/material";
 import { toast } from "./Toast";
 import { errorMessage, dateToLocaleDate } from "../libs/Misc";
 import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph, TabPrevButton, TabNextButton } from "./TabsComponents";
+import { useAxiosLoader } from "../hooks/useAxiosLoader";
 import JobService from "../services/JobService";
 
 
 
 function Tab08Validation(props) {
   const { t } = useTranslation();
-  const [ statusLocal, setStatusLocal ] = useState({});
+  const [ loading ] = useAxiosLoader();
   const [ nextIsEnabled, setNextIsEnabled ] = useState(false);
   const [ prevIsEnabled ] = useState(true);
   const [ forceCheckValidated, setForceCheckValidated ] = useState(!props.job?.outcome?.esitoUltimoTentativoAccessoUrl);
@@ -24,30 +25,23 @@ function Tab08Validation(props) {
     if (props.job?.transform) {
       if (props.job?.outcome?.esitoUltimoTentativoAccessoUrl) {
         setNextIsEnabled(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo");
-        setStatusLocal({});
       }
       if (forceCheckValidated) {
         (async () => {
-          setStatusLocal({loading: true});
           await JobService.outcomeCheck(
             props.job?.transform?.metadati?.annoRiferimento,
             props.job?.transform?.header?.codiceFiscaleStrutturaProponente
           ).then(
             result => {
               setForceCheckValidated(false);
-              if (result instanceof Error) {
-                toast.error(errorMessage(result));
-                return setStatusLocal({ error: errorMessage(result)});
-              }
-console.log("OUTCOMECHECK result:", result.data.result);
-              props.setJob({...props.job, outcome: result.data.result});
-              setStatusLocal({});
-              setNextIsEnabled(props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo");
+console.log("OUTCOMECHECK result:", result?.data?.result);
+              props.setJob({...props.job, outcome: result?.data?.result});
+              setNextIsEnabled(result.data?.result?.esitoUltimoTentativoAccessoUrl === "successo");
             },
             error => {
               toast.error(errorMessage(error));
-              props.setJob({...props.job, outcome: error.response.data.message});
-              return setStatusLocal({ error: errorMessage(error)});
+              setNextIsEnabled(false);
+              //props.goto("prev");
             }
           );
         })();
@@ -64,8 +58,6 @@ console.log("OUTCOMECHECK result:", result.data.result);
     props.goto("next");
   };
 
-console.log("statusLocal:", statusLocal);
-console.log("props.job?.outcome:", props.job?.outcome);
   const tentativiAccessoUrlLast = props.job?.outcome?.tentativiAccessoUrl?.length - 1;
   const listaAccessoRisorsaLast = (tentativiAccessoUrlLast >= 0 ? props.job?.outcome?.tentativiAccessoUrl[tentativiAccessoUrlLast]?.listaAccessoRisorsa?.length - 1 : -1);
 
@@ -76,27 +68,27 @@ console.log("props.job?.outcome:", props.job?.outcome);
           {t("Check ANAC validation")}
         </TabTitle>
         <TabParagraph>
-          {statusLocal && "loading" in statusLocal && (
+          {loading && (
             `${t("Checking")}...`
           )}
-          {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "in corso") && (
+          {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "in corso") && (
             `🟡 ${t("attempt in progress")}...`
           )}
-          {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
+          {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "successo") && (
             `🟢 ${t("last attempt succeeded")}`
           )}
-          {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (
+          {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (
             `🔴 ${t("last attempt failed")}`
           )}
         </TabParagraph>
-        {statusLocal && !("loading" in statusLocal) && (
+        {!loading && (
           <div style={{fontSize: "0.8em", marginLeft: "3em"}}>
             <TabParagraph>
               <i>{t("last verification date")}:</i> {props.job?.outcome?.dataUltimoTentativoAccessoUrl ? dateToLocaleDate(props.job?.outcome?.dataUltimoTentativoAccessoUrl) : t("never")}
             </TabParagraph>
           </div>
         )} 
-        {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (
+        {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (
           <div style={{fontSize: "0.8em", marginLeft: "3em"}}>
             <TabParagraph>
               <i>{t("outcome code")}:</i> {props.job?.outcome?.esitoComunicazione?.codice ?? "?"}
@@ -109,7 +101,7 @@ console.log("props.job?.outcome:", props.job?.outcome);
             </TabParagraph>
           </div>
         )}
-        {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (tentativiAccessoUrlLast >= 0) && (
+        {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (tentativiAccessoUrlLast >= 0) && (
           <div style={{fontSize: "0.8em", marginLeft: "3em"}}>
             <TabParagraph>
               <i>{t("last attempt to access url outcome code")}:</i> {props.job?.outcome?.tentativiAccessoUrl[tentativiAccessoUrlLast]?.esito?.codice ?? "?"}
@@ -119,7 +111,7 @@ console.log("props.job?.outcome:", props.job?.outcome);
             </TabParagraph>
           </div>
         )}
-        {statusLocal && !("loading" in statusLocal) && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (tentativiAccessoUrlLast >= 0) && (listaAccessoRisorsaLast >= 0) && (
+        {!loading && (props.job?.outcome?.esitoUltimoTentativoAccessoUrl === "fallito") && (tentativiAccessoUrlLast >= 0) && (listaAccessoRisorsaLast >= 0) && (
           <div style={{fontSize: "0.8em", marginLeft: "3em"}}>
             <TabParagraph>
               <i>{t("last attempt to access resource")}:</i> {props.job?.outcome?.tentativiAccessoUrl[tentativiAccessoUrlLast]?.listaAccessoRisorsa[listaAccessoRisorsaLast]?.url ?? "?"}

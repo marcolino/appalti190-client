@@ -31,7 +31,9 @@ instance.interceptors.request.use(
     }
 
     // add user language to request
-    cfg.headers["x-user-language"] = i18n.language;
+    //cfg.headers["x-user-language"] = i18n.language;
+    cfg.headers["accept-language"] = i18n.language;
+console.log("ACCEPT-LANGUAGE:", cfg.headers["accept-language"]);
 
     // add accepted version to request
     cfg.headers["accept-version"] = config.api.version;

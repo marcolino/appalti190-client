@@ -28,7 +28,7 @@ function Tab09Finished(props) {
             </TabParagraph>
             <TabParagraph>
               <div style={{textAlign: "center"}}>
-                {t("Compliments, you did comply successfully to {{appTitle}} fulfillments for year {{year}}", {appTitle: config.appTitle, year: props.job?.transform?.metadati?.annoRiferimento})}
+                {t("Compliments, you did comply successfully to {{referenceLawName}} fulfillments for year {{year}}", {referenceLawName: config.referenceLawName, year: props.job?.transform?.metadati?.annoRiferimento})}
               </div>
             </TabParagraph>
           </>

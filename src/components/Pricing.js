@@ -15,12 +15,13 @@ import Link from "@mui/material/Link";
 import Switch from "@mui/material/Switch";
 import FlexibleDialog from "./FlexibleDialog";
 import i18n from "i18next";
+import { toast } from "./Toast";
 import SelectedPlanImage_en from "../assets/images/SelectedPlan-en.png";
 import SelectedPlanImage_it from "../assets/images/SelectedPlan-it.png";
 import SelectedPlanImage_fr from "../assets/images/SelectedPlan-fr.png";
 import JobService from "../services/JobService";
 import { getCurrentLanguage } from "../libs/I18n";
-import { capitalize, currencyISO4217ToSymbol } from "../libs/Misc";
+import { capitalize, currencyISO4217ToSymbol, errorMessage } from "../libs/Misc";
 
 
 
@@ -90,12 +91,10 @@ console.log("Pricing - props:", props);
   useEffect(() => {
     JobService.getPlans().then(
       result => {
-        if (!!!!(result instanceof Error)) { // TODO: handle error...
-          console.error("getPlans error:", result);
-          return
-        }
-        console.log(`getPlans got successfully:`, result.data);
         setPlans(result.data);
+      },
+      error => {
+        toast.error(errorMessage(error));
       }
     );
   }, [setPlans]);

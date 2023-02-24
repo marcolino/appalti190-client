@@ -2,8 +2,8 @@ import React from "react";
 import { makeStyles } from "@mui/styles";
 import { useTranslation } from "react-i18next";
 import emailScramble from "email-scramble";
-import { Typography, Box, Link } from "@mui/material";
-import { TabContainer, TabBodyScrollable, TabTitle, TabParagraph } from "./TabsComponents";
+import { Typography, Link } from "@mui/material";
+import { TabContainer, TabBodyScrollable, TabBox, TabTitle, TabParagraph } from "./TabsComponents";
 import TokenService from "../services/TokenService";
 import config from "../config";
 
@@ -36,38 +36,12 @@ function Support() {
   return (
     <TabContainer>
       <TabBodyScrollable>
-        <Box // TODO: make a reusable component of this box...
-          sx={{
-            mx: { xs: "5%", md: "20%" },
-            mb: "1em",
-            p: 1,
-            border: "1px solid",
-            borderColor: (theme) =>
-              theme.palette.mode === "dark" ? "grey.800" : "grey.300",
-            borderRadius: 2,
-            fontSize: "1em",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
+        <TabBox>
           <TabTitle>
             {t("Support")}
           </TabTitle>
-        </Box>
-        <Box
-          sx={{
-            mx: { xs: "5%", md: "20%" },
-            mb: "1em",
-            p: 4,
-            border: "1px solid",
-            borderColor: (theme) =>
-              theme.palette.mode === "dark" ? "grey.800" : "grey.300",
-            borderRadius: 2,
-            fontSize: "1em",
-            fontWeight: "700",
-            textAlign: "center",
-          }}
-        >
+        </TabBox>
+        <TabBox>
           <TabParagraph>
             <Typography>
               {t("We offer a complete support service to all our users")}.
@@ -138,7 +112,7 @@ function Support() {
                 </Typography>
             )}
           </TabParagraph>
-        </Box>
+        </TabBox>
       </TabBodyScrollable>
     </TabContainer>
   );

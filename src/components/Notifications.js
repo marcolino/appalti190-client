@@ -37,7 +37,7 @@ export default function Notifications(props) {
 	const classes = useStyles();
   const { t } = useTranslation();
 
-  const shareMessage = (index) => { // TODO: handle message sharing, if needed
+  const shareMessage = (index) => { // NEWFEATURE: handle message sharing, if needed
     alert(t("Sorry, message sharing is not handled, yet..."));
   };
 
@@ -61,7 +61,7 @@ export default function Notifications(props) {
         //console.log("Notifications state:", state);
         const timestamp = state.data["google.c.a.ts"];
         const when = new Intl.DateTimeFormat(
-          config.languages.fallback,
+          config.languages.default, // TODO: use current language
           {
             year: 'numeric',
             month: '2-digit',
