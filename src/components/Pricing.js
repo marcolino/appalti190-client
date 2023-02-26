@@ -81,6 +81,7 @@ console.log("Pricing - props:", props);
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
   const [perMonth, setPerMonth] = React.useState(false);
+  const [plan, setPlan] = useState(props.currentPlan);
   const [plans, setPlans] = useState([]);
 
   const handleChangePerMonth = (event) => {
@@ -99,8 +100,9 @@ console.log("Pricing - props:", props);
     );
   }, [setPlans]);
 
-  const isActivePlan = (plan) => {
-    return props.currentPlanName === plan.name;
+  const isActivePlan = (p) => {
+console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p.name);
+    return plan.name === p.name;
   };
   
   const [language] = useState(getCurrentLanguage(i18n));
@@ -138,19 +140,19 @@ console.log("Pricing - props:", props);
             </Container>
           </Box>
           <Grid container spacing={3}>
-            {plans.map((plan, index) => (
+            {plans.map((p, index) => (
               <Grid key={index} item xs={12} md={parseInt(plans.length ? 12 / plans.length : 12)}>
-                {isActivePlan(plan) && (
+                {isActivePlan(p) && (
                   <img className={classes.cardActiveImage} src={selectedPlanImage} alt={t("Selected plan stamp")} />
                 )}
                 <Card
                   variant="outlined"
-                  className={[classes.card, isActivePlan(plan) ? classes.cardActive : null, /*props.paymentMode !== "live" ? classes.cardRibbonTest : null*/].join(" ")}
+                  className={[classes.card, isActivePlan(p) ? classes.cardActive : null, /*props.paymentMode !== "live" ? classes.cardRibbonTest : null*/].join(" ")}
                 >
                   <CardHeader
-                    title={capitalize(t(plan.name))}
-                    className={[classes.cardHeader, isActivePlan(plan) ? classes.cardHeaderActive : null].join(" ")}
-                    titleTypographyProps={isActivePlan(plan) ? { /*fontWeight: "bold"*/ } : {}}
+                    title={capitalize(t(p.name))}
+                    className={[classes.cardHeader, isActivePlan(p) ? classes.cardHeaderActive : null].join(" ")}
+                    titleTypographyProps={isActivePlan(p) ? { /*fontWeight: "bold"*/ } : {}}
                   >
                   </CardHeader>
                   {props.paymentMode !== "live" ? <span className={classes.cardTest}> TEST </span> : <></>}
@@ -158,18 +160,18 @@ console.log("Pricing - props:", props);
                   <CardContent>
                     <Box px={1}>
                       <Typography variant="h4" component="h2" gutterBottom={true} style={{fontWeight: "bold"}}>
-                        {currencyISO4217ToSymbol(plan.priceCurrency)}
-                        {perMonth ? plan.pricePerMonth : plan.pricePerYear}
+                        {currencyISO4217ToSymbol(p.priceCurrency)}
+                        {perMonth ? p.pricePerMonth : p.pricePerYear}
                         {<Typography variant="h6" color="textSecondary" component="span"> / {perMonth ? t("month") : t("year")}</Typography>}
                       </Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="p">{
-                        (plan.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
+                        (p.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
                           t("Unlimited CIG's")
                         :
-                          t("Up to {{cigs}} CIG's", {cigs: plan.cigNumberAllowed})
+                          t("Up to {{cigs}} CIG's", {cigs: p.cigNumberAllowed})
                       }</Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="div">{
-                        plan.supportTypes.map((supportType, index) => (
+                        p.supportTypes.map((supportType, index) => (
                           <div key={index}>{t("Support") + " " + t("by") + " " + t(supportType)}</div>
                         ))
                       }</Typography>
@@ -179,12 +181,12 @@ console.log("Pricing - props:", props);
                       onClick={(e) => {
                         openDialog({
                           title: t("Sure to buy this plan?"),
-                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: plan.cigNumberAllowed}),
+                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: p.cigNumberAllowed}),
                           actions: [
                             {
                               callback: () => {
                                 console.log("Clicked first action button");
-                                props.onPlanSelected(e, plan.name);
+                                props.onPlanSelected(e, p);
                               },
                               text: t("Ok"),
                               closeModal: true,
@@ -198,9 +200,9 @@ console.log("Pricing - props:", props);
                           ],
                         });
                       }}
-                      disabled={isActivePlan(plan)}
+                      disabled={isActivePlan(p)}
                     >{
-                      isActivePlan(plan) ?
+                      isActivePlan(p) ?
                         t("Active plan")
                       :
                         t("Select plan")
@@ -211,9 +213,11 @@ console.log("Pricing - props:", props);
                         <Box mt={1} />
                         <Button variant="contained" color="tertiary"
                           onClick={(e) => {
-                            props.onPlanForced(e, plan.name);
+                            //props.currentPlan = plan;
+                            setPlan(p)
+                            props.onPlanForced(e, p.name);
                           }}
-                          disabled={isActivePlan(plan)}
+                          disabled={isActivePlan(p)}
                         >{
                           t("Force plan")
                         }
@@ -230,6 +234,7 @@ console.log("Pricing - props:", props);
               </Grid>
             ))}
           </Grid>
+          <pre>PRICING PROPS.currentPlan: {JSON.stringify(props.currentPlan)}</pre>
         </Box>
       </Container>
     </section>
@@ -237,14 +242,14 @@ console.log("Pricing - props:", props);
 }
 
 Pricing.propTypes = {
-  currentPlanName: PropTypes.string,
+  currentPlan: PropTypes.object,
   onPlanSelected: PropTypes.func,
   canForcePlan: PropTypes.bool,
   onPlanForced: PropTypes.func,
 };
 
 Pricing.defaultProps = {
-  currentPlanName: "",
+  currentPlan: {},
   onPlanSelected: (e) => console.log("Selected plan:", e),
   canForcePlan: false,
   onPlanForced: (e) => console.log("Forced plan:", e),

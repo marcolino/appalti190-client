@@ -3,6 +3,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import UserService from "../services/UserService";
 import { errorMessage } from "../libs/Misc";
+import EventBus from "../libs/EventBus";
 import { toast } from "./Toast";
 
 function PaymentRedirect(props) {
@@ -30,6 +31,7 @@ function PaymentRedirect(props) {
             return; //setError({ code: result.message });
           }
           console.log("*** updatePlan result OK (user?):", result);
+          EventBus.dispatch("plan-change");
           toast.success(t("Plan updated successfully"));
         }
       );

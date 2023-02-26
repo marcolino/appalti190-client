@@ -32,6 +32,7 @@ import Pricing from "../../components/Pricing";
 import { errorMessage/*, capitalize*/ } from "../../libs/Misc";
 import UserService from "../../services/UserService";
 import TokenService from "../../services/TokenService";
+import JobService from "../../services/JobService";
 import PaymentService from "../../services/PaymentService";
 import EventBus from "../../libs/EventBus";
 import { toast } from "../Toast";
@@ -170,7 +171,8 @@ function Profile(props) {
   const [addressZip, setAddressZip] = useState("");
   const [addressCountry, setAddressCountry] = useState("");
   const [paymentMode, setPaymentMode] = useState("");
-  const [plan, setPlan] = useState(null/*config.api.planNameDefault*/);
+  const [plan, setPlan] = useState({});
+  const [plans, setPlans] = useState([]);
   const [roles, setRoles] = useState([]);
   const [rolesNames, setRolesNames] = useState([]);
   const [error, setError] = useState({});
@@ -178,6 +180,7 @@ function Profile(props) {
   const [tabValue, setTabValue] = React.useState(props?.location?.state?.tabValue ? props?.location?.state?.tabValue : 0);
   const [anyProfileChanges, setAnyProfileChanges] = React.useState(false);
   const [anyRolesChanges, setAnyRolesChanges] = React.useState(false);
+  const [anyPlanChanges, setAnyPlanChanges] = React.useState(false);
 
   const handleChangeTabValue = (event, newValue) => {
     setTabValue(newValue);
@@ -185,7 +188,7 @@ function Profile(props) {
   
   // avoid page unload when unsaved changes present
   useBeforeunload((event) => {
-    if (anyProfileChanges || anyRolesChanges) {
+    if (anyProfileChanges || anyRolesChanges || anyPlanChanges) {
       event.preventDefault();
     }
   });
@@ -194,7 +197,7 @@ function Profile(props) {
   useEffect(() => {
 console.log("useeffect block");
     const unblock = history.block((location, action) => {
-      if (anyProfileChanges || anyRolesChanges) {
+      if (anyProfileChanges || anyRolesChanges || anyPlanChanges) {
         return window.confirm(t("Are you sure to ignore unsaved data?"));
       }
       return true;
@@ -203,26 +206,27 @@ console.log("useeffect block");
     return () => {
       unblock();
     };
-  }, [anyProfileChanges, anyRolesChanges, history, t]);
+  }, [anyProfileChanges, anyRolesChanges, anyPlanChanges, history, t]);
   
   useEffect(() => {
-console.log("useeffect profile");
+console.log("useeffect profile:", profile);
     if (profile) {
-      setEmail(profile.email ? profile.email : "");
-      setFirstName(profile.firstName ? profile.firstName : "");
-      setLastName(profile.lastName ? profile.lastName : "");
-      setFiscalCode(profile.fiscalCode ? profile.fiscalCode : "");
-      setBusinessName(profile.businessName ? profile.businessName : "");
-      setAddressStreet(profile.address.street ? profile.address.street : "");
-      setAddressStreetNo(profile.address.streetNo ? profile.address.streetNo : "");
-      setAddressCity(profile.address.city ? profile.address.city : "");
-      setAddressProvince(profile.address.province ? profile.address.province : "");
-      setAddressZip(profile.address.zip ? profile.address.zip : "");
-      setAddressCountry(profile.address.country ? profile.address.country : "");
-      setPlan(profile.plan ? profile.plan.name : ""/*config.api.planNameDefault*/);
+      setEmail(profile.email ?? "");
+      setFirstName(profile.firstName ?? "");
+      setLastName(profile.lastName ?? "");
+      setFiscalCode(profile.fiscalCode ?? "");
+      setBusinessName(profile.businessName ?? "");
+      setAddressStreet(profile.address?.street ?? "");
+      setAddressStreetNo(profile.address?.streetNo ?? "");
+      setAddressCity(profile.address?.city ?? "");
+      setAddressProvince(profile.address?.province ?? "");
+      setAddressZip(profile.address?.zip ?? "");
+      setAddressCountry(profile.address?.country ?? "");
+      setPlan(profile.plan ?? {name: "free"});
       setRoles(profile.roles ? profile.roles.map(role => role.name) : []);
       setAnyProfileChanges(false);
       setAnyRolesChanges(false);
+      setAnyPlanChanges(false);
     }
   }, [profile]);
 
@@ -247,7 +251,16 @@ console.log("useeffect getProfile");
         setProfile(result.user); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
       }
     );
-console.log("useeffect getRoles");
+    JobService.getPlans().then(
+      result => {
+        if (result instanceof Error) {
+          console.error("getPlans error:", result);
+          return setError({ code: result.message });
+        }
+    console.log(`plans got successfully:`, result);
+        setPlans(result.data);
+      }
+    );
     UserService.getRoles().then(
       result => {
         if (result instanceof Error) {
@@ -282,7 +295,7 @@ console.log(`roles got successfully:`, result);
   }, [addressStreet, addressStreetNo, addressCity, addressProvince, addressZip, addressCountry]);
 
   const createCheckoutSession = (product) => {
-    PaymentService.createCheckoutSession({product}).then(
+    PaymentService.createCheckoutSession({product: product.name}).then(
       result => {
         //console.log(`createCheckoutSession got successfully:`, result);
         if (!result?.session?.url) {
@@ -351,17 +364,22 @@ console.log("*** USER:", user);
     );
   };
 
-  const formPlanSelect = (e, planName) => {
+  const formPlanSelect = (e, plan) => {
     // TODO: what to do with free plan selected?
     // TODO: what to do with plan downgrade?
-    createCheckoutSession(planName);
+    createCheckoutSession(plan);
   }
 
   const formPlanForce = (e, planName) => {
+//console.log("formPlanForce:", e);
     if (userCanForcePlan()) {
+      const p = plans.find(plan => plan.name === planName);
+      //setPlan(p);
+      user.plan = p;
+      setUser(user);
       TokenService.setUser(user);
       UserService.updatePlan({
-        plan: planName,
+        plan: p.name,
       }).then(
         result => {
           if (result instanceof Error) {
@@ -369,9 +387,16 @@ console.log("*** USER:", user);
             toast.error(errorMessage(result));
             return setError({ code: result.message });
           }
-          setPlan(planName);
+          setPlan(plan);
+          setAnyPlanChanges(false);
+          EventBus.dispatch("plan-change");
           toast.success(t("Plan forced successfully"));
-        }
+        },
+        // error => {
+        //   console.error("profileUpdate error:", result);
+        //   toast.error(errorMessage(result));
+        //   return setError({ code: result.message });
+        // }
       );
     }
   };
@@ -634,7 +659,7 @@ console.log("*** USER:", user);
           <form className={classes.form} noValidate autoComplete="off">
             <fieldset className={classes.fieldset}>
               <Pricing
-                currentPlanName={plan}
+                currentPlan={plan}
                 onPlanSelected={formPlanSelect}
                 canForcePlan={userCanForcePlan()}
                 onPlanForced={formPlanForce}
@@ -642,6 +667,7 @@ console.log("*** USER:", user);
               />
             </fieldset>
           </form>
+          <pre>PROFILE PLAN: {JSON.stringify(plan)}</pre>
         </ProfileTabPanel>
         }
 

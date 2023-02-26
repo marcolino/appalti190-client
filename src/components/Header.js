@@ -23,6 +23,7 @@ import IconCustom from "./IconCustom";
 import IconGravatar from "./IconGravatar";
 import ImageCustom from "./ImageCustom";
 import AuthService from "../services/AuthService";
+//import TokenService from "../services/TokenService";
 import { isAdmin } from "../libs/Validation";
 import EventBus from "../libs/EventBus";
 import config from "../config";
@@ -108,6 +109,11 @@ function Header() {
     EventBus.on("roles-change", () => {
       onRolesChange();
     });
+    EventBus.on("plan-change", () => {
+console.log("ON PLAN CHANGE GOT");
+      onPlanChange();
+    });
+
 
     return () => {
       EventBus.remove("logout");
@@ -149,6 +155,16 @@ function Header() {
     setCurrentUser(AuthService.getCurrentUser());
   };
 
+  const onPlanChange = () => {
+    //setShowModeratorBoard(false);
+    //setShowAdminBoard(false);
+    const user = AuthService.getCurrentUser();
+    //setCurrentUser(AuthService.getCurrentUser());
+console.log("onPlanChange user:", user);
+    setCurrentUser(user);
+    //TokenService.setUser(user);
+  };
+
   const [state, setState] = useState({
     view: "mobile", // mobile / desktop
     drawerOpen: false,
@@ -180,7 +196,7 @@ function Header() {
       label: t("Home"),
       icon: <HomeIcon />,
       href: "/",
-      showInDesktopMode: false,
+      //showInDesktopMode: false,
     },
     {
       label: t("Support"),
@@ -247,19 +263,19 @@ function Header() {
     ));
   };
 
-  const getDesktopMainHeaderItems = () => {
-    return mainItems.filter(item => item.showInDesktopMode).map(({ label, icon, href }) => (
-      <Link {...{
-        key: label,
-        component: RouterLink,
-        to: href,
-        color: "inherit",
-        className: classes.menuLink,
-      }}>
-        <span className={classes.headerLabel}>{label}</span>
-      </Link>
-    ));
-  };
+  // const getDesktopMainHeaderItems = () => {
+  //   return mainItems.filter(item => item.showInDesktopMode).map(({ label, icon, href }) => (
+  //     <Link {...{
+  //       key: label,
+  //       component: RouterLink,
+  //       to: href,
+  //       color: "inherit",
+  //       className: classes.menuLink,
+  //     }}>
+  //       <span className={classes.headerLabel}>{label}</span>
+  //     </Link>
+  //   ));
+  // };
 
   const getUserMenuItems = () => {
     return userItems.map(({ label, icon, href }) => (
@@ -293,9 +309,9 @@ function Header() {
         <Toolbar variant="dense">
 
           {/* drawer button */}
-          {(state.view === "mobile" || state.view === "desktop") && // menu for both mobile and desktop
+{/*       {(state.view === "mobile" || state.view === "desktop") && // menu for both mobile and desktop */}
             <IconButton
-              {...{ // mobile only
+              {...{
                 edge: "start",
                 color: "inherit",
                 "aria-label": "menu",
@@ -305,10 +321,10 @@ function Header() {
               size="large">
               <MenuIcon />
             </IconButton>
-          }
+{/*       } */}
 
           {/* drawer menu */}
-          {(state.view === "mobile" || state.view === "desktop") && // menu items for both mobile and desktop
+{/*       {(state.view === "mobile" || state.view === "desktop") && // menu items for both mobile and desktop */}
             <Drawer // mobile only
               anchor="left"
               open={state.drawerOpen}
@@ -317,7 +333,7 @@ function Header() {
             >
               <div className={classes.drawerContainer}>{getMobileMainMenuItems()}</div>
             </Drawer>
-          }
+{/*       } */}
 
           {/* main brand logo icon */}
           <RouterLink to="/">
@@ -329,11 +345,11 @@ function Header() {
             {config.appTitle}
           </RouterLink>
           
-          {state.view === "desktop" &&
+          {/* {state.view === "desktop" &&
             <div>
               {getDesktopMainHeaderItems()}
             </div>
-          }
+          } */}
           
           <> {/* user menu */}
           {currentUser ? 

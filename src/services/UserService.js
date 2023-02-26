@@ -46,6 +46,17 @@ const updateUserProperty = ({userId, propertyName, propertyValue}) => {
   );
 };
 
+const getPlans = plans => {
+  return api.get("/user/getPlans").then(
+    response => {
+      return response.data;
+    },
+    error => {
+      return error;
+    }
+  );
+};
+
 const updatePlan = plan => {
   console.log("updatePlan - plan:", plan);
   return api.post("/user/updatePlan",
@@ -116,6 +127,7 @@ const UserService = {
   getProfile,
   updateProfile,
   updateUserProperty,
+  getPlans,
   updatePlan,
   getRoles,
   updateRoles,

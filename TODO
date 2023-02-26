@@ -73,6 +73,8 @@
 - integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre) - OK
 - gestione differenziata job e data, per velocizzare colloquio con il server - OK
 - se truncatedDueToPlanLimit, non consentire di procedere con tab07publish - OK
+- Tab03FillData: tradurre - OK
+- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish - OK
 
 - risolvere i TODO's nel codice
 - gestire la navigazione da tastiera
@@ -91,7 +93,5 @@
 - verificare OnlineStatusProvider quando si parte offline
 - controllare scripts/translate-auto.js
 - Mui Tooltip è troooppo lento... Trovare alternativa per visualizzare la label del campo di input quando il placeholder non è più visibile...
-- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish
-- Tab03FillData: tradurre
 - Update user.job on every state change (on client or server?)
 - Check all "if (result instanceof Error)" and try to remove them, using error = {}

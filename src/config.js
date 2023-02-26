@@ -35,6 +35,7 @@ const config = {
     },
     backendType: "NodeJsExpress", // NodeJsExpress / SpringBoot
     rolesNamesDefault: [ "user" ],
+    planNameDefault: "free",
   },
   languages: {
     supported: {
