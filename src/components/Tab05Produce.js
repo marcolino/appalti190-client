@@ -117,7 +117,7 @@ function Tab05Produce(props) {
 
 
   useEffect(() => {
-    if (props.job.validateXml) {
+    if (props.job?.validateXml) {
       reclaimInfo();
     }
   }, [props.job]);
@@ -134,17 +134,18 @@ function Tab05Produce(props) {
     let info = [];
     if (props.job?.file) info[t("Original file name")] = props.job.file.originalname;
     if (props.job?.transform?.metadati?.titolo) info[t("Title")] = props.job.transform.metadati.titolo;
-    if (props.job?.transform?.metadati?.abstract) info[t("Abstract")] = props.job.transform.metadati.abstract;
-    if (props.job?.transform?.metadati?.dataPubblicazioneDataset) info[t("Dataset publish date")] = props.job.transform.metadati.dataPubblicazioneDataset;
-    if (props.job?.transform?.metadati?.dataUltimoAggiornamentoDataset) info[t("Dateset last update date")] = props.job.transform.metadati.dataUltimoAggiornamentoDataset;
-    if (props.job?.transform?.metadati?.entePubblicatore) info[t("Publishing body")] = props.job.transform.metadati.entePubblicatore;
+    //if (props.job?.transform?.metadati?.abstract) info[t("Abstract")] = props.job.transform.metadati.abstract;
+    //if (props.job?.transform?.metadati?.dataPubblicazioneDataset) info[t("Dataset publish date")] = props.job.transform.metadati.dataPubblicazioneDataset;
+    //if (props.job?.transform?.metadati?.dataUltimoAggiornamentoDataset) info[t("Dateset last update date")] = props.job.transform.metadati.dataUltimoAggiornamentoDataset;
+    //if (props.job?.transform?.metadati?.entePubblicatore) info[t("Publishing body")] = props.job.transform.metadati.entePubblicatore;
     if (props.job?.transform?.metadati?.annoRiferimento) info[t("Reference year")] = props.job.transform.metadati.annoRiferimento;
-    if (props.job?.transform?.metadati?.urlFile) info[t("Url file")] = props.job.transform.metadati.urlFile;
+    //if (props.job?.transform?.metadati?.urlFile) info[t("Url file")] = props.job.transform.metadati.urlFile;
     if (props.job?.transform?.rownum) info[t("Number of source rows")] = props.job.transform.rownum;
     if (props.job?.transform?.cigCount) info[t("Number of CIGs")] = props.job.transform?.cigCount
     if (props.job?.transform?.importoAggiudicazioneTotale) info[t("Total award amount")] = `${config.currency.default} ${props.job.transform.importoAggiudicazioneTotale}`;
     if (props.job?.transform?.importoSommeLiquidateTotale) info[t("Total liquidated amount")] = `${config.currency.default} ${props.job.transform.importoSommeLiquidateTotale}`;
-      setInfo(info);
+    setInfo(info);
+console.log("INFO1:", info);
   }
 
   const allWarnings = () => {
@@ -177,7 +178,7 @@ function Tab05Produce(props) {
           </TabParagraph>
         )}
 
-        {props.job?.transform?.outputFile && (Object.keys(info) > 0) && (
+        {props.job?.transform?.outputFile && (Object.keys(info).length > 0) && (
           <Grid
             container
             sx={{ overflowY: "auto", maxHeight: "300" }}

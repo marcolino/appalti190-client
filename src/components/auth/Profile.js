@@ -667,7 +667,6 @@ console.log("*** USER:", user);
               />
             </fieldset>
           </form>
-          <pre>PROFILE PLAN: {JSON.stringify(plan)}</pre>
         </ProfileTabPanel>
         }
 

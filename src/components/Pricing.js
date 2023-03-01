@@ -234,7 +234,6 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
               </Grid>
             ))}
           </Grid>
-          <pre>PRICING PROPS.currentPlan: {JSON.stringify(props.currentPlan)}</pre>
         </Box>
       </Container>
     </section>

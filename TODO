@@ -1,97 +1,99 @@
-- far persistere auth tra i reloads delle pagine - OK
-- rimuovere la key error => error.html per quiccasa su AWS - OK
-- attivare la certificazione SSL anche per quiccasa.sistemisolari.com - OK
-- gestione deploy su AWS - OK
-- gestione config (vedi footer, "Sistemi Solari") - OK
-- rimuovere components/FormElement.js, ed estrarre i componenti da SignIn.js a components/FormInput.js - OK
-- pulire la cache di cloudfront dopo un deploy - OK
-- mostrare icona di loading mentre disabled == true - OK
-- risolvere showFooter - OK
-- onChange={(e) => setEmail(e.target.value)} => setEmail - OK
-- gestione suspense/loading ed eventualmente bloccare l'interazione - OK
-- gestione errori (rimuovere gli alert!) - OK
-- nel componente SignIn invertire l'ordine del login social con quello username/password - OK
-- capire React.lazy(), e usarlo, se può servire - OK
-- usare AuthPromise, non Auth in Body - OK
-- capire come ottimizzare i bundles in build (sopattutto js/ e media/) - OK
-- scrivere i Termini d'uso e la Privacy Policy, e mettere i link in SignUp - OK
-- rendere name/surname sulla stessa riga sul desktop in SignUp - OK
-- migliorare il fallback di Suspense in Routes (attualmente è "Loading...") - OK
-- mettere changefreq e priority in Routes, e gestirno in scripts/sitemap-build.js - OK
-- scrivere il README.md - OK
-- migliorare header / menu (vedi material-ui examples) (menu per mobile almeno aggiungere icone) - OK
-- compattare un po' il form di login - OK
-- provare react-gravatar - OK
-- modificare i tests Jest per funzionare con Suspense - OK
-- finire scripts/sitemap-search-engines-update.sh - OK
-- parametrizzare title in index.html - OK
-- usare il main brand logo per le favicon e i logo in /static (e rinominare "logo" in "favicon") - OK
-- usare react-gravatar solo per il logged user e solo nell'header, non nel menu - OK
-- gestire meta name="theme-color" in index.html - OK
-- parametrizzare short_name e name in manifest.json - OK
+- far persistere auth tra i reloads delle pagine
+- rimuovere la key error => error.html per quiccasa su AWS
+- attivare la certificazione SSL anche per quiccasa.sistemisolari.com
+- gestione deploy su AWS
+- gestione config (vedi footer, "Sistemi Solari")
+- rimuovere components/FormElement.js, ed estrarre i componenti da SignIn.js a components/FormInput.js
+- pulire la cache di cloudfront dopo un deploy
+- mostrare icona di loading mentre disabled == true
+- risolvere showFooter
+- onChange={(e) => setEmail(e.target.value)} => setEmail
+- gestione suspense/loading ed eventualmente bloccare l'interazione
+- gestione errori (rimuovere gli alert!)
+- nel componente SignIn invertire l'ordine del login social con quello username/password
+- capire React.lazy(), e usarlo, se può servire
+- usare AuthPromise, non Auth in Body
+- capire come ottimizzare i bundles in build (sopattutto js/ e media/)
+- scrivere i Termini d'uso e la Privacy Policy, e mettere i link in SignUp
+- rendere name/surname sulla stessa riga sul desktop in SignUp
+- migliorare il fallback di Suspense in Routes (attualmente è "Loading...")
+- mettere changefreq e priority in Routes, e gestirno in scripts/sitemap-build.js
+- scrivere il README.md
+- migliorare header / menu (vedi material-ui examples) (menu per mobile almeno aggiungere icone)
+- compattare un po' il form di login
+- provare react-gravatar
+- modificare i tests Jest per funzionare con Suspense
+- finire scripts/sitemap-search-engines-update.sh
+- parametrizzare title in index.html
+- usare il main brand logo per le favicon e i logo in /static (e rinominare "logo" in "favicon")
+- usare react-gravatar solo per il logged user e solo nell'header, non nel menu
+- gestire meta name="theme-color" in index.html
+- parametrizzare short_name e name in manifest.json
 - verificare che le traduzioni del backend AWS Ampilify (I18n) siano state implementate da Amplify - OPENED ISSUE ON https://github.com/aws-amplify/amplify-js/issues/8599 - See https://github.com/aws-amplify/amplify-js/blob/master/packages/aws-amplify-react/src/AmplifyI18n.tsx
-- handle cookie consent popup - OK
-- usare sempre " anzichè ' - OK
-- far funzionare il login federato con Google - OK
-- tornare immediatamente da signout, e lasciare amplify in background - OK
-- rendere i login federati attivi su un flag in config - OK
-- organizzare meglio la cartella assets - OK
-- organizzare meglio la configurazione amplify (attualmente in Body) - OK
-- spostare lo Spinner in una posizione migliore, o migliorarlo perchè sia più visibile ovunque - OK
-- capire bene Jest.toMatchSnapshot(), e aggiungere tests con gli snapshots - OK
-- nei componenti Auth non usare "toast" per i messaggi importanti (codice inviato a ..."), ma usare dialogs - OK
-- gestire I18n - OK
-- gestire le lingue tipo "en_US" - OK
-- tradurre i Temini d'uso e la Privacy Policy almeno in inglese - OK
-- rimuovere la cartella locale amplify - OK
-- rivedere gli assets.external/* - OK
-- dopo aver aggiunto qualche contenuto, pensare a qualche animazione (con react-router v5 sono difficili, brutte e inutili) - OK
-- finire di tradurre auth/* - OK
-- debuggare il service worker - OK
-- tradurre i testi nel serviceworker - OK
-- gestire la cache delle pagine localizzate nel serviceworker - OK
-- rileggere privacy e termini - OK
-- parametrizzare il testo del contenuto di privacy e termini, ove necessario - OK
-- rendere sottolineati i link in CookieBanner (comunque fare come in SignUp) - OK
-- codificare in entità HTML le email (per offuscarle e limitare lo SPAM) - OK
-- far funzionare il login federato con Facebook - OK
-- documentare come aggiungere una lingua - OK
-- aggiungere la possibilità di tornare indietro (history.back) da /privacy-policy e /terms-of-use - OK
-- dopo aver gestito I18n, se si vuole gestire il cambio lingua da parte dell'utente, ricordarsi di cambiare "html lang" quando si cambia lingua con `i18next.on('languageChanged', (lng) => {document.documentElement.setAttribute('lang', lng);});` - OK
-- accettare invio come default submit in tutti i forms (NO) - OK
-- in signup/confirm, o dove ci sono più submit, attivare il corretto default submit (?) - OK
-- decidere se "please specifiy a more complex password" va bene o è meglio precisare (va bene) - OK
-- rimuovere ETBTadd (Amplify error handling) - OK
-- chiamare una rest autenticata dopo che il token sia scaduto - OK
-- usare useMemo e useCallback per tutti i componenti - OK
-- tests: rendere più semplice la rigenerazione degli snapshots - OK
-- dall'axios request interceptor, passare la lingua preferita dell'utente per i messaggi d'errore dal server - OK
-- provare a usare entrambi useLocation e useHistory da "react-router" oppure da "react-router-dom" - OK
-- rinominare service -> job - OK
-- fare un componente per i Dialog - OK
-- in caso di errore "User already exists" durante la registrazione, chiedere di redirigere in /signin - OK
-- integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre) - OK
-- gestione differenziata job e data, per velocizzare colloquio con il server - OK
-- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish - OK
-- Tab03FillData: tradurre - OK
-- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish - OK
-
-- risolvere i TODO's nel codice
-- gestire la navigazione da tastiera
-- completare (e testare) gli attributi aria (?)
-- capire e gestire testing coverage
-- seguire i suggerimenti di chrome lighthouse per il profiling
-- gestire tags opengraph / twitter in index.html
-- completare il README.md (copiare lo stile di uno bello)
-- gestire il logging
-- rimuovere tutti i `console.*` non necessari
-- gestire le email privacy@sistemisolari.com, info@sistemisolari.com (o arsistemi.it ?)
-- gestire l'auditing: tracciare la registrazione (e altro) dell'utente con react-tracking e google tag manager (forse)
-- gestire URL di callback per la rimozione dell'autorizzazione (Facebook e Google)
-- gestire URL di callback per la richiesta di eliminazione dei dati (Facebook e Google)
-- ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
-- verificare OnlineStatusProvider quando si parte offline
-- controllare scripts/translate-auto.js
+- handle cookie consent popup
+- usare sempre " anzichè '
+- far funzionare il login federato con Google
+- tornare immediatamente da signout, e lasciare amplify in background
+- rendere i login federati attivi su un flag in config
+- organizzare meglio la cartella assets
+- organizzare meglio la configurazione amplify (attualmente in Body)
+- spostare lo Spinner in una posizione migliore, o migliorarlo perchè sia più visibile ovunque
+- capire bene Jest.toMatchSnapshot(), e aggiungere tests con gli snapshots
+- nei componenti Auth non usare "toast" per i messaggi importanti (codice inviato a ..."), ma usare dialogs
+- gestire I18n
+- gestire le lingue tipo "en_US"
+- tradurre i Temini d'uso e la Privacy Policy almeno in inglese
+- rimuovere la cartella locale amplify
+- rivedere gli assets.external/*
+- dopo aver aggiunto qualche contenuto, pensare a qualche animazione (con react-router v5 sono difficili, brutte e inutili)
+- finire di tradurre auth/*
+- debuggare il service worker
+- tradurre i testi nel serviceworker
+- gestire la cache delle pagine localizzate nel serviceworker
+- rileggere privacy e termini
+- parametrizzare il testo del contenuto di privacy e termini, ove necessario
+- rendere sottolineati i link in CookieBanner (comunque fare come in SignUp)
+- codificare in entità HTML le email (per offuscarle e limitare lo SPAM)
+- far funzionare il login federato con Facebook
+- documentare come aggiungere una lingua
+- aggiungere la possibilità di tornare indietro (history.back) da /privacy-policy e /terms-of-use
+- dopo aver gestito I18n, se si vuole gestire il cambio lingua da parte dell'utente, ricordarsi di cambiare "html lang" quando si cambia lingua con `i18next.on('languageChanged', (lng) => {document.documentElement.setAttribute('lang', lng);});`
+- accettare invio come default submit in tutti i forms (NO)
+- in signup/confirm, o dove ci sono più submit, attivare il corretto default submit (?)
+- decidere se "please specifiy a more complex password" va bene o è meglio precisare (va bene)
+- rimuovere ETBTadd (Amplify error handling)
+- chiamare una rest autenticata dopo che il token sia scaduto
+- usare useMemo e useCallback per tutti i componenti
+- tests: rendere più semplice la rigenerazione degli snapshots
+- dall'axios request interceptor, passare la lingua preferita dell'utente per i messaggi d'errore dal server
+- provare a usare entrambi useLocation e useHistory da "react-router" oppure da "react-router-dom"
+- rinominare service -> job
+- fare un componente per i Dialog
+- in caso di errore "User already exists" durante la registrazione, chiedere di redirigere in /signin
+- integrare `yarn translations-parse` / `yarn translate-auto` nel flusso di deploy (confrontare i files 'locales/translation.json' con gli 'old', e se ci sono differenze interrompere il deploy chiedendo se si vuole tradurre)
+- gestione differenziata job e data, per velocizzare colloquio con il server
+- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish
+- Tab03FillData: tradurre
+- se truncatedDueToPlanLimit, non consentire di procedere con tab07publish
 - Mui Tooltip è troooppo lento... Trovare alternativa per visualizzare la label del campo di input quando il placeholder non è più visibile...
-- Update user.job on every state change (on client or server?)
-- Check all "if (result instanceof Error)" and try to remove them, using error = {}
+
+- TODO risolvere i TO DO's nel codice
+- TODO gestire la navigazione da tastiera
+- TODO completare (e testare) gli attributi aria (?) (almeno per i Button ed IconButton)
+- TODO capire e gestire testing coverage
+- TODO seguire i suggerimenti di chrome lighthouse per il profiling
+- TODO gestire tags opengraph / twitter in index.html
+- TODO completare il README.md (copiare lo stile di uno bello)
+- TODO gestire il logging
+- TODO rimuovere tutti i `console.*` non necessari
+- TODO gestire le email privacy@sistemisolari.com, info@sistemisolari.com (?) (o *@arsistemi.it ?)
+- TODO gestire l'auditing: tracciare la registrazione (e altro) dell'utente con react-tracking e google tag manager (?)
+- TODO gestire URL di callback per la rimozione dell'autorizzazione (Facebook e Google)
+- TODO gestire URL di callback per la richiesta di eliminazione dei dati (Facebook e Google)
+- TODO ripulire Google e Facebook console dalle impostazioni inutili per i login federati nel cloud
+- TODO verificare OnlineStatusProvider quando si parte offline
+- TODO controllare scripts/translate-auto.js (?)
+- TODO verificare tutti i "if (result instanceof Error)" e provare a rimuoverli, usando error = {}
+- TODO: gestire il cambio lingua nel menu hotdog a sinistra in alto (sempre visibile), anziché nel footer
+- TODO: provare ad usare https://www.ag-grid.com/react-data-grid/ per la gestione utenti nel pannello ammininistrazione
+- TODO: dopo l'acquisto di un piano, forazre l'aggiornamento dell'utente, come per la forzatura di un piano
