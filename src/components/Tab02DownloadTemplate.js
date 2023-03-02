@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
+import PropTypes from "prop-types";
 import { useModal } from "mui-modal-provider";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -81,7 +81,7 @@ function Tab02DownloadTemplate(props) {
           {t("Download")}
         </TabTitle>
         <TabParagraph>
-          Scarica il modello Excel in cui potrai inserire i dati degli appalti, uno per riga.
+          {t("Scarica il modello Excel in cui potrai inserire i dati degli appalti")}.
         </TabParagraph>
         <TabParagraph>
           <Button onClick={onDownload} variant="contained" color="tertiary">
@@ -91,8 +91,8 @@ function Tab02DownloadTemplate(props) {
         {/* <br />
         <TabParagraph small>
           <input type="checkbox"></input>
-          Clicca qui se preferisci la versione ODS (Open Document Format),
-          nel caso che tu utilizzi LibreOffice anziché Microsoft Office.
+          {t("Clicca qui se preferisci la versione ODS (Open Document Format),
+          nel caso che tu utilizzi LibreOffice anziché Microsoft Office")}.
         </TabParagraph> */}
       </TabBodyScrollable>
 
