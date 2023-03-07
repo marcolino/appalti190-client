@@ -297,7 +297,7 @@ console.log(`roles got successfully:`, result);
   const createCheckoutSession = (product) => {
     PaymentService.createCheckoutSession({product: product.name}).then(
       result => {
-        //console.log(`createCheckoutSession got successfully:`, result);
+console.log(`createCheckoutSession got successfully:`, result);
         if (!result?.session?.url) {
           return toast.error(t("Sorry, could not get the payment page"));
         }

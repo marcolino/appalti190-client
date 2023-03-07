@@ -17,7 +17,7 @@ const TermsOfUse = [];
       TermsOfUse["it"] = lazy(() => import("./legal/it/TermsOfUse"));
 const Legal = lazy(() => import("./legal/legal"));
 const AdminPanel = lazy(() => import("./AdminPanel"));
-const PaymentRedirect = lazy(() => import("./PaymentRedirect"));
+const PaymentResponse = lazy(() => import("./PaymentResponse"));
 
 
 function Routes() {
@@ -49,8 +49,8 @@ function Routes() {
         <Route path="/privacy-policy" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"privacyPolicy"} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="/terms-of-use" render={(props) => <Legal language={getCurrentLanguage(i18n)} doc={"termsOfUse"} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="/admin-panel" component={AdminPanel} /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
-        <Route path="/payment-success" render={(props) => <PaymentRedirect {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
-        <Route path="/payment-cancel" render={(props) => <PaymentRedirect {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
+        <Route path="/payment-success" render={(props) => <PaymentResponse {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
+        <Route path="/payment-cancel" render={(props) => <PaymentResponse {...props} /> } /> {/* sitemapFrequency={"yearly"} sitemapPriority={0} */}
         <Route path="" component={NotFound} />
       </Switch>
       </div>

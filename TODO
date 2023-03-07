@@ -97,3 +97,5 @@
 - TODO: gestire il cambio lingua nel menu hotdog a sinistra in alto (sempre visibile), anziché nel footer
 - TODO: provare ad usare https://www.ag-grid.com/react-data-grid/ per la gestione utenti nel pannello ammininistrazione
 - TODO: dopo l'acquisto di un piano, forazre l'aggiornamento dell'utente, come per la forzatura di un piano
+- TODO: Sei sicuro di acquistare questo piano? Consente di elaborare fino a CIG (nessun valore di # cig)
+- TODO: [a, b] => [ a, b ]

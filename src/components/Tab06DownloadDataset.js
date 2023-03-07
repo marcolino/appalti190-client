@@ -96,7 +96,7 @@ console.log("url:", url);
 
         {props.job?.transform?.truncatedDueToPlanLimit && (
           <TabParagraph>
-            <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigsCountAllowedllowed})}.</Typography>
+            <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigNumberAllowed})}.</Typography>
             <br />
           </TabParagraph>
         )}

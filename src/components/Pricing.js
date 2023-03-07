@@ -81,7 +81,6 @@ console.log("Pricing - props:", props);
   const { showModal } = useModal();
   const openDialog = (props) => showModal(FlexibleDialog, props);
   const [perMonth, setPerMonth] = React.useState(false);
-  const [plan, setPlan] = useState(props.currentPlan);
   const [plans, setPlans] = useState([]);
 
   const handleChangePerMonth = (event) => {
@@ -101,8 +100,7 @@ console.log("Pricing - props:", props);
   }, [setPlans]);
 
   const isActivePlan = (p) => {
-console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p.name);
-    return plan.name === p.name;
+    return props.currentPlan.name === p.name;
   };
   
   const [language] = useState(getCurrentLanguage(i18n));
@@ -140,7 +138,9 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
             </Container>
           </Box>
           <Grid container spacing={3}>
-            {plans.map((p, index) => (
+            {plans.map((p, index) => {
+console.log("P:", p);
+              return (
               <Grid key={index} item xs={12} md={parseInt(plans.length ? 12 / plans.length : 12)}>
                 {isActivePlan(p) && (
                   <img className={classes.cardActiveImage} src={selectedPlanImage} alt={t("Selected plan stamp")} />
@@ -165,10 +165,10 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                         {<Typography variant="h6" color="textSecondary" component="span"> / {perMonth ? t("month") : t("year")}</Typography>}
                       </Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="p">{
-                        (p.cigsCountAllowedllowed === Number.MAX_SAFE_INTEGER) ?
+                        (p.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
                           t("Unlimited CIG's")
                         :
-                          t("Up to {{cigs}} CIG's", {cigs: p.cigsCountAllowedllowed})
+                          t("Up to {{cigs}} CIG's", {cigs: p.cigNumberAllowed})
                       }</Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="div">{
                         p.supportTypes.map((supportType, index) => (
@@ -181,7 +181,12 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                       onClick={(e) => {
                         openDialog({
                           title: t("Sure to buy this plan?"),
-                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: p.cigsCountAllowedllowed}),
+                          contentText: t("It allows processing of ") +
+                            ((p.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
+                              t("unlimited CIG's")
+                                :
+                              t("up to {{cigs}} CIG's", {cigs: p.cigNumberAllowed})
+                            ),
                           actions: [
                             {
                               callback: () => {
@@ -214,7 +219,7 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                         <Button variant="contained" color="tertiary"
                           onClick={(e) => {
                             //props.currentPlan = plan;
-                            setPlan(p)
+                            //setPlan(p)
                             props.onPlanForced(e, p.name);
                           }}
                           disabled={isActivePlan(p)}
@@ -232,7 +237,7 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                   </CardContent>
                 </Card>
               </Grid>
-            ))}
+            )})}
           </Grid>
         </Box>
       </Container>

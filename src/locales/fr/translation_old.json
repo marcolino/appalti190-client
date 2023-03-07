@@ -56,6 +56,7 @@
   "IMPORTO DELLE SOMME LIQUIDATE": "IMPORTO DELLE SOMME LIQUIDATE",
   "INIZIO": "INIZIO",
   "Invalid verification code provided, please try again.": "Invalid verification code provided, please try again.",
+  "It allows processing of up to {{cigs}} CIGs": "It allows processing of up to {{cigs}} CIGs",
   "l'anno di riferimento per cui inserirai gli appalti": "l'anno di riferimento per cui inserirai gli appalti",
   "l'indirizzo URL dove sarà pubblicato il documento finale": "l'indirizzo URL dove sarà pubblicato il documento finale",
   "la ragione sociale della tua struttura": "la ragione sociale della tua struttura",
@@ -129,7 +130,7 @@
   "Wait for ANAC validation": "Wait for ANAC validation",
   "xml validation errors": "xml validation errors",
   "You can now sign in with email and password.": "You can now sign in with email and password.",
-  "Your current plan \"{{planName}}\" allows processing of up to {{cigsCountAllowedllowed}} CIGs": "Your current plan \"{{planName}}\" allows processing of up to {{cigsCountAllowedllowed}} CIGs",
+  "Your current plan \"{{planName}}\" allows processing of up to {{cigNumberAllowed}} CIGs": "Your current plan \"{{planName}}\" allows processing of up to {{cigNumberAllowed}} CIGs",
   "Your roles": "Your roles",
   "Zip": "Zip"
 }
