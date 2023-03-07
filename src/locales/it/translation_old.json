@@ -81,6 +81,7 @@
   "requirements": "requisiti",
   "Roles": "Ruoli",
   "Scarica il dataset e provvedi a pubblicarlo": "Scarica il dataset e provvedi a pubblicarlo",
+  "Scarica il modello Excel in cui potrai inserire i dati degli appalti": "Scarica il modello Excel in cui potrai inserire i dati degli appalti",
   "SCELTA CONTRAENTE": "SCELTA CONTRAENTE",
   "Searches": "Ricerche",
   "Select file": "Scegli il file",
@@ -128,7 +129,7 @@
   "Wait for ANAC validation": "Attendi la validazione ANAC",
   "xml validation errors": "errori di validazione xml",
   "You can now sign in with email and password.": "Puoi adesso accedere con email e password.",
-  "Your current plan \"{{planName}}\" allows processing of up to {{cigNumberAllowed}} CIGs": "Your current plan \"{{planName}}\" allows processing of up to {{cigNumberAllowed}} CIGs",
+  "Your current plan \"{{planName}}\" allows processing of up to {{cigsCountAllowedllowed}} CIGs": "Your current plan \"{{planName}}\" allows processing of up to {{cigsCountAllowedllowed}} CIGs",
   "Your roles": "I tuoi ruoli",
   "Zip": "C.A.P."
 }

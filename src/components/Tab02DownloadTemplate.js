@@ -81,7 +81,7 @@ function Tab02DownloadTemplate(props) {
           {t("Download")}
         </TabTitle>
         <TabParagraph>
-          {t("Scarica il modello Excel in cui potrai inserire i dati degli appalti")}.
+          {t("Download Excel template, where you'll be able to insert contracts data")}.
         </TabParagraph>
         <TabParagraph>
           <Button onClick={onDownload} variant="contained" color="tertiary">

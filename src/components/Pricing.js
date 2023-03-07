@@ -165,10 +165,10 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                         {<Typography variant="h6" color="textSecondary" component="span"> / {perMonth ? t("month") : t("year")}</Typography>}
                       </Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="p">{
-                        (p.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
+                        (p.cigsCountAllowedllowed === Number.MAX_SAFE_INTEGER) ?
                           t("Unlimited CIG's")
                         :
-                          t("Up to {{cigs}} CIG's", {cigs: p.cigNumberAllowed})
+                          t("Up to {{cigs}} CIG's", {cigs: p.cigsCountAllowedllowed})
                       }</Typography>
                       <Typography color="textSecondary" variant="subtitle1" component="div">{
                         p.supportTypes.map((supportType, index) => (
@@ -181,7 +181,7 @@ console.log("Pricing - isActivePlan - props.currentPlan: ", plan, ", p.name:", p
                       onClick={(e) => {
                         openDialog({
                           title: t("Sure to buy this plan?"),
-                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: p.cigNumberAllowed}),
+                          contentText: t("It allows processing of up to {{cigs}} CIGs", {cigs: p.cigsCountAllowedllowed}),
                           actions: [
                             {
                               callback: () => {

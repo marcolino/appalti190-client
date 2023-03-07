@@ -66,7 +66,7 @@ function Tab05Produce(props) {
                 },
               },
               {
-                text: t("Proceed with the first {{cigNumberAllowed}} CIGs", { cigNumberAllowed: user?.plan?.cigNumberAllowed }),
+                text: t("Proceed with the first {{cigsCountAllowedllowed}} CIGs", { cigsCountAllowedllowed: user?.plan?.cigsCountAllowedllowed }),
                 closeModal: true,
                 callback: () => {
                   props.setJob({...props.job, transform: {...props.job?.transform, planUpgradeDeclined: true}});
@@ -173,7 +173,7 @@ console.log("INFO1:", info);
         </TabParagraph>
         {props.job?.transform?.truncatedDueToPlanLimit && (
           <TabParagraph>
-            <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigNumberAllowed})}.</Typography>
+            <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigsCountAllowedllowed})}.</Typography>
             <br />
           </TabParagraph>
         )}
