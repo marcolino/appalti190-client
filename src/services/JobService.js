@@ -1,34 +1,25 @@
 import api from "./API";
-import TokenService from "./TokenService";
+//import TokenService from "./TokenService";
 
+/*
 // get job status
 const get = async () => {
   // const user = TokenService.getUser();
   // if (!user) {
   //   return null;
   // }
-  // return api.get("/job/get", {
-  //   userId: user._id,
-  // });
-
-  //const retval = await api.get("/job/get");
-
-  const user = TokenService.getUser();
-  if (!user) {
-    return null;
-  }
   return await api.get("/job/get");
 };
 
 // set job status
 const set = (job) => {
-  const user = TokenService.getUser();
-  if (!user) {
-    return null;
-  }
-
+  // const user = TokenService.getUser();
+  // if (!user) {
+  //   return null;
+  // }
   return api.put("/job/set", {job});
 };
+*/
 
 // upload a file
 const upload = (file) => {
@@ -71,16 +62,16 @@ const outcomeCheck = (anno, codiceFiscaleAmministrazione) => {
   );
 }
 
-// get ANAC periodic verification failed outcome details
-const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
-  return api.post(
-    "/job/outcomeFailureDetails/anno/codiceFiscaleAmministrazione",
-    {
-      anno,
-      codiceFiscaleAmministrazione,
-    }
-  );
-}
+// // get ANAC periodic verification failed outcome details
+// const outcomeFailureDetails = (anno, codiceFiscaleAmministrazione) => {
+//   return api.post(
+//     "/job/outcomeFailureDetails/anno/codiceFiscaleAmministrazione",
+//     {
+//       anno,
+//       codiceFiscaleAmministrazione,
+//     }
+//   );
+// }
 
 // check url existence
 const urlExistenceAndMatch = (url, fileToMatch) => {
@@ -112,13 +103,13 @@ const getPlans = () => {
 }
 
 const JobService = {
-  get,
-  set,
+//  get,
+//  set,
   upload,
   transformXls2Xml,
   validateXml,
   outcomeCheck,
-  outcomeFailureDetails,
+  //outcomeFailureDetails,
   urlExistenceAndMatch,
   //sanitizeJob,
   getPlans,

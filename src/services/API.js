@@ -1,3 +1,5 @@
+// TODO: move to ../middleware/ ....
+
 import axios from "axios";
 import TokenService from "./TokenService";
 import EventBus from "../libs/EventBus";

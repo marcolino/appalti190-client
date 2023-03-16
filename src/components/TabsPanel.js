@@ -10,7 +10,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TokenService from "../services/TokenService";
-import JobService from "../services/JobService";
+//import JobService from "../services/JobService";
 import Tab01Start from "./Tab01Start";
 import Tab02DownloadTemplate from "./Tab02DownloadTemplate";
 import Tab03FillData from "./Tab03FillData";
@@ -107,7 +107,7 @@ const TabsPanel = () => {
   
   useEffect(() => { // to serialize job
     TokenService.setJob(job); // serialize locally, on local storage
-    JobService.set(job); // serialize remotely, on server db
+    //JobService.set(job); // serialize remotely, on server db (never used...)
   }, [job]);
 
   function changeTab(id) {

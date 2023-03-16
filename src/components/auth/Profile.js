@@ -382,15 +382,37 @@ console.log("*** USER:", user);
         plan: p.name,
       }).then(
         result => {
+          JobService.getPlans().then(
+            result => {
+              console.log("*** forcePlan result OK (user?):", result);
+              EventBus.dispatch("plan-change");
+              toast.success(t("Plan forced successfully"));
+              console.log("useeffect getPlans");
+              console.log(`plans got successfully:`, result);
+              setPlans(result.data);
+              const p = result.data.find(plan => plan.name === planName);
+              //setPlan(p);
+              user.plan = p;
+              setUser(user);
+              TokenService.setUser(user);
+              window.location.reload();
+            },
+            error => {
+              console.error("getPlans error:", error);
+            }
+          );
+          /*
           if (result instanceof Error) {
             console.error("profileUpdate error:", result);
             toast.error(errorMessage(result));
             return setError({ code: result.message });
           }
           setPlan(plan);
+          user.plan = plan;
           setAnyPlanChanges(false);
           EventBus.dispatch("plan-change");
           toast.success(t("Plan forced successfully"));
+          */
         },
         // error => {
         //   console.error("profileUpdate error:", result);

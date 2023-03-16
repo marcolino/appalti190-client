@@ -29,7 +29,8 @@
     "lighthouse": "lighthouse http://localhost:3000/ --output json --output-path src/__tests__/lighthouseOutput.json",
     "browserlist-update": "npx browserslist@latest --update-db",
     "optimize": "npx unimported",
-    "list-deadfiles": "npx deadfile ./src/index.js --dir src --exclude __tests__"
+    "list-deadfiles": "npx deadfile ./src/index.js --dir src --exclude __tests__",
+    "compush": "git add . && git commit -m \"$CM\" && git push"
   },
   "eslintConfig": {
     "extends": [

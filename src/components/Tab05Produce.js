@@ -66,7 +66,11 @@ function Tab05Produce(props) {
                 },
               },
               {
-                text: t("Proceed with the first {{cigNumberAllowed}} CIGs", { cigNumberAllowed: user?.plan?.cigNumberAllowed }),
+                text:
+                  (user?.plan?.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
+                    t("Proceed with unlimited CIG's")
+                  :
+                    t("Proceed with the first {{cigNumberAllowed}} CIGs", { cigNumberAllowed: user?.plan?.cigNumberAllowed }),
                 closeModal: true,
                 callback: () => {
                   props.setJob({...props.job, transform: {...props.job?.transform, planUpgradeDeclined: true}});
@@ -85,7 +89,7 @@ function Tab05Produce(props) {
       (async () => {
         await JobService.transformXls2Xml(props.job.file.path).then(
           response => {
-            props.setJob({...props.job, transform: response.data?.result});
+            props.setJob({...props.job, transform: response?.data});
           },
           error => {
             toast.error(errorMessage(error));
@@ -101,8 +105,8 @@ function Tab05Produce(props) {
       (async () => {
         await JobService.validateXml(props.job.transform).then(
           response => {
-            props.setJob({...props.job, validateXml: response?.data?.result});
-            setNextIsEnabled(props.job?.transform?.code === "OK" && response?.data?.result?.code === "OK" && allErrors().length === 0);
+            props.setJob({...props.job, validateXml: response?.data});
+            setNextIsEnabled(props.job?.transform?.code === "OK" && response?.data?.code === "OK" && allErrors().length === 0);
           },
           error => {
             toast.error(errorMessage(error));
@@ -171,7 +175,7 @@ console.log("INFO1:", info);
           {/* {statusLocal.loading === "transform" && `🟡 ${t("Transforming XLS to XML...")}`}
           {statusLocal.loading === "validateXml" && `🟡 ${t("Validating...")}`} */}
         </TabParagraph>
-        {props.job?.transform?.truncatedDueToPlanLimit && (
+        {(props.job?.transform?.truncatedDueToPlanLimit && (user?.plan?.cigNumberAllowed < Number.MAX_SAFE_INTEGER)) && (
           <TabParagraph>
             <Typography align="center" className={classes.danger}>{t("Warning")}: {t("The produced dataset has been truncated to {{cigs}} CIGs; you can proceed and downoad it, but file is not to be published", {cigs: user?.plan?.cigNumberAllowed})}.</Typography>
             <br />

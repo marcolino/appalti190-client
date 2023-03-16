@@ -181,7 +181,7 @@ console.log("P:", p);
                       onClick={(e) => {
                         openDialog({
                           title: t("Sure to buy this plan?"),
-                          contentText: t("It allows processing of ") +
+                          contentText: t("It allows processing of") + " " +
                             ((p.cigNumberAllowed === Number.MAX_SAFE_INTEGER) ?
                               t("unlimited CIG's")
                                 :

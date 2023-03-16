@@ -34,9 +34,9 @@ function Tab08Validation(props) {
           ).then(
             result => {
               setForceCheckValidated(false);
-console.log("OUTCOMECHECK result:", result?.data?.result);
-              props.setJob({...props.job, outcome: result?.data?.result});
-              setNextIsEnabled(result.data?.result?.esitoUltimoTentativoAccessoUrl === "successo");
+console.log("OUTCOMECHECK result:", result?.data);
+              props.setJob({...props.job, outcome: result?.data});
+              setNextIsEnabled(result.data?.esitoUltimoTentativoAccessoUrl === "successo");
             },
             error => {
               toast.error(errorMessage(error));

@@ -99,3 +99,6 @@
 - TODO: dopo l'acquisto di un piano, forazre l'aggiornamento dell'utente, come per la forzatura di un piano
 - TODO: Sei sicuro di acquistare questo piano? Consente di elaborare fino a CIG (nessun valore di # cig)
 - TODO: [a, b] => [ a, b ]
+- TODO: services: const function mame => exports.name
+- TODO: pricing reload: do not window.reload, but use a local useState initialized with prop
+- TODO: in package.json, just one ... git push ...(unify compush and pub)
