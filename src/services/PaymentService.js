@@ -13,7 +13,7 @@ const mode = async() => {
 };
 
 const createCheckoutSession = async({product}) => {
-  return await api.post("/payment/create-checkout-session", {
+  return await api.post("/payment/createCheckoutSession", {
     product
   }).then(
     response => {

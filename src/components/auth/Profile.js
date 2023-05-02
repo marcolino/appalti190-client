@@ -32,7 +32,7 @@ import Pricing from "../../components/Pricing";
 import { errorMessage/*, capitalize*/ } from "../../libs/Misc";
 import UserService from "../../services/UserService";
 import TokenService from "../../services/TokenService";
-import JobService from "../../services/JobService";
+//import JobService from "../../services/JobService";
 import PaymentService from "../../services/PaymentService";
 import EventBus from "../../libs/EventBus";
 import { toast } from "../Toast";
@@ -251,20 +251,20 @@ console.log("useeffect getProfile");
         setProfile(result.user); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
       }
     );
-    JobService.getPlans().then(
+    UserService.getAllPlans().then(
       result => {
         if (result instanceof Error) {
-          console.error("getPlans error:", result);
+          console.error("getAllPlans error:", result);
           return setError({ code: result.message });
         }
     console.log(`plans got successfully:`, result);
         setPlans(result.data);
       }
     );
-    UserService.getRoles().then(
+    UserService.getAllRoles().then(
       result => {
         if (result instanceof Error) {
-          console.error("getRoles error:", result);
+          console.error("getAllRoles error:", result);
           return setError({ code: result.message });
         }
 console.log(`roles got successfully:`, result);
@@ -382,12 +382,12 @@ console.log("*** USER:", user);
         plan: p.name,
       }).then(
         result => {
-          JobService.getPlans().then(
+          UserService.getAllPlans().then(
             result => {
               console.log("*** forcePlan result OK (user?):", result);
               EventBus.dispatch("plan-change");
               toast.success(t("Plan forced successfully"));
-              console.log("useeffect getPlans");
+              console.log("useeffect getAllPlans");
               console.log(`plans got successfully:`, result);
               setPlans(result.data);
               const p = result.data.find(plan => plan.name === planName);
@@ -398,7 +398,7 @@ console.log("*** USER:", user);
               window.location.reload();
             },
             error => {
-              console.error("getPlans error:", error);
+              console.error("getAllPlans error:", error);
             }
           );
           /*

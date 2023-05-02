@@ -61,7 +61,8 @@ instance.interceptors.response.use(
   async (err) => {
     const originalConfig = err.config;
 
-    if (originalConfig.url !== "/auth/signin" && err.response) {
+    if ((originalConfig.url !== "/auth/signin" && originalConfig.url !== "/auth/signup") && err.response) {
+console.log("******************* 1, originalConfig.url:", originalConfig.url, err.response);
       // a not-signin url, and got error response
       if (err.response.status === 401 && !originalConfig._retry) {
         // we got unauthorized error, and we did not retry yet

@@ -6,7 +6,7 @@ import EventBus from "../libs/EventBus";
 import { toast } from "./Toast";
 import UserService from "../services/UserService";
 import TokenService from "../services/TokenService";
-import JobService from "../services/JobService";
+//import JobService from "../services/JobService";
 
 function PaymentResponse(props) {
   const history = useHistory();
@@ -17,11 +17,11 @@ function PaymentResponse(props) {
 
  // get user profile on load
   // useEffect(() => {
-  //   console.log("useeffect getPlans");
-  //   JobService.getPlans().then(
+  //   console.log("useeffect getAllPlans");
+  //   JobService.getAllPlans().then(
   //     result => {
   //       if (result instanceof Error) {
-  //         console.error("getPlans error:", result);
+  //         console.error("getAllPlans error:", result);
   //         toast.error(errorMessage(result));
   //         return; //setError({ code: result.message });
   //       }
@@ -29,7 +29,7 @@ function PaymentResponse(props) {
   //       setPlans(result.data);
   //     },
   //     error => {
-  //       console.error("getPlans error:", error);
+  //       console.error("getAllPlans error:", error);
   //     }
   //   );
   // }, []);
@@ -50,12 +50,12 @@ console.log("queryParams, search:", queryParams, search);
         plan: planName,
       }).then(
         result => {
-          JobService.getPlans().then(
+          UserService.getAllPlans().then(
             result => {
               console.log("*** updatePlan result OK (user?):", result);
               EventBus.dispatch("plan-change");
               toast.success(t("Plan updated successfully"));
-              console.log("useeffect getPlans");
+              console.log("useeffect getAllPlans");
               console.log(`plans got successfully:`, result);
               setPlans(result.data);
               const p = result.data.find(plan => plan.name === planName);
@@ -65,7 +65,7 @@ console.log("queryParams, search:", queryParams, search);
               TokenService.setUser(user);
             },
             error => {
-              console.error("getPlans error:", error);
+              console.error("getAllPlans error:", error);
             }
           );
         },

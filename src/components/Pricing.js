@@ -19,7 +19,7 @@ import { toast } from "./Toast";
 import SelectedPlanImage_en from "../assets/images/SelectedPlan-en.png";
 import SelectedPlanImage_it from "../assets/images/SelectedPlan-it.png";
 import SelectedPlanImage_fr from "../assets/images/SelectedPlan-fr.png";
-import JobService from "../services/JobService";
+import UserService from "../services/UserService";
 import { getCurrentLanguage } from "../libs/I18n";
 import { capitalize, currencyISO4217ToSymbol, errorMessage } from "../libs/Misc";
 
@@ -89,7 +89,7 @@ console.log("Pricing - props:", props);
 
   // get user plans on load
   useEffect(() => {
-    JobService.getPlans().then(
+    UserService.getAllPlans().then(
       result => {
         setPlans(result.data);
       },

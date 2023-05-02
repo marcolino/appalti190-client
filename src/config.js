@@ -25,7 +25,7 @@ const config = {
     endpoint: `${serverBaseUrl}/`
   },
   checkout: {
-    endpoint: `${serverBaseUrl}/create-checkout-session`,
+    endpoint: `${serverBaseUrl}/createCheckoutSession`,
   },
   api: {
     version: "1", // semver syntax

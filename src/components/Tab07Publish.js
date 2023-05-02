@@ -37,6 +37,7 @@ function Tab07Publish(props) {
       if (!props.job?.datasetIsPublished || forceVerifyPublished) {
       (async () => {
         setForceVerifyPublished(false);
+console.log("*************** publishUrlFile, fileToMatch:", publishUrlFile, fileToMatch);
         await JobService.urlExistenceAndMatch(publishUrlFile, fileToMatch).then(
           result => {
             props.setJob({...props.job, datasetIsPublished: result.data.published, datasetIsPublishedAsIs: result.data.publishedAsIs});

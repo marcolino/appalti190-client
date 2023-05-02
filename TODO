@@ -77,6 +77,8 @@
 - se truncatedDueToPlanLimit, non consentire di procedere con tab07publish
 - Mui Tooltip è troooppo lento... Trovare alternativa per visualizzare la label del campo di input quando il placeholder non è più visibile...
 
+- TODO controllare perchè non si salva lo stato completo dello user sul logout, ma solo fino all'upload escluso...
+- TODO evitare di rimuovere job.transform, ... sul logout (anche logout forzato per scadenza token)
 - TODO risolvere i TO DO's nel codice
 - TODO gestire la navigazione da tastiera
 - TODO completare (e testare) gli attributi aria (?) (almeno per i Button ed IconButton)
@@ -102,3 +104,4 @@
 - TODO: services: const function mame => exports.name
 - TODO: pricing reload: do not window.reload, but use a local useState initialized with prop
 - TODO: in package.json, just one ... git push ...(unify compush and pub)
+- TODO: in fase di upload, non forzare il tipo MIME to application/spereadsheet..., ma leggerlo dal file

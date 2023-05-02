@@ -25,6 +25,7 @@ const set = (job) => {
 const upload = (file) => {
   const formData = new FormData();
   formData.append("file", file);
+console.info("*********** upload - file:", file, "formData:", formData);
   
   return api.post("/job/upload", formData, {
     headers: {
@@ -95,12 +96,11 @@ console.log("*** jobService - url,fileToMatch:", url, fileToMatch);
 //   return j;
 // }
 
-// get ANAC periodic verification failed outcome details
-const getPlans = () => {
-  return api.get(
-    "/job/getPlans",
-  );
-}
+// const getAllPlans = () => {
+//   return api.get(
+//     "/job/getAllPlans",
+//   );
+// }
 
 const JobService = {
 //  get,
@@ -112,7 +112,7 @@ const JobService = {
   //outcomeFailureDetails,
   urlExistenceAndMatch,
   //sanitizeJob,
-  getPlans,
+  //getAllPlans,
 };
 
 export default JobService;

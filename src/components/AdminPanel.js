@@ -431,20 +431,20 @@ console.log("*** preProcessEditCellValidation result:", result);
   
   // get user profile on load
   useEffect(() => {
-    UserService.getAdminPanel().then(
+    UserService.getAllUsersWithFullInfo().then(
       result => {
         if (result instanceof Error) {
-          console.error("getAdminPanel error:", result);
+          console.error("getAllUsersWithFullInfo error:", result);
           return setError({ code: result.message });
         }
-        console.log(`getAdminPanel got successfully:`, result.users);
+        console.log(`getAllUsersWithFullInfo got successfully:`, result.users);
 
         result.users = result.users.map(user => ({
           //...user,
           ...flattenObject(user, "address"), // user with flattened address
           id: user._id, // copy _id to id, a requiste of DataGrid
           plan: user.plan.name, // flatten plan
-          roles: user.roles[0].name, // get the first role only, we don't yet use multiple select here...
+          roles: user.roles[0].name, // get the first role only ("default" role), we don't yet use multiple select here...
         }));
 
         // DEBUG ONLY: multiplicate users
@@ -455,7 +455,7 @@ console.log("*** preProcessEditCellValidation result:", result);
         //   }
         // }
 
-console.log(`getAdminPanel got successfully after flattening:`, result.users);
+console.log(`getAllUsersWithFullInfo got successfully after flattening:`, result.users);
         setUsers(result.users); // we have to update local state outside this useEffect, otherwise there is a really long delay in each set function...
         setUsersLoaded(true); // to distinguish an empty users set and a grid not yet loaded
       }

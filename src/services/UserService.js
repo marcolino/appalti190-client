@@ -46,8 +46,8 @@ const updateUserProperty = ({userId, propertyName, propertyValue}) => {
   );
 };
 
-const getPlans = plans => {
-  return api.get("/user/getPlans").then(
+const getAllPlans = plans => {
+  return api.get("/user/getAllPlans").then(
     response => {
       return response.data;
     },
@@ -71,8 +71,8 @@ const updatePlan = plan => {
   );
 };
 
-const getRoles = roles => {
-  return api.get("/user/getRoles").then(
+const getAllRoles = roles => {
+  return api.get("/user/getAllRoles").then(
     response => {
       return response.data;
     },
@@ -111,8 +111,8 @@ const getAdminBoard = () => {
   return api.get("/test/admin");
 };
 
-const getAdminPanel = () => {
-  return api.get("/admin/getAdminPanel"
+const getAllUsersWithFullInfo = () => {
+  return api.get("/user/getAllUsersWithFullInfo"
   ).then(
     (response) => {
       return response.data;
@@ -127,15 +127,15 @@ const UserService = {
   getProfile,
   updateProfile,
   updateUserProperty,
-  getPlans,
+  getAllPlans,
   updatePlan,
-  getRoles,
+  getAllRoles,
   updateRoles,
   getPublicContent,
   getUserBoard,
   getModeratorBoard,
   getAdminBoard,
-  getAdminPanel,
+  getAllUsersWithFullInfo,
 };
 
 export default UserService;
