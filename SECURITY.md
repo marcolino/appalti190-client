@@ -37,7 +37,7 @@ We do not consider the following types of findings to be security vulnerabilitie
 - Exposed stack traces. We do not consider stack traces by themselves to be a security issue. If you find that a stack trace details personally identifiable information or user generated content, please submit a report detailing the issue.
 - Content spoofing by administrative users. We allow administrators to inject HTML into specific areas of our products as a customization feature and do not consider that functionality to be a vulnerability.
 - Clickjacking on pages that only contain static content.
-- Auto-complete enabled or disabled
+- Auto-complete enabled or disabled.
 
 ### Public Disclosure
 
